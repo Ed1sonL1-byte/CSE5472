@@ -1,0 +1,17 @@
+{
+  "results": [
+    {
+      "attempts": 1,
+      "fixture_id": "range_gate",
+      "report_sha256": "dec35b8583a053d36372076c23f36769adbeb1472d7fb62558247deb022fc61a",
+      "status": "stage1_confirmed"
+    },
+    {
+      "attempts": 1,
+      "fixture_id": "workflow_gate",
+      "report_sha256": "24303ed7f936e4a7cdbc639c3ccaf9c6d5b7a16e7f172ec46ff3f3fde2330697",
+      "status": "stage1_confirmed"
+    }
+  ],
+  "schema_version": 1
+}

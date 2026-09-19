@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 import re
 
-from .config import UINT256_MAX
+from .config import UINT256_MAX, get_scenario
 from .io import file_hash
 
 ADDRESS = re.compile(r"0x[0-9a-fA-F]{40}\Z")
@@ -29,7 +29,9 @@ def sequence_identity(steps: list[dict]) -> str:
     return hashlib.sha256(json.dumps(projection, sort_keys=True).encode()).hexdigest()
 
 
-def validate_prefix(sequence: dict, *, verify_native: bool = True) -> dict:
+def validate_prefix(sequence: dict, *, fixture_id: str = "phase_counter",
+                    verify_native: bool = True) -> dict:
+    scenario = get_scenario(fixture_id)
     steps = sequence.get("steps", [])
     if not 1 <= len(steps) <= 3:
         raise ValueError("A prefix must contain 1–3 concrete calls")
@@ -61,7 +63,7 @@ def validate_prefix(sequence: dict, *, verify_native: bool = True) -> dict:
             raise ValueError("Independent fixture invariant did not hold")
     if steps[-1]["observe"][-1]:
         raise ValueError("Goal already holds before the symbolic call")
-    if uint(steps[-1]["observe"][0]) != 2:
+    if not scenario.ready(steps[-1]["observe"], len(steps)):
         raise ValueError("Prefix did not reach the fixture's declared ready state")
     if verify_native:
         native_path = Path(sequence["native_path"])
@@ -70,11 +72,13 @@ def validate_prefix(sequence: dict, *, verify_native: bool = True) -> dict:
     return {**sequence, "case_id": sequence_identity(steps)}
 
 
-def select_prefixes(observation: dict, limit: int = 5) -> tuple[list[dict], list[dict]]:
+def select_prefixes(observation: dict, limit: int = 5,
+                    fixture_id: str | None = None) -> tuple[list[dict], list[dict]]:
+    selected_fixture = fixture_id or observation.get("fixture") or "phase_counter"
     candidates, rejected, seen = [], [], set()
     for sequence in observation.get("sequences", []):
         try:
-            prefix = validate_prefix(sequence)
+            prefix = validate_prefix(sequence, fixture_id=selected_fixture)
             if prefix["case_id"] in seen:
                 raise ValueError("Duplicate prefix")
             seen.add(prefix["case_id"])

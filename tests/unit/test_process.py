@@ -15,6 +15,8 @@ def test_timeout_kills_the_child_process_group(tmp_path):
     result = run_command([sys.executable, "-c", script], cwd=tmp_path,
                          log_path=tmp_path / "process.log", timeout=0.5)
     assert result.timed_out
+    assert result.resource_usage_status == "unavailable"
+    assert "process-tree" in result.resource_usage_reason
     assert pidfile.exists()
     # A terminated child may briefly be a zombie before init reaps it.
     import psutil

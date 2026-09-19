@@ -1,0 +1,10 @@
+{
+  "planned_results": 60,
+  "reason": "Four symbolic campaigns crossed the deadline boundary while cleanup errors escaped. The complete matrix was rerun after process cleanup and deadline-result handling fixes.",
+  "replacement": "runs/stage2-formal-02",
+  "run": "runs/stage2-formal-01",
+  "schema_version": 1,
+  "selected_for_summary": false,
+  "status": "superseded",
+  "valid_results": 56
+}

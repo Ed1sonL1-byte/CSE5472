@@ -11,7 +11,7 @@ pytestmark = [pytest.mark.integration, pytest.mark.skipif(
     os.environ.get("SEEDBRIDGE_INTEGRATION") != "1", reason="set SEEDBRIDGE_INTEGRATION=1 to run native tools")]
 
 
-@pytest.mark.parametrize("fixture", ["phase_counter", "bounded_ledger"])
+@pytest.mark.parametrize("fixture", ["phase_counter", "bounded_ledger", "range_gate", "workflow_gate"])
 def test_concrete_fixture_suite(fixture, tmp_path):
     scenario = get_scenario(fixture)
     result = run_command(["forge", "test", "--json", "--match-contract", scenario.contract + "Test"],

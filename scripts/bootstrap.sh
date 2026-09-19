@@ -8,6 +8,7 @@ if [ ! -x "$seedbridge_compiler" ] && [ -z "${SEEDBRIDGE_SOLC:-}" ]; then
     .venv/bin/solc-select install 0.8.36
 fi
 mkdir -p .bin
+./scripts/prepare-medusa-lineage.sh
 cd adapters/medusa
 GOTOOLCHAIN=local go build -mod=readonly -o ../../.bin/medusa-adapter .
 cd "$seedbridge_root"

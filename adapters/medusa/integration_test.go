@@ -26,7 +26,7 @@ func TestNativeRestartObserverAndDeterminism(t *testing.T) {
 	if os.Getenv("SEEDBRIDGE_INTEGRATION") != "1" {
 		t.Skip("set SEEDBRIDGE_INTEGRATION=1 with pinned Forge/crytic-compile environment")
 	}
-	for _, id := range []string{"phase_counter", "bounded_ledger"} {
+	for _, id := range []string{"phase_counter", "bounded_ledger", "range_gate", "workflow_gate"} {
 		t.Run(id, func(t *testing.T) {
 			fx := testFixture(t, id)
 			dir := t.TempDir()

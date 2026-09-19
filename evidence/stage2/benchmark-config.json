@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "fixtures": [
+    "phase_counter",
+    "bounded_ledger",
+    "range_gate",
+    "workflow_gate"
+  ],
+  "repeats": [
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "arms": [
+    "native_resume",
+    "concrete_augment",
+    "symbolic_augment"
+  ],
+  "arm_orders": {
+    "1": [
+      "native_resume",
+      "concrete_augment",
+      "symbolic_augment"
+    ],
+    "2": [
+      "concrete_augment",
+      "symbolic_augment",
+      "native_resume"
+    ],
+    "3": [
+      "symbolic_augment",
+      "native_resume",
+      "concrete_augment"
+    ],
+    "4": [
+      "native_resume",
+      "symbolic_augment",
+      "concrete_augment"
+    ],
+    "5": [
+      "concrete_augment",
+      "native_resume",
+      "symbolic_augment"
+    ]
+  },
+  "seeds": {
+    "phase_counter:1": 1001,
+    "phase_counter:2": 1002,
+    "phase_counter:3": 1003,
+    "phase_counter:4": 1004,
+    "phase_counter:5": 1005,
+    "bounded_ledger:1": 2001,
+    "bounded_ledger:2": 2002,
+    "bounded_ledger:3": 2003,
+    "bounded_ledger:4": 2004,
+    "bounded_ledger:5": 2005,
+    "range_gate:1": 3001,
+    "range_gate:2": 3002,
+    "range_gate:3": 3003,
+    "range_gate:4": 3004,
+    "range_gate:5": 3005,
+    "workflow_gate:1": 4001,
+    "workflow_gate:2": 4002,
+    "workflow_gate:3": 4003,
+    "workflow_gate:4": 4004,
+    "workflow_gate:5": 4005
+  },
+  "warmup_sequences": 40,
+  "continuation_test_limit": 10000,
+  "max_prefixes": 4,
+  "max_candidates": 4,
+  "concrete_attempts_per_prefix": 20,
+  "boundary_values": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "7",
+    "9",
+    "10",
+    "13",
+    "15",
+    "16",
+    "31",
+    "32",
+    "63",
+    "64",
+    "255",
+    "115792089237316195423570985008687907853269984665640564039457584007913129639935"
+  ],
+  "budget": {
+    "total_seconds": 8,
+    "common_limit_seconds": 4,
+    "augmentation_limit_seconds": 2.5,
+    "query_limit_seconds": 0.75,
+    "startup_reserve_seconds": 1.25,
+    "continuation_reserve_seconds": 1.0,
+    "cleanup_tolerance_seconds": 0.75
+  }
+}

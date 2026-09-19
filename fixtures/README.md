@@ -1,52 +1,32 @@
-# Stage 1 local state-machine fixtures
+# Local state-machine fixtures
 
-These newly written, dependency-free fixtures exercise bounded reachability and
-concrete regression checks. They are not production contracts, independently
-sourced benchmarks, or vulnerability reproductions. Quantities are inert integers;
-there are no funds, external calls, or address/time/gas-dependent decisions.
+These four dependency-free fixtures exercise bounded reachability, replay, and continued exploration. They are repository-owned teaching contracts, not production contracts, third-party benchmarks, or vulnerability reproductions. They hold inert integers and make no external calls.
 
-Both projects pin Solidity 0.8.36, the Shanghai EVM, and disabled optimization.
-The concrete `test*` functions have no fuzz parameters. The separate `check_*`
-functions provide Halmos smoke checks over symbolic `uint256` parameters.
-The Foundry configuration limits test discovery to contracts ending in `Test`:
-otherwise Foundry interprets the required `invariantHolds()` application interface
-as one of its own invariant tests.
+Every project pins Solidity 0.8.36, the Shanghai EVM, and disabled optimization. Concrete `test*` functions have no fuzz parameters. Separate `check_*` functions expose one symbolic `uint256` to Halmos. Foundry discovers only contracts ending in `Test`, so the application method `invariantHolds()` is not mistaken for a Foundry invariant test.
 
-| Fixture | Successful prefix | Goal condition in phase 2 | `observe()` |
-| --- | --- | --- | --- |
-| `phase_counter` | `begin(); advance(delta)` | `arg0 == counter * 7 + 11` | `(phase, counter, 0, goal)` |
-| `bounded_ledger` | `open(); reserve(units)` | `arg0 == total * 5 + reserved * 3 + 13` | `(phase, total, reserved, goal)` |
+| Fixture | Ready prefix | Symbolic suffix | State projection | Role |
+| --- | --- | --- | --- | --- |
+| `phase_counter` | `begin(); advance(delta)` | `complete(arg0)` | `(phase, counter, 0, goal)` | Narrow exact condition |
+| `bounded_ledger` | `open(); reserve(units)` | `settle(arg0)` | `(phase, total, reserved, goal)` | Narrow exact condition with independent accounting invariant |
+| `range_gate` | `begin(); configure(mode)` | `passRange(arg0)` | `(phase, bound, offset, goal)` | Broad interval reachable by ordinary boundary values |
+| `workflow_gate` | `start(); choose(lane)` | `unlock(arg0)` | `(phase, lane, progress, goal)` | Segmented predicate; `continueWork` reaches two post-goal states |
 
-`advance` sets `counter = (delta % 17) + 3`. `reserve` sets
-`reserved = (units % 23) + 1` and `total = reserved + 7`. Initial state is phase
-0, the first prefix operation enters phase 1, and the second enters phase 2.
-A matching final marker sets `goal = true` and phase 3. Calls in the wrong phase
-or with the wrong final marker are no-ops, including inputs of `uint256.max`.
-The terminal state is stable. `invariantHolds()` checks phase/goal consistency
-and each fixture's bounded quantity relationships; it is independent of the
-reachability marker equation.
+Calls in an invalid phase are no-ops. Each fixture declares finite bounds for the three numeric observation fields and exposes a separate boolean goal. `invariantHolds()` checks state consistency independently of the reachability predicate. The same Python and Go engine code handles all four fixtures; scenario-specific operation names, prefix bounds, readiness, state fields, and finite domains live in `src/seedbridge/config.py` and `adapters/medusa/fixture.go`.
 
-## Local checks
-
-Run commands from either project directory. To use an already installed compiler
-without asking Foundry to download it, provide its absolute path:
+Run concrete checks from any project directory:
 
 ```sh
-forge test --offline --use /absolute/path/to/solc -vv
+forge test --offline --use /absolute/path/to/solc-0.8.36 -vv
 ```
 
-The compiler must report `0.8.36`. Halmos invokes `forge build` internally, so
-the equivalent environment override is needed if that compiler is not already
-in Foundry's version cache:
+Run a symbolic smoke check with the fixture's test contract:
 
 ```sh
-FOUNDRY_SOLC=/absolute/path/to/solc halmos \
+FOUNDRY_SOLC=/absolute/path/to/solc-0.8.36 halmos \
   --contract PhaseCounterTest --function check_ \
-  --solver-command '/absolute/path/to/z3' --solver-threads 1 \
+  --solver-command /absolute/path/to/z3 --solver-threads 1 \
   --solver-timeout-assertion 10s --no-status \
   --json-output halmos-smoke.json
 ```
 
-Use `BoundedLedgerTest` in the second project. This checks local invariants and
-out-of-order no-op behavior; passing these checks is not a proof about arbitrary
-call histories or external contracts. See `VALIDATION.md` for actual results.
+Passing a fixture test establishes only the behavior encoded in that local contract. Cross-engine replay, native corpus handling, lineage, and benchmark evidence are validated separately in `docs/STAGE1_VALIDATION.md` and `docs/STAGE2_VALIDATION.md`.

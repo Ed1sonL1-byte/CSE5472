@@ -1,10 +1,10 @@
-# SeedBridge — Stage 1
+# SeedBridge — Symbolic Seed Augmentation
 
 SeedBridge 是 CSE 5472 semester project 的本地工具原型：把 Medusa 实际执行过的具体调用前缀交给 Halmos，只求解下一步的一个参数，再将经过具体重放验证的序列回灌 Medusa。
 
-Stage 1 使用仓库内两个无害教学状态机，验证跨工具流程和证据是否可靠。两个场景已通过端到端验收；84 项 pytest 检查全部通过，其中包含实际原生工具集成。验收范围与证据见 [STAGE1_VALIDATION.md](docs/STAGE1_VALIDATION.md)。目标可达不等于发现漏洞，也不构成性能提升结论。
+Stage 1 使用两个无害教学状态机验证跨工具流程。Stage 2 保留这两个场景，新增容易探索的 `RangeGate` 和 goal 后仍可继续变化的 `WorkflowGate`，让已验证种子真正参加 Medusa mutation，并在同一总 wall-clock 预算下比较三种策略。正式矩阵的 4 × 5 × 3 共 60 条结果全部通过完整性审计。
 
-完整设计见 [Stage 1 Tech Plan](docs/STAGE1_TECH_PLAN.md)。
+设计、结果与证据分别见 [Stage 1 Tech Plan](docs/STAGE1_TECH_PLAN.md)、[Stage 2 Tech Plan](docs/STAGE2_TECH_PLAN.md)、[Stage 2 benchmark 说明](docs/STAGE2_BENCHMARKS.md)、[Stage 2 验收记录](docs/STAGE2_VALIDATION.md) 和 [可提交证据索引](evidence/stage2/INDEX.md)。目标可达不等于发现漏洞；四个自建场景的结果也不代表第三方合约上的性能。
 
 ## 流程与支持范围
 
@@ -16,10 +16,11 @@ Medusa 执行与原生语料
   → Forge 在新部署上具体重放
   → 原生 codec 导出 seed
   → Medusa 重启执行并确认 mutation admission
+  → 默认 generator / mutator 继续探索并记录真实父子 lineage
   → JSON / Markdown 报告
 ```
 
-- 两个内置 fixture：`phase_counter` 和 `bounded_ledger`。
+- 四个内置 fixture：`phase_counter`、`bounded_ledger`、`range_gate` 和 `workflow_gate`。
 - 每个 fixture 固定一个目标合约和 actor；前缀包含 1–3 个成功调用，随后追加一个单参数 `uint256` 调用。
 - `msg.value = 0`；目标不依赖时间、gas、自身地址或复杂跨交易副作用。
 - 比较 fixture 声明的有限状态投影，不宣称完整 EVM 世界状态等价。
@@ -27,10 +28,12 @@ Medusa 执行与原生语料
 
 | Fixture | 用来验证什么 |
 | --- | --- |
-| `PhaseCounter` | 通过具体调用建立阶段和计数器状态，再求解能进入目标阶段的参数 |
-| `BoundedLedger` | 用不同的整数记账状态复用相同编排流程，并分别检查目标标志和记账不变量 |
+| `PhaseCounter` | 狭窄整数条件；验证符号 seed 能否补足普通具体输入难以命中的目标 |
+| `BoundedLedger` | 独立记账状态与不变量；检验同一核心流程是否跨场景复用 |
+| `RangeGate` | 宽范围条件；观察普通边界输入已有效时的额外增强成本 |
+| `WorkflowGate` | 分段条件及 goal 后行为；观察增强与 continuation 时间的取舍 |
 
-两者都没有真实资金、外部调用或攻击载荷。它们证明集成机制是否工作，不是安全漏洞 benchmark。
+四者都没有真实资金、外部调用或攻击载荷。它们用于验证集成和受控比较，不是安全漏洞 benchmark。
 
 ## 环境与安装
 
@@ -52,7 +55,7 @@ Medusa 执行与原生语料
 ./seedbridge doctor
 ```
 
-bootstrap 执行 `uv sync --frozen`，必要时安装 solc 0.8.36，构建 Go 适配器，将 doctor 结果写入 `configs/toolchain.local.json`，再编译两个固定 fixture。首次安装需要能够取得锁定依赖。现有全局 Z3 4.13.0 不作为项目求解器；不需要另外安装 Medusa CLI。
+bootstrap 执行 `uv sync --frozen`，必要时安装 solc 0.8.36，复制并校验 Medusa v1.5.1 的最小 lineage 补丁，构建 Go 适配器，将 doctor 结果写入 `configs/toolchain.local.json`，再编译四个固定 fixture。首次安装需要能够取得锁定依赖。现有全局 Z3 不作为项目求解器；不需要另外安装 Medusa CLI。
 
 solc 默认使用以下已安装二进制：
 
@@ -73,11 +76,13 @@ bootstrap 使用 `solc-select install`，不执行 `solc-select use`，因此不
 
 `doctor` 检查路径、版本和构建来源。检查通过仅说明环境就绪，不能替代端到端验收。
 
-## 运行两个场景
+## 运行 Stage 1 单场流程
 
 ```sh
 ./seedbridge run phase_counter
 ./seedbridge run bounded_ledger
+./seedbridge run range_gate
+./seedbridge run workflow_gate
 ```
 
 每次运行使用独立的 `runs/<run-id>/` 目录。命令会打印状态及 `report.md` 的位置。指定输出目录时必须使用尚不存在的目录：
@@ -107,6 +112,20 @@ bootstrap 使用 `solc-select install`，不执行 `solc-select use`，因此不
 
 将 `RUN_PATH` 替换为已有 run 目录，例如 `runs/phase-counter-review`。这个命令读取已有 `report.json`，不重新执行求解或重放。
 
+## 运行 Stage 2 campaign 与 benchmark
+
+冻结配置位于 `configs/stage2-benchmark.json`。单个 arm、完整 60 槽位矩阵和纯离线报告分别使用：
+
+```sh
+./seedbridge campaign phase_counter symbolic_augment --repeat 1 --output runs/campaign-review
+./seedbridge benchmark --config configs/stage2-benchmark.json --output runs/stage2-review
+./seedbridge benchmark-report runs/stage2-review
+uv run --frozen python scripts/audit-stage2.py runs/stage2-review --output runs/stage2-review/audit.json
+uv run --frozen python scripts/build-stage2-evidence.py
+```
+
+三个 arm 是 `native_resume`、`concrete_augment` 和 `symbolic_augment`。每个 `(fixture, repeat)` 只执行一次共同 warmup，三组从相同 corpus 副本开始；共同成本分别计入每组的 8 秒总预算。原始运行保存在被 Git 忽略的 `runs/`，小型、无本机绝对路径的证据保存在 `evidence/stage2/`。
+
 ## Warmup 与随机种子的边界
 
 Stage 1 warmup 采用 Medusa 原生的 **new-sequence-only generator** 固定策略，并使用单 worker，以减少语料 mutation 调度对集成复现的影响。具体调用仍由原生生成器产生；编排器不手写目标调用顺序或目标解。
@@ -116,6 +135,8 @@ Stage 1 warmup 采用 Medusa 原生的 **new-sequence-only generator** 固定策
 `--seed` 只保证控制到的随机源使用给定种子，不是整个工具链完全确定性的承诺。跨版本、不同构建产物、solver 行为及 wall-clock 截止均可能影响结果。复现应使用报告中的实际工具版本、有效配置、原生语料和已确认序列；不要仅凭种子相同就声称执行一致。
 
 回灌验收分别检查 seed 被执行，以及进入 mutation 候选集合。进入该集合不代表已经证明后续 mutation 有效果，也不代表 fuzzing 性能提升。
+
+Stage 2 campaign 恢复 Medusa v1.5.1 的默认生成和 mutation 策略。仓库内固定版本补丁只暴露现有策略选出的 generation id 与真实父代，不增加随机调用或改变权重。worker seed、运行顺序和导入顺序受控；Medusa 内部 clock-seeded corpus 与 mutation strategy chooser 仍属于明确记录的非受控随机源，因此五个 repeat 是独立重复，不是逐位相同的随机轨迹。
 
 ## 运行产物与验收证据
 
@@ -131,6 +152,10 @@ Stage 1 warmup 采用 Medusa 原生的 **new-sequence-only generator** 固定策
 | Halmos 原始 JSON 与日志 | 检查目标测试身份、typed model、warning、界限和未完成原因 |
 | Forge 与 Medusa 执行记录 | 确认具体调用成功、状态匹配、目标变化及原生 admission |
 | `novelty.json` | 保存候选 Medusa hash、warmup hash 集合及逐项去重结论 |
+| `lineage.jsonl` | 记录 startup replay、new sequence、mutation、真实父代和实际执行结果 |
+| `metrics.json` / `coverage.json` / `states.json` | 分开保存序列、有限状态和目标 runtime coverage 的 warmup/import/continuation 集合 |
+| `campaign.json` | 保存 Stage 2 各阶段状态、总预算计费、合法未命中及工具／证据错误分类 |
+| `summary.{json,csv,md}` | 从原始事件离线生成 60 条逐次结果与分组汇总 |
 
 一次场景运行只有同时取得以下证据，才应标记为 `stage1_confirmed`：
 
@@ -168,7 +193,7 @@ Python 单元测试从仓库根目录运行：
 uv run --frozen pytest tests/unit -q
 ```
 
-完整验收包含两个端到端流程、八个 Forge 具体测试，以及 Go 原生往返／观察对照／确定性检查：
+完整验收包含四个端到端流程、四套 Forge 具体测试，以及 Go 原生往返／观察对照／lineage 检查：
 
 ```sh
 SEEDBRIDGE_INTEGRATION=1 uv run --frozen pytest -q
@@ -187,13 +212,16 @@ GOTOOLCHAIN=local go test -mod=readonly ./...
 
 | 路径 | 内容 |
 | --- | --- |
-| `src/seedbridge/` | Python CLI、配置、序列选择、harness、求解、重放与报告 |
-| `adapters/medusa/` | Go 原生 codec、执行观察和回灌适配器 |
-| `fixtures/` | 两个教学状态机与 Foundry 配置、测试 |
+| `src/seedbridge/` | Python CLI、配置、序列选择、求解、预算、campaign、指标与报告 |
+| `adapters/medusa/` | Go 原生 codec、执行观察、continuation 与固定版本 lineage 接入 |
+| `fixtures/` | 四个教学状态机与 Foundry 配置、测试 |
+| `configs/stage2-benchmark.json` | 冻结的正式实验矩阵、预算、顺序和随机种子 |
+| `evidence/stage2/` | 路径清理后的正式汇总、机制链条、审计结果和校验和 |
 | `scripts/bootstrap.sh` | 锁定依赖安装和适配器构建 |
 | `tests/unit/` | Python 单元测试 |
 | `runs/` | 每次运行的原始证据和报告 |
 | `docs/STAGE1_TECH_PLAN.md` | S0–S6 的范围、验收与产出 |
+| `docs/STAGE2_TECH_PLAN.md` | P0–P5 的范围、完成状态、验收与产出 |
 | `output/pdf/` | 课程 proposal 及其生成材料 |
 
 项目建立在 [Medusa](https://github.com/crytic/medusa)、[Halmos](https://github.com/a16z/halmos) 和 [Foundry](https://github.com/foundry-rs/foundry) 上。[Optik](https://github.com/crytic/optik) 已有符号执行辅助 fuzzing 的相关实践；本项目的定位是受限接口集成与评估，不将 hybrid fuzzing 本身作为新的方法。

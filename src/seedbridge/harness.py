@@ -72,7 +72,7 @@ def _normalize_prefix(fixture_id: str, prefix: dict) -> dict:
         if selector not in permitted or (len(calldata) - 2) // 2 != permitted[selector]:
             raise ValueError(f"step {index} is not a supported static fixture call")
         if _uint(step.get("value"), "call value") != 0:
-            raise ValueError("Stage 1 only supports zero-value calls")
+            raise ValueError("SeedBridge only supports zero-value calls")
         block = _uint(step.get("actual_block"), "actual_block")
         timestamp = _uint(step.get("actual_timestamp"), "actual_timestamp")
         if normalized and (block < int(normalized[-1]["actual_block"]) or
@@ -93,6 +93,8 @@ def _normalize_prefix(fixture_id: str, prefix: dict) -> dict:
                            "actual_timestamp": str(timestamp), "status": "success",
                            "observe": observation, "invariant_holds": True})
     result = {"fixture_id": scenario.fixture_id, "steps": normalized}
+    if not scenario.ready(normalized[-1]["observe"], len(normalized)):
+        raise ValueError("prefix does not satisfy the scenario ready predicate and length bounds")
     if "deployer" in prefix:
         result["deployer"] = _address(prefix["deployer"], "deployer")
         if result["deployer"] != scenario.deployer.lower():
@@ -165,7 +167,7 @@ interface Vm {{
     function warp(uint256 timestamp) external;
 }}
 
-// Generated solely for an owned, inert Stage 1 state-machine fixture.
+// Generated solely for an owned, inert state-machine fixture.
 contract BridgeHarnessTest {{
     Vm private constant vm = Vm(address(uint160(uint256(keccak256("hevm cheat code")))));
     {scenario.contract} private target;

@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "seedbridge"
 version = "0.1.0"
-description = "Stage 1 reachability integration for two local teaching state machines"
+description = "Medusa and Halmos symbolic-seed integration and controlled local evaluation"
 requires-python = ">=3.12,<3.13"
 dependencies = ["halmos==0.3.3", "crytic-compile==0.3.11"]
 

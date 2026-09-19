@@ -9,6 +9,31 @@ import (
 	"github.com/crytic/medusa/fuzzing/coverage"
 )
 
+// coverageMarkerSnapshot exports stable marker identities and hit counts for one runtime bytecode target.
+// Marker identity excludes hit count so set union and difference remain independent of execution frequency.
+func coverageMarkerSnapshot(maps *coverage.CoverageMaps, code []byte, markers []uint64) ([]string, map[string]uint64, error) {
+	contract, err := maps.GetContractCoverageMap(code, false)
+	if err != nil {
+		return nil, nil, err
+	}
+	runtimeDigest := sha256Hex(code)
+	identities := make([]string, 0, maps.BranchesHit())
+	hits := make(map[string]uint64, maps.BranchesHit())
+	for _, marker := range markers {
+		count := contract.HitCount(marker)
+		if count == 0 {
+			continue
+		}
+		identity := fmt.Sprintf("%s:0x%016x", runtimeDigest, marker)
+		identities = append(identities, identity)
+		hits[identity] = count
+	}
+	if uint64(len(identities)) != maps.BranchesHit() {
+		return nil, nil, fmt.Errorf("enumerated %d native markers but native map reports %d", len(identities), maps.BranchesHit())
+	}
+	return identities, hits, nil
+}
+
 // Enumerate possible v1.5.1 markers through bytecode PCs, then query the public
 // HitCount API. No private map reflection or separate coverage engine is used.
 // A count check below ensures that an omitted native marker fails the run.

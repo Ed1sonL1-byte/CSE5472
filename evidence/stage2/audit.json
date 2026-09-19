@@ -1,0 +1,15 @@
+{
+  "checks": {
+    "accepted_seeds": 36,
+    "accepted_seeds_used": 36,
+    "campaign_records": 60,
+    "complete_sequences": 29259,
+    "lineage_events": 29259,
+    "metrics_recomputed": 60,
+    "mutation_events": 20382,
+    "shared_warmups": 20
+  },
+  "errors": [],
+  "schema_version": 1,
+  "status": "passed"
+}

@@ -1,0 +1,35 @@
+{
+  "results": [
+    {
+      "accepted_seeds": 1,
+      "arm": "concrete_augment",
+      "augmentation_status": "completed",
+      "charged_wall_seconds": 6.985030458017718,
+      "evaluation_valid": true,
+      "execution_status": "completed",
+      "goal_reached": true,
+      "lineage_status": "verified"
+    },
+    {
+      "accepted_seeds": 0,
+      "arm": "native_resume",
+      "augmentation_status": "not_applicable",
+      "charged_wall_seconds": 7.22203662499669,
+      "evaluation_valid": true,
+      "execution_status": "completed",
+      "goal_reached": false,
+      "lineage_status": "verified"
+    },
+    {
+      "accepted_seeds": 0,
+      "arm": "symbolic_augment",
+      "augmentation_status": "timeout",
+      "charged_wall_seconds": 6.616584416013211,
+      "evaluation_valid": true,
+      "execution_status": "completed",
+      "goal_reached": false,
+      "lineage_status": "verified"
+    }
+  ],
+  "schema_version": 1
+}

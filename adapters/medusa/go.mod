@@ -2,6 +2,8 @@ module cse5472.local/medusa-adapter
 
 go 1.26.4
 
+replace github.com/crytic/medusa => ./.patched/medusa-v1.5.1
+
 require (
 	github.com/crytic/medusa v1.5.1
 	github.com/crytic/medusa-geth v0.0.0-20250423141023-d818338d6925

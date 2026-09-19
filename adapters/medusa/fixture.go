@@ -63,8 +63,14 @@ func loadFixture(id string) (*fixture, error) {
 	case "bounded_ledger":
 		f.Contract, f.Suffix = "BoundedLedger", "settle"
 		f.Allowed["open()"], f.Allowed["reserve(uint256)"], f.Allowed["settle(uint256)"] = true, true, true
+	case "range_gate":
+		f.Contract, f.Suffix = "RangeGate", "passRange"
+		f.Allowed["begin()"], f.Allowed["configure(uint256)"], f.Allowed["passRange(uint256)"] = true, true, true
+	case "workflow_gate":
+		f.Contract, f.Suffix = "WorkflowGate", "unlock"
+		f.Allowed["start()"], f.Allowed["choose(uint256)"], f.Allowed["unlock(uint256)"], f.Allowed["continueWork(uint256)"] = true, true, true, true
 	default:
-		return nil, fmt.Errorf("unsupported fixture %q; only phase_counter and bounded_ledger are allowed", id)
+		return nil, fmt.Errorf("unsupported fixture %q; choose phase_counter, bounded_ledger, range_gate, or workflow_gate", id)
 	}
 	root, err := repositoryRoot()
 	if err != nil {

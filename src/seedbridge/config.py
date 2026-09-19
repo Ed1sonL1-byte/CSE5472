@@ -1,4 +1,4 @@
-"""Explicit support for the two repository-owned teaching fixtures."""
+"""Explicit, validated support for the four repository-owned teaching fixtures."""
 
 from dataclasses import dataclass
 from pathlib import Path
@@ -18,6 +18,36 @@ class Scenario:
     observe_id: str = "observe()"
     goal_id: str = "observe.goal"
     invariant_id: str = "invariantHolds()"
+    prefix_minimum: int = 1
+    prefix_maximum: int = 3
+    ready_observation_index: int = 0
+    ready_values: tuple[int, ...] = (2,)
+    state_fields: tuple[str, str, str, str] = ("phase", "counter", "unused", "goal")
+    state_bounds: tuple[tuple[int, int], tuple[int, int], tuple[int, int]] = (
+        (0, 3), (0, 19), (0, 0),
+    )
+
+    def __post_init__(self) -> None:
+        if not 1 <= self.prefix_minimum <= self.prefix_maximum <= 3:
+            raise ValueError("scenario prefix bounds must remain within 1..3")
+        if self.ready_observation_index not in range(3) or not self.ready_values:
+            raise ValueError("scenario ready predicate must reference a numeric observation")
+        if len(self.state_fields) != 4 or len(self.state_bounds) != 3:
+            raise ValueError("scenario state projection must declare three integers and goal")
+        if any(type(low) is not int or type(high) is not int or low < 0 or high < low
+               for low, high in self.state_bounds):
+            raise ValueError("scenario state projection bounds must be finite uint ranges")
+
+    def ready(self, observation: list[object], prefix_length: int) -> bool:
+        if not self.prefix_minimum <= prefix_length <= self.prefix_maximum:
+            return False
+        if len(observation) != 4 or type(observation[3]) is not bool or observation[3]:
+            return False
+        try:
+            value = int(observation[self.ready_observation_index])
+        except (TypeError, ValueError):
+            return False
+        return value in self.ready_values
 
     @property
     def root(self) -> Path:
@@ -49,8 +79,22 @@ class Scenario:
             "goal_id": self.goal_id,
             "observe_id": self.observe_id,
             "invariant_id": self.invariant_id,
+            "ready_predicate": {
+                "observation_index": self.ready_observation_index,
+                "operator": "in",
+                "values": list(self.ready_values),
+            },
+            "state_projection": {
+                "fields": list(self.state_fields),
+                "integer_bounds": [
+                    {"minimum": str(low), "maximum": str(high)}
+                    for low, high in self.state_bounds
+                ],
+                "goal_domain": [False, True],
+            },
+            "goal_definition": "observe[3] == true",
             "execution": {
-                "prefix_steps": {"minimum": 1, "maximum": 3},
+                "prefix_steps": {"minimum": self.prefix_minimum, "maximum": self.prefix_maximum},
                 "worker_count": 1, "call_value": "0", "reinsertion_rounds": 1,
             },
         }
@@ -64,6 +108,22 @@ SCENARIOS = {
     "bounded_ledger": Scenario(
         "bounded_ledger", "BoundedLedger", "settle",
         ("open()", "reserve(uint256)", "settle(uint256)"),
+        state_fields=("phase", "total", "reserved", "goal"),
+        state_bounds=((0, 3), (0, 30), (0, 23)),
+    ),
+    "range_gate": Scenario(
+        "range_gate", "RangeGate", "passRange",
+        ("begin()", "configure(uint256)", "passRange(uint256)"),
+        prefix_minimum=2, prefix_maximum=2,
+        state_fields=("phase", "bound", "offset", "goal"),
+        state_bounds=((0, 3), (0, 30), (0, 32)),
+    ),
+    "workflow_gate": Scenario(
+        "workflow_gate", "WorkflowGate", "unlock",
+        ("start()", "choose(uint256)", "unlock(uint256)", "continueWork(uint256)"),
+        prefix_minimum=2, prefix_maximum=2,
+        state_fields=("phase", "lane", "progress", "goal"),
+        state_bounds=((0, 5), (0, 3), (0, 4)),
     ),
 }
 

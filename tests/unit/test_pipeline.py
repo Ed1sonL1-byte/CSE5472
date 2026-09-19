@@ -48,3 +48,14 @@ def test_pipeline_does_not_report_evidence_mismatch_as_tool_failure(tmp_path, mo
         EvidenceMismatchError("evidence differs", status=status)))
     report, _ = run_pipeline(RunConfig("phase_counter"), tmp_path / status)
     assert report["status"] == status
+
+
+@pytest.mark.parametrize("status", ["timeout", "tool_error"])
+def test_stage1_failed_build_still_records_stage_elapsed(tmp_path, monkeypatch, status):
+    monkeypatch.setattr("seedbridge.pipeline.inspect_toolchain", lambda: {"ok": True})
+    monkeypatch.setattr("seedbridge.pipeline.build_fixture", lambda *args: (_ for _ in ()).throw(
+        ToolExecutionError("build failed", status=status)))
+    report, _ = run_pipeline(RunConfig("phase_counter"), tmp_path / f"build-{status}")
+    assert report["status"] == status
+    assert "s0_environment_build" in report["stage_elapsed_seconds"]
+    assert report["stage_elapsed_seconds"]["s0_environment_build"] >= 0

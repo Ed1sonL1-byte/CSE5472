@@ -110,15 +110,22 @@ def test_optional_deployer_is_validated_and_input_not_mutated(tmp_path: Path):
         generate_harness("phase_counter", prefix, tmp_path / "invalid")
 
 
-@pytest.mark.parametrize("fixture", ["phase_counter", "bounded_ledger"])
-def test_scenario_manifest_captures_stage1_constraints(fixture):
+@pytest.mark.parametrize("fixture", ["phase_counter", "bounded_ledger", "range_gate", "workflow_gate"])
+def test_scenario_manifest_captures_fixed_constraints(fixture):
     scenario = get_scenario(fixture).to_dict()
     assert scenario["schema_version"] == 1
     assert scenario["target_call"] in scenario["allowed_calls"]
     assert scenario["symbolic_parameter"] == {
         "name": "arg0", "type": "uint256", "minimum": "0", "maximum": str(UINT256_MAX),
     }
-    assert scenario["execution"] == {
-        "prefix_steps": {"minimum": 1, "maximum": 3},
-        "worker_count": 1, "call_value": "0", "reinsertion_rounds": 1,
+    expected_prefix = ({"minimum": 1, "maximum": 3}
+                       if fixture in {"phase_counter", "bounded_ledger"}
+                       else {"minimum": 2, "maximum": 2})
+    assert scenario["execution"] == {"prefix_steps": expected_prefix,
+                                     "worker_count": 1, "call_value": "0",
+                                     "reinsertion_rounds": 1}
+    assert scenario["ready_predicate"] == {
+        "observation_index": 0, "operator": "in", "values": [2],
     }
+    assert len(scenario["state_projection"]["integer_bounds"]) == 3
+    assert scenario["goal_definition"] == "observe[3] == true"

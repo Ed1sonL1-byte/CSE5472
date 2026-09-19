@@ -61,9 +61,64 @@ def observe(fixture_id: str, directory: Path, *, seed: int, tests: int,
     return {**observation, "command_result": command, "output_path": str(output)}
 
 
+def campaign(fixture_id: str, directory: Path, *, seed: int, tests: int,
+             fuzz_timeout: float, process_timeout: float, corpus: Path,
+             observe_state: bool = True, record_lineage: bool = True) -> dict:
+    """Run the patched native continuation mode and retain valid partial timeout evidence."""
+    directory.mkdir(parents=True, exist_ok=True)
+    output = directory / "campaign.json"
+    lineage = directory / "lineage.jsonl"
+    if output.exists() or (record_lineage and lineage.exists()):
+        raise ValueError("Campaign outputs must be fresh")
+    arguments = [
+        "run-campaign", "--fixture", fixture_id, "--corpus-dir", str(corpus),
+        "--output", str(output), "--seed", str(seed), "--tests", str(tests),
+        "--max-steps", "4", "--timeout", f"{fuzz_timeout:.6f}s",
+        f"--observe={str(observe_state).lower()}",
+        f"--record-lineage={str(record_lineage).lower()}",
+    ]
+    if record_lineage:
+        arguments.extend(["--lineage-output", str(lineage)])
+    result = run_command([str(ROOT / ".bin/medusa-adapter"), *arguments], cwd=ROOT,
+                         log_path=directory / "adapter.log", timeout=process_timeout,
+                         env=tool_environment())
+    if result.timed_out:
+        raise ToolExecutionError("Medusa campaign exceeded its outer process deadline", status="timeout")
+    if not output.is_file():
+        raise ToolExecutionError("Medusa campaign produced no report", status="tool_error")
+    observation = read_json(output)
+    if (observation.get("schema_version") != 2 or observation.get("medusa_version") != "v1.5.1"
+            or observation.get("fixture") != fixture_id
+            or observation.get("status") not in {"complete", "timeout"}
+            or type(observation.get("completed_sequences")) is not int):
+        raise RuntimeError("Adapter returned an incomplete or incompatible campaign report")
+    if result.returncode != 0 and observation["status"] != "timeout":
+        raise ToolExecutionError("Medusa campaign failed", status="tool_error")
+    if record_lineage:
+        if not lineage.is_file() or len(observation.get("lineage", [])) != observation["completed_sequences"]:
+            raise RuntimeError("Campaign lineage does not cover every completed sequence")
+    for sequence in observation.get("sequences", []):
+        sequence["admitted"] = sequence.get("admitted_for_mutation", False)
+        sequence["deployer"] = observation["deployment"]["deployer"]
+        for step in sequence["steps"]:
+            step["actual_block"] = str(step["block_number"])
+            step["actual_timestamp"] = str(step["block_timestamp"])
+    return {**observation, "command_result": result.to_dict(), "output_path": str(output)}
+
+
 def codec(fixture_id: str, operation: str, source: Path, output: Path,
           timeout: float, argument: str | None = None) -> dict:
     arguments = [operation, "--fixture", fixture_id, "--input", str(source), "--output", str(output)]
     if argument is not None:
         arguments.extend(["--argument", argument])
     return invoke(arguments, output.parent, timeout)
+
+
+def codec_batch(fixture_id: str, plan: Path, output: Path, timeout: float) -> dict:
+    invoke(["encode-batch", "--fixture", fixture_id, "--input", str(plan),
+            "--output", str(output)], output.parent, timeout)
+    document = read_json(output)
+    if (document.get("schema_version") != 1 or document.get("fixture") != fixture_id
+            or not isinstance(document.get("entries"), list)):
+        raise RuntimeError("Adapter returned an incompatible codec batch manifest")
+    return document

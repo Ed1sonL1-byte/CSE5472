@@ -21,17 +21,17 @@ func testFixture(t *testing.T, id string) *fixture {
 
 func oneNativeCall(t *testing.T, fx *fixture) calls.CallSequence {
 	t.Helper()
-	name := "begin"
-	if fx.ID == "bounded_ledger" {
-		name = "open"
-	}
+	name := map[string]string{
+		"phase_counter": "begin", "bounded_ledger": "open",
+		"range_gate": "begin", "workflow_gate": "start",
+	}[fx.ID]
 	method := fx.ABI.Methods[name]
 	msg := calls.NewCallMessageWithAbiValueData(actor, &targetAddress, 0, big.NewInt(0), 12500000, big.NewInt(1), big.NewInt(0), big.NewInt(0), &calls.CallMessageDataAbiValues{Method: &method, InputValues: []any{}})
 	return calls.CallSequence{calls.NewCallSequenceElement(nil, msg, 0, 0)}
 }
 
 func TestNativeCodecPreservesMaximumUint256(t *testing.T) {
-	for _, id := range []string{"phase_counter", "bounded_ledger"} {
+	for _, id := range []string{"phase_counter", "bounded_ledger", "range_gate", "workflow_gate"} {
 		t.Run(id, func(t *testing.T) {
 			fx := testFixture(t, id)
 			max := new(big.Int).Sub(new(big.Int).Lsh(big.NewInt(1), 256), big.NewInt(1))
@@ -68,6 +68,56 @@ func TestNativeCodecPreservesMaximumUint256(t *testing.T) {
 	}
 }
 
+func TestEncodeCandidateBatchUsesNativeCodecForEveryEntry(t *testing.T) {
+	fx := testFixture(t, "phase_counter")
+	dir := t.TempDir()
+	input := filepath.Join(dir, "input.json")
+	if _, err := writeSequence(input, oneNativeCall(t, fx)); err != nil {
+		t.Fatal(err)
+	}
+	first := filepath.Join(dir, "first.json")
+	second := filepath.Join(dir, "second.json")
+	requests := []batchCandidateRequest{
+		{Input: input, Output: first, Argument: "0"},
+		{Input: input, Output: second, Argument: "17"},
+	}
+	plan := filepath.Join(dir, "plan.json")
+	data, err := json.Marshal(requests)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(plan, data, 0644); err != nil {
+		t.Fatal(err)
+	}
+	result := filepath.Join(dir, "result.json")
+	if err := encodeCandidateBatch(plan, result, fx); err != nil {
+		t.Fatal(err)
+	}
+	for _, path := range []string{first, second} {
+		sequence, err := readSequence(path, fx)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if len(sequence) != 2 || sequence[1].Call.Nonce != 1 {
+			t.Fatal("batch output did not append one native candidate call")
+		}
+	}
+	var report struct {
+		Fixture string           `json:"fixture"`
+		Entries []map[string]any `json:"entries"`
+	}
+	reportData, err := os.ReadFile(result)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := json.Unmarshal(reportData, &report); err != nil {
+		t.Fatal(err)
+	}
+	if report.Fixture != fx.ID || len(report.Entries) != len(requests) {
+		t.Fatal("batch result omitted an encoded candidate")
+	}
+}
+
 func TestRejectInvalidCandidateParameters(t *testing.T) {
 	fx := testFixture(t, "phase_counter")
 	tooLarge := new(big.Int).Lsh(big.NewInt(1), 256).String()
@@ -75,6 +125,40 @@ func TestRejectInvalidCandidateParameters(t *testing.T) {
 		if _, err := appendCandidate(oneNativeCall(t, fx), fx, arg); err == nil {
 			t.Fatalf("accepted %q", arg)
 		}
+	}
+}
+
+func TestSequenceIdentityTracksCallsButIgnoresNonceAndTiming(t *testing.T) {
+	fx := testFixture(t, "phase_counter")
+	base := oneNativeCall(t, fx)
+	first, err := nativeSequenceIdentity(base)
+	if err != nil {
+		t.Fatal(err)
+	}
+	changedContext, err := base.Clone()
+	if err != nil {
+		t.Fatal(err)
+	}
+	changedContext[0].Call.Nonce = 99
+	changedContext[0].BlockNumberDelay = 7
+	changedContext[0].BlockTimestampDelay = 11
+	second, err := nativeSequenceIdentity(changedContext)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if first != second {
+		t.Fatal("nonce or timing changed canonical sequence identity")
+	}
+	changedCall, err := appendCandidate(base, fx, "17")
+	if err != nil {
+		t.Fatal(err)
+	}
+	third, err := nativeSequenceIdentity(changedCall)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if first == third {
+		t.Fatal("calldata or call structure did not change canonical sequence identity")
 	}
 }
 

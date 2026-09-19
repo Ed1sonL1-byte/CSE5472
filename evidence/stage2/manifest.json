@@ -1,0 +1,262 @@
+{
+  "benchmark_id": "c5beb855e64942b09d47472ae0cd95ca",
+  "cache_protocol": "one physical build/warmup per fixture-repeat; each arm receives a fresh corpus copy",
+  "config": {
+    "arms": [
+      "native_resume",
+      "concrete_augment",
+      "symbolic_augment"
+    ],
+    "budget": {
+      "augmentation_limit_seconds": 2.5,
+      "cleanup_tolerance_seconds": 0.75,
+      "common_limit_seconds": 4,
+      "continuation_reserve_seconds": 1.0,
+      "query_limit_seconds": 0.75,
+      "startup_reserve_seconds": 1.25,
+      "total_seconds": 8
+    },
+    "fixtures": [
+      "phase_counter",
+      "bounded_ledger",
+      "range_gate",
+      "workflow_gate"
+    ],
+    "repeats": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ]
+  },
+  "config_path": "configs/stage2-benchmark.json",
+  "config_sha256": "d4764e88dc3621e3a32a8ccbefb9bc0894eda741ea31963f3ff5ee896fdf3cd1",
+  "evaluation_valid_count": 60,
+  "fixtures": {
+    "bounded_ledger": {
+      "source_sha256": "1e3be9739e02247ce7d65a1ff91f1b459e438380ea3cba5bed4e8fa258f755c6"
+    },
+    "phase_counter": {
+      "source_sha256": "0744b30d92ee3ea3a1cd579b1d5958824c843fa3f5fafd01ddc0ad3ee4a0340f"
+    },
+    "range_gate": {
+      "source_sha256": "b7cf7146b56d31ef95b9b7918207fd88e8d9e053e826b8deb4f704626ebe0be8"
+    },
+    "workflow_gate": {
+      "source_sha256": "36df2df4eb928934a51651683e4093017c8a006ac6fca7a6761c7c13ba82fad0"
+    }
+  },
+  "git_head": "4bf442f6faee2a4a8bd58ebe8cc30de613912de0",
+  "git_status": "M README.md\n M adapters/medusa/.gitignore\n M adapters/medusa/codec.go\n M adapters/medusa/codec_test.go\n M adapters/medusa/coverage.go\n M adapters/medusa/fixture.go\n M adapters/medusa/go.mod\n M adapters/medusa/main.go\n M adapters/medusa/observed.go\n M scripts/bootstrap.sh\n M src/seedbridge/cli.py\n M src/seedbridge/config.py\n M src/seedbridge/harness.py\n M src/seedbridge/medusa.py\n M src/seedbridge/pipeline.py\n M src/seedbridge/process.py\n M src/seedbridge/trace.py\n M tests/integration/test_fixtures.py\n M tests/unit/test_harness.py\n M tests/unit/test_pipeline.py\n M tests/unit/test_process.py\n?? adapters/medusa/patches/\n?? configs/\n?? docs/STAGE2_GOAL_PROMPT.md\n?? docs/STAGE2_TECH_PLAN.md\n?? docs/STAGE2_VALIDATION.md\n?? fixtures/range_gate/\n?? fixtures/workflow_gate/\n?? scripts/prepare-medusa-lineage.sh\n?? src/seedbridge/augmentation.py\n?? src/seedbridge/benchmark.py\n?? src/seedbridge/budget.py\n?? src/seedbridge/campaign.py\n?? src/seedbridge/metrics.py\n?? tests/unit/test_augmentation.py\n?? tests/unit/test_benchmark.py\n?? tests/unit/test_budget.py\n?? tests/unit/test_metrics.py",
+  "host": {
+    "platform": "macOS-27.0-arm64-arm-64bit",
+    "python": "3.12.13"
+  },
+  "medusa": {
+    "adapter_binary_sha256": "2c834d429116efebbfe2955938645b3ba1e3ecc3dc24cc4696d5e05c2e92ebb0",
+    "lineage_patch": "adapters/medusa/patches/medusa-v1.5.1-lineage.patch",
+    "lineage_patch_sha256": "0038fba13210126f6866abc06a236593ddecc6ec80e0a27b3710c21baa14c702",
+    "upstream_version": "v1.5.1",
+    "upstream_zip_sum": "h1:euR4vTAV85QglBsIiwvCDrGT6Fu/6KHkZF2jmzxxe2Q="
+  },
+  "physical_elapsed_seconds": 368.20114587497665,
+  "randomness_boundary": {
+    "controlled": [
+      "worker RNG seed",
+      "fixture order",
+      "repeat order",
+      "arm order",
+      "import filename order",
+      "concrete random samples"
+    ],
+    "uncontrolled": [
+      "Medusa corpus chooser clock-seeded RNG",
+      "Medusa mutation strategy chooser clock-seeded RNG"
+    ]
+  },
+  "result_count": 60,
+  "run_order": [
+    {
+      "arms": [
+        "native_resume",
+        "concrete_augment",
+        "symbolic_augment"
+      ],
+      "fixture": "phase_counter",
+      "repeat_id": 1
+    },
+    {
+      "arms": [
+        "concrete_augment",
+        "symbolic_augment",
+        "native_resume"
+      ],
+      "fixture": "phase_counter",
+      "repeat_id": 2
+    },
+    {
+      "arms": [
+        "symbolic_augment",
+        "native_resume",
+        "concrete_augment"
+      ],
+      "fixture": "phase_counter",
+      "repeat_id": 3
+    },
+    {
+      "arms": [
+        "native_resume",
+        "symbolic_augment",
+        "concrete_augment"
+      ],
+      "fixture": "phase_counter",
+      "repeat_id": 4
+    },
+    {
+      "arms": [
+        "concrete_augment",
+        "native_resume",
+        "symbolic_augment"
+      ],
+      "fixture": "phase_counter",
+      "repeat_id": 5
+    },
+    {
+      "arms": [
+        "native_resume",
+        "concrete_augment",
+        "symbolic_augment"
+      ],
+      "fixture": "bounded_ledger",
+      "repeat_id": 1
+    },
+    {
+      "arms": [
+        "concrete_augment",
+        "symbolic_augment",
+        "native_resume"
+      ],
+      "fixture": "bounded_ledger",
+      "repeat_id": 2
+    },
+    {
+      "arms": [
+        "symbolic_augment",
+        "native_resume",
+        "concrete_augment"
+      ],
+      "fixture": "bounded_ledger",
+      "repeat_id": 3
+    },
+    {
+      "arms": [
+        "native_resume",
+        "symbolic_augment",
+        "concrete_augment"
+      ],
+      "fixture": "bounded_ledger",
+      "repeat_id": 4
+    },
+    {
+      "arms": [
+        "concrete_augment",
+        "native_resume",
+        "symbolic_augment"
+      ],
+      "fixture": "bounded_ledger",
+      "repeat_id": 5
+    },
+    {
+      "arms": [
+        "native_resume",
+        "concrete_augment",
+        "symbolic_augment"
+      ],
+      "fixture": "range_gate",
+      "repeat_id": 1
+    },
+    {
+      "arms": [
+        "concrete_augment",
+        "symbolic_augment",
+        "native_resume"
+      ],
+      "fixture": "range_gate",
+      "repeat_id": 2
+    },
+    {
+      "arms": [
+        "symbolic_augment",
+        "native_resume",
+        "concrete_augment"
+      ],
+      "fixture": "range_gate",
+      "repeat_id": 3
+    },
+    {
+      "arms": [
+        "native_resume",
+        "symbolic_augment",
+        "concrete_augment"
+      ],
+      "fixture": "range_gate",
+      "repeat_id": 4
+    },
+    {
+      "arms": [
+        "concrete_augment",
+        "native_resume",
+        "symbolic_augment"
+      ],
+      "fixture": "range_gate",
+      "repeat_id": 5
+    },
+    {
+      "arms": [
+        "native_resume",
+        "concrete_augment",
+        "symbolic_augment"
+      ],
+      "fixture": "workflow_gate",
+      "repeat_id": 1
+    },
+    {
+      "arms": [
+        "concrete_augment",
+        "symbolic_augment",
+        "native_resume"
+      ],
+      "fixture": "workflow_gate",
+      "repeat_id": 2
+    },
+    {
+      "arms": [
+        "symbolic_augment",
+        "native_resume",
+        "concrete_augment"
+      ],
+      "fixture": "workflow_gate",
+      "repeat_id": 3
+    },
+    {
+      "arms": [
+        "native_resume",
+        "symbolic_augment",
+        "concrete_augment"
+      ],
+      "fixture": "workflow_gate",
+      "repeat_id": 4
+    },
+    {
+      "arms": [
+        "concrete_augment",
+        "native_resume",
+        "symbolic_augment"
+      ],
+      "fixture": "workflow_gate",
+      "repeat_id": 5
+    }
+  ],
+  "schema_version": 1
+}

@@ -1,0 +1,204 @@
+--- a/fuzzing/fuzzer_worker_sequence_generator.go
++++ b/fuzzing/fuzzer_worker_sequence_generator.go
+@@ -39,8 +39,22 @@
+ 	// mutationStrategyChooser is a weighted random selector of functions that prepare the CallSequenceGenerator with
+ 	// a baseSequence derived from corpus entries.
+ 	mutationStrategyChooser *randomutils.WeightedRandomChooser[CallSequenceGeneratorMutationStrategy]
++
++	// generationID and generation expose read-only provenance for the sequence most recently initialized by this
++	// generator. Recording this metadata does not select values or consume randomness.
++	generationID uint64
++	generation   CallSequenceGeneration
+ }
+ 
++// CallSequenceGeneration describes how the sequence currently being executed was initialized. ParentHashes contain
++// the exact corpus sequence hashes returned by the native chooser, in selection order.
++type CallSequenceGeneration struct {
++	GenerationID uint64
++	Kind         string
++	Strategy     string
++	ParentHashes []string
++}
++
+ // CallSequenceGeneratorConfig defines the configuration for a CallSequenceGenerator to be created and used by a
+ // FuzzerWorker to generate call sequences in a fuzzing campaign.
+ type CallSequenceGeneratorConfig struct {
+@@ -109,6 +123,9 @@
+ 
+ // CallSequenceGeneratorMutationStrategy defines a structure for a mutation strategy used by a CallSequenceGenerator.
+ type CallSequenceGeneratorMutationStrategy struct {
++	// Name is a stable label for recording the strategy selected by the existing weighted chooser.
++	Name string
++
+ 	// CallSequenceGeneratorFunc describes a method used to populate a provided call sequence.
+ 	CallSequenceGeneratorFunc CallSequenceGeneratorFunc
+ 
+@@ -127,6 +144,7 @@
+ 	generator.mutationStrategyChooser.AddChoices(
+ 		randomutils.NewWeightedRandomChoice(
+ 			CallSequenceGeneratorMutationStrategy{
++				Name:                      "corpus_head",
+ 				CallSequenceGeneratorFunc: callSeqGenFuncCorpusHead,
+ 				PrefetchModifyCallFunc:    nil,
+ 			},
+@@ -134,6 +152,7 @@
+ 		),
+ 		randomutils.NewWeightedRandomChoice(
+ 			CallSequenceGeneratorMutationStrategy{
++				Name:                      "corpus_tail",
+ 				CallSequenceGeneratorFunc: callSeqGenFuncCorpusTail,
+ 				PrefetchModifyCallFunc:    nil,
+ 			},
+@@ -141,6 +160,7 @@
+ 		),
+ 		randomutils.NewWeightedRandomChoice(
+ 			CallSequenceGeneratorMutationStrategy{
++				Name:                      "splice_at_random",
+ 				CallSequenceGeneratorFunc: callSeqGenFuncSpliceAtRandom,
+ 				PrefetchModifyCallFunc:    nil,
+ 			},
+@@ -148,6 +168,7 @@
+ 		),
+ 		randomutils.NewWeightedRandomChoice(
+ 			CallSequenceGeneratorMutationStrategy{
++				Name:                      "interleave_at_random",
+ 				CallSequenceGeneratorFunc: callSeqGenFuncInterleaveAtRandom,
+ 				PrefetchModifyCallFunc:    nil,
+ 			},
+@@ -155,6 +176,7 @@
+ 		),
+ 		randomutils.NewWeightedRandomChoice(
+ 			CallSequenceGeneratorMutationStrategy{
++				Name:                      "mutated_corpus_head",
+ 				CallSequenceGeneratorFunc: callSeqGenFuncCorpusHead,
+ 				PrefetchModifyCallFunc:    prefetchModifyCallFuncMutate,
+ 			},
+@@ -162,6 +184,7 @@
+ 		),
+ 		randomutils.NewWeightedRandomChoice(
+ 			CallSequenceGeneratorMutationStrategy{
++				Name:                      "mutated_corpus_tail",
+ 				CallSequenceGeneratorFunc: callSeqGenFuncCorpusTail,
+ 				PrefetchModifyCallFunc:    prefetchModifyCallFuncMutate,
+ 			},
+@@ -169,6 +192,7 @@
+ 		),
+ 		randomutils.NewWeightedRandomChoice(
+ 			CallSequenceGeneratorMutationStrategy{
++				Name:                      "mutated_splice_at_random",
+ 				CallSequenceGeneratorFunc: callSeqGenFuncSpliceAtRandom,
+ 				PrefetchModifyCallFunc:    prefetchModifyCallFuncMutate,
+ 			},
+@@ -176,6 +200,7 @@
+ 		),
+ 		randomutils.NewWeightedRandomChoice(
+ 			CallSequenceGeneratorMutationStrategy{
++				Name:                      "mutated_interleave_at_random",
+ 				CallSequenceGeneratorFunc: callSeqGenFuncInterleaveAtRandom,
+ 				PrefetchModifyCallFunc:    prefetchModifyCallFuncMutate,
+ 			},
+@@ -184,6 +209,25 @@
+ 	)
+ 
+ 	return generator
++}
++
++// CallSequenceGeneration returns a defensive copy of the provenance for the sequence currently being executed.
++func (fw *FuzzerWorker) CallSequenceGeneration() CallSequenceGeneration {
++	if fw.sequenceGenerator == nil {
++		return CallSequenceGeneration{}
++	}
++	generation := fw.sequenceGenerator.generation
++	generation.ParentHashes = append([]string(nil), generation.ParentHashes...)
++	return generation
++}
++
++func (g *CallSequenceGenerator) recordParent(sequence calls.CallSequence) error {
++	hash, err := sequence.Hash()
++	if err != nil {
++		return err
++	}
++	g.generation.ParentHashes = append(g.generation.ParentHashes, hash.Hex())
++	return nil
+ }
+ 
+ // InitializeNextSequence prepares the CallSequenceGenerator for generating a new sequence. Each element can be
+@@ -195,11 +239,23 @@
+ 	g.baseSequence = make(calls.CallSequence, g.worker.fuzzer.config.Fuzzing.CallSequenceLength)
+ 	g.fetchIndex = 0
+ 	g.prefetchModifyCallFunc = nil
++	g.generationID++
++	g.generation = CallSequenceGeneration{
++		GenerationID: g.generationID,
++		Kind:         "new_sequence",
++		Strategy:     "new_sequence",
++		ParentHashes: make([]string, 0, 2),
++	}
+ 
+ 	// Check if there are any previously un-executed corpus call sequences. If there are, the fuzzer should execute
+ 	// those first.
+ 	unexecutedSequence := g.worker.fuzzer.corpus.UnexecutedCallSequence()
+ 	if unexecutedSequence != nil {
++		if err := g.recordParent(*unexecutedSequence); err != nil {
++			return false, fmt.Errorf("could not record startup replay sequence hash: %v", err)
++		}
++		g.generation.Kind = "startup_replay"
++		g.generation.Strategy = "startup_replay"
+ 		g.baseSequence = *unexecutedSequence
+ 		return false, nil
+ 	}
+@@ -224,6 +280,8 @@
+ 		// If we have a corpus mutation method, call it to generate our base sequence, then set the pre-fetch modify
+ 		// call function.
+ 		if corpusMutationFunc != nil && corpusMutationFunc.CallSequenceGeneratorFunc != nil {
++			g.generation.Kind = "mutation"
++			g.generation.Strategy = corpusMutationFunc.Name
+ 			err = corpusMutationFunc.CallSequenceGeneratorFunc(g, g.baseSequence)
+ 			if err != nil {
+ 				return true, fmt.Errorf("could not generate a corpus mutation derived call sequence due to an error executing a mutation method: %v", err)
+@@ -379,6 +437,9 @@
+ 	if err != nil {
+ 		return fmt.Errorf("could not obtain corpus call sequence for head mutation: %v", err)
+ 	}
++	if err := sequenceGenerator.recordParent(corpusSequence); err != nil {
++		return fmt.Errorf("could not record head mutation parent: %v", err)
++	}
+ 
+ 	// Determine the length of the slice to be copied in the head.
+ 	maxLength := utils.Min(len(sequence), len(corpusSequence))
+@@ -396,6 +457,9 @@
+ 	if err != nil {
+ 		return fmt.Errorf("could not obtain corpus call sequence for tail mutation: %v", err)
+ 	}
++	if err := sequenceGenerator.recordParent(corpusSequence); err != nil {
++		return fmt.Errorf("could not record tail mutation parent: %v", err)
++	}
+ 
+ 	// Determine a random position to slice the call sequence.
+ 	maxLength := utils.Min(len(sequence), len(corpusSequence))
+@@ -419,6 +483,12 @@
+ 	if err != nil {
+ 		return fmt.Errorf("could not obtain tail corpus call sequence for splice-at-random corpus mutation: %v", err)
+ 	}
++	if err := sequenceGenerator.recordParent(headSequence); err != nil {
++		return fmt.Errorf("could not record splice head parent: %v", err)
++	}
++	if err := sequenceGenerator.recordParent(tailSequence); err != nil {
++		return fmt.Errorf("could not record splice tail parent: %v", err)
++	}
+ 
+ 	// Determine a random position to slice off the head of the call sequence.
+ 	maxLength := utils.Min(len(sequence), len(headSequence))
+@@ -451,6 +521,12 @@
+ 	if err != nil {
+ 		return fmt.Errorf("could not obtain second corpus call sequence for interleave-at-random corpus mutation: %v", err)
+ 	}
++	if err := sequenceGenerator.recordParent(firstSequence); err != nil {
++		return fmt.Errorf("could not record first interleave parent: %v", err)
++	}
++	if err := sequenceGenerator.recordParent(secondSequence); err != nil {
++		return fmt.Errorf("could not record second interleave parent: %v", err)
++	}
+ 
+ 	// Determine how many transactions to take from the first sequence and slice it.
+ 	maxLength := utils.Min(len(sequence), len(firstSequence))

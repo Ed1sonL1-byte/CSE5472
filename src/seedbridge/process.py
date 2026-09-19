@@ -35,6 +35,8 @@ class CommandResult:
     timed_out: bool
     log_path: str
     stderr_path: str | None = None
+    resource_usage_status: str = "unavailable"
+    resource_usage_reason: str = "portable process-tree CPU attribution is not available"
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -70,12 +72,12 @@ def run_command(command: list[str], *, cwd: Path, log_path: Path,
                 child.wait(timeout=2)
             except subprocess.TimeoutExpired:
                 pass
-            except ProcessLookupError:
+            except (ProcessLookupError, PermissionError):
                 pass
             # A launcher can exit while one of its descendants ignores SIGTERM.
             try:
                 os.killpg(child.pid, signal.SIGKILL)
-            except ProcessLookupError:
+            except (ProcessLookupError, PermissionError):
                 pass
             child.wait()
     return CommandResult(command, child.returncode, time.monotonic() - start,

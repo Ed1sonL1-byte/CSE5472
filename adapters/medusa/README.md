@@ -1,14 +1,15 @@
 # Fixed-fixture Medusa adapter
 
-This Stage 1 adapter uses `github.com/crytic/medusa v1.5.1` through its public Go APIs. It supports only the repository's `phase_counter` and `bounded_ledger` teaching fixtures. It does not accept another project path, RPC endpoint, arbitrary sender, deployment recipe, or target contract.
+This fixed-scope adapter uses `github.com/crytic/medusa v1.5.1` and supports only the repository's `phase_counter`, `bounded_ledger`, `range_gate`, and `workflow_gate` teaching fixtures. It does not accept another project path, RPC endpoint, arbitrary sender, deployment recipe, or target contract.
 
 The adapter calls the real `Fuzzer.Start()` and saves actual executed native prefixes. It does not invent transaction sequences or manually fill fixture state. An exported native prefix is an adapter snapshot of Medusa's executed calls; Medusa separately retains coverage-increasing entries in `corpus/call_sequences/`.
 
 ## Build and environment
 
-From the repository root, first install the Python lockfile and build both fixed fixtures using the project's documented environment. `loadFixture` requires their existing Forge artifacts. Then:
+From the repository root, first install the Python lockfile, prepare the verified local lineage source copy, and build all fixed fixtures. `loadFixture` requires their existing Forge artifacts. Then:
 
 ```sh
+./scripts/prepare-medusa-lineage.sh
 cd adapters/medusa
 go build -o ../../.bin/medusa-adapter .
 ../../.bin/medusa-adapter version
@@ -47,13 +48,22 @@ All output paths must be new. Paths below are examples; run inside the repositor
 .bin/medusa-adapter encode-candidate --fixture phase_counter \
   --input runs/restart/corpus/call_sequences/input.json \
   --argument 123 --output runs/candidate/call_sequences/input.json
+
+.bin/medusa-adapter run-campaign --fixture phase_counter \
+  --corpus-dir runs/restart/corpus --output runs/restart/campaign.json \
+  --lineage-output runs/restart/lineage.jsonl --tests 300 --max-steps 4
+
+.bin/medusa-adapter encode-batch --fixture phase_counter \
+  --input runs/candidate/batch-plan.json --output runs/candidate/batch-result.json
 ```
 
 `--argument` is a candidate supplied by the bridge, not a claim that the example value reaches a goal. `encode-candidate` appends `complete(uint256)` or `settle(uint256)` using native `CallMessageDataAbiValues` and `CallSequence` serialization. It inherits the fixed actor/target from the last call and increments its nonce. A prefix must contain 1–3 calls. The exported candidate may contain 2–4 calls. `roundtrip` and `decode-corpus` also accept `--prefix-length N`.
 
 `--tests` counts **complete sequences**, rather than transactions. It is implemented by stopping at `CallSequenceTested`, after Medusa has processed native admission. Fresh warmup defaults to 3 calls per sequence and permits `--max-steps 1..4`. Restart requires `--tests` to equal the number of input JSON files initially present in `call_sequences/`; no new fuzzed sequence is generated after those inputs. Use a fresh directory containing one seed for an unambiguous single-seed acceptance check. `test_results` imports are rejected.
 
-The timeout is a secondary wall-clock guard starting after compilation. A timeout writes partial evidence and returns an error. The caller must separately bound the whole subprocess, including compiler execution.
+`run-observed` retains the Stage 1 new-sequence-only behavior. `run-campaign` replays imported corpus entries, then continues with Medusa's default new-sequence/mutation configuration and writes one lineage event for every completed sequence. `encode-batch` applies the same native codec to a bounded list of candidate requests so concrete augmentation compiles and validates as a batch.
+
+The timeout is a secondary wall-clock guard starting after compilation. A timeout writes partial campaign evidence; the Python campaign ledger separately bounds compilation, augmentation, restart, continuation, and cleanup.
 
 ## Output schema 1
 
@@ -66,9 +76,12 @@ The report records versions, fixture, RNG strategy, seed, configuration path, ac
 - `observe`: three decimal strings and a JSON boolean. `goal` repeats the final boolean. `invariant_holds` is a separate observation.
 - `state_digest_sha256`: SHA256 of the ABI-encoded `observe()` return data. It covers only the fixture's declared projection, not complete cross-engine world-state equality.
 - `state_root_before_observer` / `state_root_after_observer`: Medusa state roots around view readbacks. The adapter rejects a persistent change.
-- `coverage_digest_sha256`: SHA256 of ordered big-endian `(native marker uint64, hit count uint64)` pairs for the target runtime. Cumulative digest/count fields and a final top-level digest are also present.
+- `coverage_markers` / `coverage_marker_hits`: stable `(runtime_bytecode_sha256, marker_hex)` identities and hit counts for the target runtime. Digest/count fields remain for Stage 1 compatibility.
+- `lineage`: generation kind and id, existing strategy name, actual parent and child hashes, normalized identities, execution status, goal, coverage, and state digests.
 
-Coverage is copied via a transaction-only public tracer callback before native corpus processing frees the per-transaction map. The adapter queries Medusa's public `GetContractCoverageMap`/`HitCount` APIs. It enumerates possible markers from the fixed runtime and requires the number found to equal `BranchesHit()`, failing closed if a native marker cannot be represented. Getter calls do not run through the transaction coverage tracer. No private fields, reflection into the chooser, or Medusa source patches are used.
+Coverage is copied via a transaction-only public tracer callback before native corpus processing frees the per-transaction map. The adapter queries Medusa's public `GetContractCoverageMap`/`HitCount` APIs. It enumerates possible markers from the fixed runtime and requires the number found to equal `BranchesHit()`, failing closed if a native marker cannot be represented. Getter calls do not run through the transaction coverage tracer.
+
+Medusa v1.5.1 has no public hook for the parent actually chosen by its corpus and splice strategies. Stage 2 therefore builds against a project-local source copy with `patches/medusa-v1.5.1-lineage.patch`. The preparation script verifies both upstream and patched SHA-256 values, and `go.mod` points only this adapter at `.patched/medusa-v1.5.1`; the global module cache is never edited. The patch exposes the selection already made by Medusa and does not call RNG, change weights, or alter the sequence.
 
 `--observe=false` omits getter calls and yields null projection/goal/invariant values, while retaining transaction receipts, state-root readouts, and coverage instrumentation. The integration comparison tests the effect of adding getter observation; it does not claim that all adapter instrumentation is absent in the off run.
 
@@ -80,9 +93,9 @@ At pinned v1.5.1, `testNextCallSequence` calls `MarkCallSequenceForMutation` aft
 
 ## Determinism and scope
 
-Stage 1 uses one worker, fixed sender `0x10000`, deployer `0x30000`, value zero, zero requested delays, checked nonces, and fixed gas/fees. Requested zero delay still permits Medusa to create a new block; output records actual execution context.
+All modes use one worker, fixed sender `0x10000`, deployer `0x30000`, value zero, zero requested delays, checked nonces, and fixed gas/fees. Requested zero delay still permits Medusa to create a new block; output records actual execution context.
 
-The public generator hook seeds the worker RNG, sorts the target's exposed method list, selects Medusa's native `RandomValueGenerator`, and sets `NewSequenceProbability=1`. It does not implement a custom transaction generator. Medusa's independent clock-seeded corpus choosers are not invoked in this mode. This is a reproducible integration configuration, **not stock Medusa and not a performance baseline**. The native restart path remains intact. Reproducibility excludes elapsed times, generated filenames, and absolute directory names; exact native call files and step observations are the comparison artifacts.
+Stage 1's public generator hook seeds the worker RNG, sorts exposed methods, selects Medusa's native `RandomValueGenerator`, and sets `NewSequenceProbability=1`. Stage 2 campaign mode omits that override and keeps the pinned default generator/mutator and strategy weights. Medusa's corpus and mutation-strategy choosers remain independently clock-seeded; the reports state that boundary rather than claiming bit-for-bit campaign determinism.
 
 ## Verification
 
@@ -92,6 +105,6 @@ go test -v ./...
 SEEDBRIDGE_INTEGRATION=1 go test -v -run TestNativeRestartObserverAndDeterminism ./...
 ```
 
-The integration command requires the pinned compiler environment above. On 2026-09-18 it passed for both fixtures: 30 native sequences repeated exactly per fixture; a real two-call prefix round-tripped and restarted with readbacks on/off; state roots, receipts, contexts, native coverage digests, and admission evidence agreed. Unit tests verify maximum uint256 precision, native codec stability, candidate bounds, and rejection of incompatible calldata/ABI metadata and unsupported execution context.
+The integration command requires the pinned compiler environment above. On 2026-09-19 it passed for all four fixtures: 30 native sequences repeated exactly per fixture; a real ready prefix round-tripped and restarted with readbacks on/off; state roots, receipts, contexts, native coverage digests, and admission evidence agreed. Unit tests verify maximum uint256 precision for all fixtures, native codec and batch encoding, canonical sequence identity, candidate bounds, and rejection of incompatible calldata/ABI metadata and unsupported execution context.
 
 `test-runs/` contains local debugging evidence and is not required for the adapter. The early `phase-warmup`/`restart-on` folders predate corrected account-check and coverage settings; use `phase-v2` and `restart-v2-on` for current examples.

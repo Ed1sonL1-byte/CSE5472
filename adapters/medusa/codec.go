@@ -124,3 +124,62 @@ func sequenceSummary(seq calls.CallSequence) map[string]any {
 	h, _ := seq.Hash()
 	return map[string]any{"schema_version": 1, "medusa_version": medusaVersion, "medusa_hash": h.Hex(), "steps": steps}
 }
+
+type batchCandidateRequest struct {
+	Input    string `json:"input"`
+	Output   string `json:"output"`
+	Argument string `json:"argument"`
+}
+
+func encodeCandidateBatch(planPath string, outputPath string, fx *fixture) error {
+	data, err := os.ReadFile(planPath)
+	if err != nil {
+		return err
+	}
+	var requests []batchCandidateRequest
+	if err := json.Unmarshal(data, &requests); err != nil {
+		return fmt.Errorf("candidate batch plan decode: %w", err)
+	}
+	if len(requests) < 1 || len(requests) > 256 {
+		return fmt.Errorf("candidate batch must contain 1..256 entries")
+	}
+	seen := map[string]bool{}
+	results := make([]map[string]any, 0, len(requests))
+	for index, request := range requests {
+		input, err := filepath.Abs(request.Input)
+		if err != nil {
+			return err
+		}
+		output, err := filepath.Abs(request.Output)
+		if err != nil {
+			return err
+		}
+		if seen[output] {
+			return fmt.Errorf("duplicate batch output at index %d", index)
+		}
+		seen[output] = true
+		if _, err := os.Stat(output); err == nil {
+			return fmt.Errorf("batch output already exists: %s", output)
+		}
+		sequence, err := readSequence(input, fx)
+		if err != nil {
+			return fmt.Errorf("batch input %d: %w", index, err)
+		}
+		sequence, err = appendCandidate(sequence, fx, request.Argument)
+		if err != nil {
+			return fmt.Errorf("batch argument %d: %w", index, err)
+		}
+		digest, err := writeSequence(output, sequence)
+		if err != nil {
+			return err
+		}
+		results = append(results, map[string]any{
+			"index": index, "input": input, "native_path": output,
+			"native_sha256": digest, "argument": request.Argument,
+			"summary": sequenceSummary(sequence),
+		})
+	}
+	return writeJSON(outputPath, map[string]any{
+		"schema_version": 1, "fixture": fx.ID, "entries": results,
+	})
+}
