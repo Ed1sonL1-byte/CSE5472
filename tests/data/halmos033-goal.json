@@ -1,0 +1,38 @@
+{
+    "exitcode": 1,
+    "test_results": {
+        "test/BridgeHarness.t.sol:BridgeHarnessTest": [
+            {
+                "name": "check_goal(uint256)",
+                "exitcode": 1,
+                "num_models": 1,
+                "models": [
+                    {
+                        "model": {
+                            "p_arg0_uint256_cf25d2e_00": {
+                                "full_name": "p_arg0_uint256_cf25d2e_00",
+                                "variable_name": "arg0",
+                                "solidity_type": "uint256",
+                                "smt_type": "BitVec 256",
+                                "size_bits": 256,
+                                "value": 67
+                            }
+                        },
+                        "is_valid": true
+                    }
+                ],
+                "num_paths": [
+                    2,
+                    1,
+                    0
+                ],
+                "time": [
+                    0.07231441600015387,
+                    0.0473527499998454,
+                    0.024957624991657212
+                ],
+                "num_bounded_loops": 0
+            }
+        ]
+    }
+}

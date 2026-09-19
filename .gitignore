@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+.DS_Store
+runs/
+.bin/
+configs/toolchain.local.json
+tmp/
+**/out/
+**/cache/
+**/crytic-export/
+**/halmos-smoke.log
+**/forge-test.log
+**/halmos-smoke.json

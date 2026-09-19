@@ -1,0 +1,24 @@
+{
+    "exitcode": 0,
+    "test_results": {
+        "test/BridgeHarness.t.sol:BridgeHarnessTest": [
+            {
+                "name": "check_prefix()",
+                "exitcode": 0,
+                "num_models": 0,
+                "models": [],
+                "num_paths": [
+                    1,
+                    1,
+                    0
+                ],
+                "time": [
+                    0.015005916997324675,
+                    0.014994791999924928,
+                    9.457988198846579e-06
+                ],
+                "num_bounded_loops": 0
+            }
+        ]
+    }
+}
