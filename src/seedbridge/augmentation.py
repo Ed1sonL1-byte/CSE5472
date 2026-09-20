@@ -15,12 +15,46 @@ from .io import read_json, write_json
 from .medusa import codec, codec_batch, observe
 from .metrics import normalized_sequence_identity
 from .replay import concrete_replay
-from .process import ToolExecutionError
+from .process import EvidenceMismatchError, ToolExecutionError
 
 
 DEFAULT_BOUNDARY_VALUES = (
     0, 1, 2, 3, 7, 9, 10, 13, 15, 16, 31, 32, 63, 64, 255, UINT256_MAX,
 )
+
+
+def _checked_result_status(result: object, *, stage: str,
+                           allowed: set[str]) -> str:
+    """Return a declared domain result, but never hide tool or evidence failures."""
+    if not isinstance(result, dict) or not isinstance(result.get("status"), str):
+        raise EvidenceMismatchError(
+            f"{stage} returned no classified result", status="result_mismatch")
+    status = result["status"]
+    reason = result.get("reason", "no reason recorded")
+    if status == "tool_error":
+        raise ToolExecutionError(f"{stage} failed: {reason}", status="tool_error")
+    if status in {"result_mismatch", "decode_error"}:
+        raise EvidenceMismatchError(
+            f"{stage} returned inconsistent evidence: {reason}", status="result_mismatch")
+    if stage == "symbolic prefix check" and status == "prefix_mismatch":
+        raise EvidenceMismatchError(
+            f"symbolic prefix disagrees with the concrete trace: {reason}",
+            status="state_mismatch",
+        )
+    if status not in allowed:
+        raise EvidenceMismatchError(
+            f"{stage} returned unsupported status {status!r}: {reason}",
+            status="result_mismatch",
+        )
+    return status
+
+
+def _unsuccessful_symbolic_status(statuses: list[str]) -> str:
+    """Preserve the most material valid negative result when no seed is accepted."""
+    for status in ("timeout", "invalid_model", "replay_mismatch"):
+        if status in statuses:
+            return status
+    return "no_candidate"
 
 
 def concrete_values(seed: int, limit: int,
@@ -172,6 +206,7 @@ def symbolic_augment(fixture_id: str, prefixes: list[dict], warmup: dict, direct
 
     entries: list[dict] = []
     attempts: list[dict] = []
+    unsuccessful_statuses: list[str] = []
     scenario = get_scenario(fixture_id)
     for prefix_index, prefix in enumerate(prefixes):
         if deadline - time.monotonic() <= 0.25:
@@ -188,7 +223,13 @@ def symbolic_augment(fixture_id: str, prefixes: list[dict], warmup: dict, direct
             prefix_result = run_halmos(project, "check_prefix()", case / "prefix-check",
                                        remaining(query_timeout, validation_reserve=0.5), solver, executable)
             attempt["prefix_check"] = prefix_result
-            if prefix_result["status"] != "prefix_confirmed":
+            prefix_status = _checked_result_status(
+                prefix_result, stage="symbolic prefix check",
+                allowed={"prefix_confirmed", "prefix_incomplete", "timeout", "stuck",
+                         "all_paths_reverted"},
+            )
+            if prefix_status != "prefix_confirmed":
+                unsuccessful_statuses.append(prefix_status)
                 attempt["elapsed_seconds"] = time.monotonic() - attempt_started
                 continue
             generated_build = build_manifest(
@@ -198,7 +239,13 @@ def symbolic_augment(fixture_id: str, prefixes: list[dict], warmup: dict, direct
             solved = run_halmos(project, "check_goal(uint256)", case / "solve",
                                 remaining(query_timeout, validation_reserve=0.5), solver, executable)
             attempt["solve"] = solved
-            if solved["status"] != "candidate":
+            solve_status = _checked_result_status(
+                solved, stage="symbolic goal solve",
+                allowed={"candidate", "no_witness_within_bounds", "timeout", "stuck",
+                         "all_paths_reverted", "invalid_model"},
+            )
+            if solve_status != "candidate":
+                unsuccessful_statuses.append(solve_status)
                 attempt["elapsed_seconds"] = time.monotonic() - attempt_started
                 continue
             argument = solved["candidates"][0]
@@ -207,7 +254,12 @@ def symbolic_augment(fixture_id: str, prefixes: list[dict], warmup: dict, direct
                 Path(concrete["project_path"]), case / "concrete-check",
                 remaining(process_timeout, validation_reserve=0.5))
             attempt["replay"] = replay
-            if replay["status"] != "reachable_confirmed":
+            replay_status = _checked_result_status(
+                replay, stage="concrete candidate replay",
+                allowed={"reachable_confirmed", "replay_mismatch", "timeout"},
+            )
+            if replay_status != "reachable_confirmed":
+                unsuccessful_statuses.append(replay_status)
                 attempt["elapsed_seconds"] = time.monotonic() - attempt_started
                 continue
             concrete_build = build_manifest(
@@ -236,6 +288,7 @@ def symbolic_augment(fixture_id: str, prefixes: list[dict], warmup: dict, direct
             attempt["candidate"] = entry
             attempt["elapsed_seconds"] = time.monotonic() - attempt_started
         except TimeoutError as error:
+            unsuccessful_statuses.append("timeout")
             attempt["status"] = "timeout"
             attempt["reason"] = str(error)
             attempt["elapsed_seconds"] = time.monotonic() - attempt_started
@@ -243,6 +296,7 @@ def symbolic_augment(fixture_id: str, prefixes: list[dict], warmup: dict, direct
         except ToolExecutionError as error:
             if error.status != "timeout":
                 raise
+            unsuccessful_statuses.append("timeout")
             attempt["status"] = "timeout"
             attempt["reason"] = str(error)
             attempt["elapsed_seconds"] = time.monotonic() - attempt_started
@@ -256,13 +310,17 @@ def symbolic_augment(fixture_id: str, prefixes: list[dict], warmup: dict, direct
             max_candidates=max_candidates,
         )
     except TimeoutError as error:
+        unsuccessful_statuses.append("timeout")
         validation = {"status": "timeout", "reason": str(error),
                       "attempts": entries, "accepted": []}
     except ToolExecutionError as error:
         if error.status != "timeout":
             raise
+        unsuccessful_statuses.append("timeout")
         validation = {"status": "timeout", "reason": str(error),
                       "attempts": entries, "accepted": []}
+    if not validation.get("accepted") and validation.get("status") == "no_candidate":
+        validation["status"] = _unsuccessful_symbolic_status(unsuccessful_statuses)
     validation["symbolic_attempts"] = attempts
     validation["elapsed_seconds"] = time.monotonic() - started
     return validation

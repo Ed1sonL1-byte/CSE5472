@@ -383,6 +383,16 @@ def _elapsed(result: dict | None) -> float:
     return float(command.get("elapsed_seconds", 0.0)) if isinstance(command, dict) else 0.0
 
 
+def _right_censor_fields(record: dict, *, has_goal: bool) -> dict:
+    budget = record["budget"]
+    return {
+        "right_censored": not has_goal,
+        "censor_seconds": None if has_goal else float(budget["charged_wall_seconds"]),
+        "censor_time_basis": None if has_goal else "charged_campaign_observation_end",
+        "budget_limit_seconds": float(budget["budget_seconds"]),
+    }
+
+
 def _row_evidence(path: Path, record: dict) -> dict:
     arm_dir = path.parent
     block_dir = path.parents[2]
@@ -482,11 +492,11 @@ def _row_evidence(path: Path, record: dict) -> dict:
     return {
         "first_goal_stage": goal_events[0]["stage"] if goal_events else "right_censored",
         "first_goal_seconds": goal_events[0]["time_seconds"] if goal_events else None,
-        "first_goal_time_basis": goal_events[0]["time_basis"] if goal_events else "budget_deadline",
+        "first_goal_time_basis": (goal_events[0]["time_basis"] if goal_events
+                                  else "charged_campaign_observation_end"),
         "first_native_goal_stage": native_goal_events[0]["stage"] if native_goal_events else "right_censored",
         "first_native_goal_seconds": native_goal_events[0]["time_seconds"] if native_goal_events else None,
-        "right_censored": not goal_events,
-        "censor_seconds": record["budget"]["budget_seconds"] if not goal_events else None,
+        **_right_censor_fields(record, has_goal=bool(goal_events)),
         "candidate_opportunities": opportunities,
         "accepted_seed_count": len(accepted_hashes),
         "used_seed_count": len(used_hashes),

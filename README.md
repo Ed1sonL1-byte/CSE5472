@@ -124,7 +124,7 @@ uv run --frozen python scripts/audit-stage2.py runs/stage2-review --output runs/
 uv run --frozen python scripts/build-stage2-evidence.py
 ```
 
-三个 arm 是 `native_resume`、`concrete_augment` 和 `symbolic_augment`。每个 `(fixture, repeat)` 只执行一次共同 warmup，三组从相同 corpus 副本开始；共同成本分别计入每组的 8 秒总预算。原始运行保存在被 Git 忽略的 `runs/`，小型、无本机绝对路径的证据保存在 `evidence/stage2/`。
+三个 arm 是 `native_resume`、`concrete_augment` 和 `symbolic_augment`。每个 `(fixture, repeat)` 只执行一次共同 warmup，三组从相同 corpus 副本开始；共同成本分别计入每组的 8 秒总预算。未命中按实际计费观察结束时间右截尾，8 秒只作为预算上限另行保存。原始运行保存在被 Git 忽略的 `runs/`，小型、无本机绝对路径的证据保存在 `evidence/stage2/`。
 
 ## Warmup 与随机种子的边界
 

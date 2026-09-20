@@ -594,13 +594,7 @@ func runObserved(fx *fixture, opts runOptions) error {
 	report.CoverageDigest, _ = coverageDigest(cumulativeCoverage, fx.Runtime, markers)
 	report.CoverageMarkers, report.CoverageMarkerHits, _ = coverageMarkerSnapshot(cumulativeCoverage, fx.Runtime, markers)
 	report.TimedOut = timedOut.Load()
-	report.Status = "complete"
-	if err != nil {
-		report.Status, report.Error = "tool_error", err.Error()
-	}
-	if report.TimedOut {
-		report.Status = "timeout"
-	}
+	report.Status, report.Error = classifyRunOutcome(err, report.TimedOut)
 	if opts.Campaign && opts.RecordLineage {
 		if writeErr := writeJSONLines(opts.LineageOutput, report.Lineage); writeErr != nil {
 			return writeErr
@@ -619,6 +613,16 @@ func runObserved(fx *fixture, opts runOptions) error {
 		return fmt.Errorf("completed sequence count differs from requested count")
 	}
 	return nil
+}
+
+func classifyRunOutcome(runErr error, timedOut bool) (string, string) {
+	if runErr != nil {
+		return "tool_error", runErr.Error()
+	}
+	if timedOut {
+		return "timeout", ""
+	}
+	return "complete", ""
 }
 
 func observeStep(fx *fixture, testChain *chain.TestChain, element *calls.CallSequenceElement, index int, enabled bool, cumulative *coverage.CoverageMaps) (stepRecord, error) {

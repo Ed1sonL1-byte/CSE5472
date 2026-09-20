@@ -2,7 +2,11 @@ from pathlib import Path
 
 import pytest
 
-from seedbridge.benchmark import _write_goal_hits_chart, load_benchmark_config
+from seedbridge.benchmark import (
+    _right_censor_fields,
+    _write_goal_hits_chart,
+    load_benchmark_config,
+)
 from seedbridge.config import ROOT
 
 
@@ -44,3 +48,19 @@ def test_goal_hit_chart_is_generated_from_group_counts(tmp_path: Path):
     assert svg.startswith('<svg xmlns="http://www.w3.org/2000/svg"')
     assert "Stage 2 goal hits" in svg
     assert svg.count(">3/5</text>") == 12
+
+
+def test_right_censor_uses_observed_end_and_keeps_budget_limit_distinct():
+    record = {"budget": {"charged_wall_seconds": 6.393949, "budget_seconds": 8.0}}
+    assert _right_censor_fields(record, has_goal=False) == {
+        "right_censored": True,
+        "censor_seconds": 6.393949,
+        "censor_time_basis": "charged_campaign_observation_end",
+        "budget_limit_seconds": 8.0,
+    }
+    assert _right_censor_fields(record, has_goal=True) == {
+        "right_censored": False,
+        "censor_seconds": None,
+        "censor_time_basis": None,
+        "budget_limit_seconds": 8.0,
+    }

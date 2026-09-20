@@ -75,9 +75,9 @@ adapter 逐步导出 `(runtime_bytecode_sha256, marker_hex)` 集合及命中次�
 | bounded_ledger | 0/5 | 0/5 | 5/5 | symbolic 五个 seed 均被选择并执行 mutation 子代 |
 | phase_counter | 0/5 | 0/5 | 5/5 | symbolic import 每次增加 1 个目标 coverage marker |
 | range_gate | 5/5 | 5/5 | 5/5 | 三组命中率与逐次总 coverage 增量一致；额外求解没有命中率收益 |
-| workflow_gate | 5/5 | 5/5 | 3/5 | symbolic 接纳 0 个 seed，两个结果右截尾；增强成本压缩 continuation |
+| workflow_gate | 5/5 | 5/5 | 3/5 | symbolic 接纳 0 个 seed；一次未命中无合格 prefix、增强耗时为零，另一次尝试求解但无候选 |
 
-concrete 共接纳 21 个 seed，symbolic 共接纳 15 个；36 个都与各自 warmup 序列不同，也都作为真实 mutation 父代产生并执行了不同子代。受 seed 归因的子代在 `workflow_gate` concrete 五次重复中合计增加 10 个投影状态和 48 个 coverage marker；在两个狭窄条件中，symbolic 子代合计增加 24 个投影状态，但 coverage 只增加 1 个 marker。未把其余 continuation 的收益归给 seed。
+concrete 共接纳 21 个 seed，symbolic 共接纳 15 个；36 个都与各自 warmup 序列不同，也都作为真实 mutation 父代产生并执行了不同子代。受 seed 归因的子代在 `workflow_gate` concrete 五次重复中合计增加 10 个投影状态和 48 个 coverage marker；在两个狭窄条件中，symbolic 子代合计增加 24 个投影状态，但 coverage 只增加 1 个 marker。未把其余 continuation 的收益归给 seed。`workflow_gate` 的两个 symbolic 未命中不能统一归因于求解开销：repeat 1 没有合格 prefix、求解开销为零；repeat 2 才有三次符号尝试。各 arm 还受 Medusa 内部独立 clock-seeded chooser 影响，因此这里只报告观察关联，不作单一原因的因果解释。
 
 独立审计命令：
 
@@ -86,9 +86,9 @@ uv run --frozen python scripts/audit-stage2.py \
   runs/stage2-formal-02 --output runs/stage2-formal-02/audit.json
 ```
 
-审计从保存的 29,259 条完整序列重算：60 个 campaign 与 20 个共同 warmup 齐全；29,259 条 lineage 与完整序列逐一对应；20,382 条 mutation 的父代均指向更早已执行序列；60 份 sequence/state/coverage metrics 与保存值完全一致；36/36 接纳种子都有不同且实际执行的子代。`audit.json` 的状态为 `passed`，错误列表为空。
+审计从保存的 29,259 条完整序列重算：60 个 campaign 与 20 个共同 warmup 齐全；29,259 条 lineage 与完整序列逐一对应；20,382 条 mutation 的父代均指向更早已执行序列；60 份 sequence/state/coverage metrics 与保存值完全一致；36/36 接纳种子都有不同且实际执行的子代。`audit.json` 的状态为 `passed`，错误列表为空。公开正式样例只统计 `kind=mutation` 的父代事件，共 170 次；startup replay 不再计入选择次数，首条公开选择事件也来自 mutation。
 
-连续重建 `./seedbridge benchmark-report runs/stage2-formal-02` 后，四个输出的 SHA-256 均保持不变，证明报告只依赖保存数据：`summary.json` 为 `ff9e734324c810e46f2aa47645d3717888b1cc11025c3cf9f16946e5d02d1c6e`，`summary.csv` 为 `bdd1da15b00ff05ef979c1f7de322ac110daa87c75079b9c85da6c96c22a426d`，`summary.md` 为 `2da77637aef59260171ca9a23d1a2f2c1ed45269aa9647931fc37a51148f0049`，`goal-hits.svg` 为 `bfa275c6ef77e758b4bd40485f0d2ddddc594465e0d54faf9b2ea9a59352eb12`。
+连续重建 `./seedbridge benchmark-report runs/stage2-formal-02` 后，四个输出的 SHA-256 均保持不变，证明报告只依赖保存数据：`summary.json` 为 `d935434533174e5c52d937a31ec4eadab50899d69eded516170bff430399938c`，`summary.csv` 为 `2f891019a15e8437fe52007f5cd666556b8afb76fd95fb001b0f4d8e46b12054`，`summary.md` 为 `2da77637aef59260171ca9a23d1a2f2c1ed45269aa9647931fc37a51148f0049`，`goal-hits.svg` 为 `bfa275c6ef77e758b4bd40485f0d2ddddc594465e0d54faf9b2ea9a59352eb12`。本轮收尾修正后，报告的 22 个未命中均按实际计费观察结束时间截尾（6.394–7.286 秒），8 秒单列为预算上限；原始 60 条 campaign 未改动。
 
 可分享证据位于 `evidence/stage2/`：包含冻结配置、路径清理后的 manifest、60 条 JSON/CSV/Markdown 汇总、goal-hit SVG、审计结果、代表性的符号 seed → 父代选择 → 子代执行事件及两份原生 Medusa 输入、记录开关中性对照、新 fixture 验收、三组 smoke、被替代运行说明和全包校验和。完整 127,000 余个原始生成文件继续保存在 Git 忽略的 `runs/stage2-formal-02`，避免以小型摘录代替原始记录。
 
@@ -105,4 +105,4 @@ cd adapters/medusa && SEEDBRIDGE_INTEGRATION=1 GOTOOLCHAIN=local go test -mod=re
 git diff --check
 ```
 
-2026-09-19 的最终结果：`compileall` 与 `git diff --check` 无错误；Python 单元测试 **118 passed**；`SEEDBRIDGE_INTEGRATION=1` 全套 pytest **125 passed in 18.49s**，JUnit 位于 `runs/stage2-final-pytest.xml`；Go 单元测试通过；Go 原生集成在四个 fixture 上均通过。每个 fixture 的 30 条 warmup 原生序列可按相同 seed 精确重复，真实前缀经 restart 后 observer 开关两侧的 calldata、status、gas、block/timestamp、state root、coverage digest 和 admission 一致。bootstrap 成功校验补丁、构建 adapter，并编译四个 fixture；doctor 的 Forge、solc、Halmos、crytic-compile、Z3、Go、adapter 和 Python 检查全部为 OK。
+2026-09-19 的最终结果：`compileall` 与 `git diff --check` 无错误；Python 单元测试 **126 passed**；`SEEDBRIDGE_INTEGRATION=1` 全套 pytest **133 passed in 17.91s**，JUnit 位于 `runs/stage2-closure-pytest.xml`；Go 单元测试通过；Go 原生集成在四个 fixture 上均通过。新增测试覆盖实际观察结束截尾、符号工具/结果错误闭合分类、无效模型与 timeout 负结果保留，以及 Go 原生错误优先于同时发生的 timeout。每个 fixture 的 30 条 warmup 原生序列可按相同 seed 精确重复，真实前缀经 restart 后 observer 开关两侧的 calldata、status、gas、block/timestamp、state root、coverage digest 和 admission 一致。bootstrap 成功校验补丁、构建 adapter，并编译四个 fixture；doctor 的 Forge、solc、Halmos、crytic-compile、Z3、Go、adapter 和 Python 检查全部为 OK。

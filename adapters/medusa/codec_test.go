@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"math/big"
 	"os"
 	"path/filepath"
@@ -9,6 +10,21 @@ import (
 
 	"github.com/crytic/medusa/fuzzing/calls"
 )
+
+func TestRunErrorTakesPrecedenceOverTimeout(t *testing.T) {
+	status, detail := classifyRunOutcome(errors.New("worker failed"), true)
+	if status != "tool_error" || detail != "worker failed" {
+		t.Fatalf("simultaneous error and timeout classified as %q (%q)", status, detail)
+	}
+	status, detail = classifyRunOutcome(nil, true)
+	if status != "timeout" || detail != "" {
+		t.Fatalf("plain timeout classified as %q (%q)", status, detail)
+	}
+	status, detail = classifyRunOutcome(nil, false)
+	if status != "complete" || detail != "" {
+		t.Fatalf("successful run classified as %q (%q)", status, detail)
+	}
+}
 
 func testFixture(t *testing.T, id string) *fixture {
 	t.Helper()

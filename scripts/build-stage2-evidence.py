@@ -146,7 +146,10 @@ def build() -> None:
         for row in sample_augmentation["accepted"]]
     accepted_hashes = {row["medusa_hash"] for row in accepted}
     selected = [event for event in sample_native["lineage"]
-                if accepted_hashes.intersection(event.get("parent_hashes") or [])]
+                if event.get("kind") == "mutation"
+                and accepted_hashes.intersection(event.get("parent_hashes") or [])]
+    if len(selected) != 170 or not selected:
+        raise ValueError("formal symbolic sample must contain 170 mutation parent selections")
     write_json(DESTINATION / "formal-symbolic-sample.json", _sanitize({
         "schema_version": 1,
         "spec": sample_record["spec"],

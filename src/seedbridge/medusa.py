@@ -89,9 +89,12 @@ def campaign(fixture_id: str, directory: Path, *, seed: int, tests: int,
     observation = read_json(output)
     if (observation.get("schema_version") != 2 or observation.get("medusa_version") != "v1.5.1"
             or observation.get("fixture") != fixture_id
-            or observation.get("status") not in {"complete", "timeout"}
+            or observation.get("status") not in {"complete", "timeout", "tool_error"}
             or type(observation.get("completed_sequences")) is not int):
         raise RuntimeError("Adapter returned an incomplete or incompatible campaign report")
+    if observation["status"] == "tool_error":
+        detail = observation.get("error") or "no adapter error detail"
+        raise ToolExecutionError(f"Medusa campaign failed: {detail}", status="tool_error")
     if result.returncode != 0 and observation["status"] != "timeout":
         raise ToolExecutionError("Medusa campaign failed", status="tool_error")
     if record_lineage:
