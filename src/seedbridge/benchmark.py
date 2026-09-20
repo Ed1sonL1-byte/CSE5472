@@ -21,7 +21,13 @@ from .config import ROOT, SCENARIOS, get_scenario
 from .doctor import inspect_toolchain
 from .io import file_hash, read_json, write_json
 from .medusa import build_fixture, campaign
-from .metrics import save_segmented_metrics, segmented_metrics, set_delta, snapshot
+from .metrics import (
+    mutation_parent_events,
+    save_segmented_metrics,
+    segmented_metrics,
+    set_delta,
+    snapshot,
+)
 from .process import EvidenceMismatchError, ToolExecutionError
 from .trace import select_prefixes
 
@@ -250,7 +256,8 @@ def run_arm(config: BenchmarkConfig, fixture_id: str, repeat_id: int, arm: str,
                     augmentation = symbolic_augment(
                         fixture_id, prefixes, common["warmup"], directory / "augmentation",
                         seed=spec.seed, max_candidates=spec.max_candidates,
-                        query_timeout=min(config.budget.query_limit_seconds, available),
+                        prefix_query_timeout=min(config.budget.query_limit_seconds, available),
+                        goal_query_timeout=min(config.budget.query_limit_seconds, available),
                         process_timeout=available,
                         total_timeout=available,
                         solver=toolchain["tools"]["z3"]["path"],
@@ -445,11 +452,7 @@ def _row_evidence(path: Path, record: dict) -> dict:
     native_goal_events = [event for event in goal_events if event["stage"] != "auxiliary_concrete_validation"]
 
     accepted_hashes = {entry["medusa_hash"] for entry in augmentation.get("accepted", [])}
-    selected_events = [
-        event for event in native.get("lineage", [])
-        if event.get("kind") == "mutation"
-        and accepted_hashes.intersection(event.get("parent_hashes", []))
-    ]
+    selected_events = mutation_parent_events(native.get("lineage", []), accepted_hashes)
     used_hashes = {
         parent for event in selected_events for parent in event.get("parent_hashes", [])
         if parent in accepted_hashes

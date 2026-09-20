@@ -105,6 +105,16 @@ def set_delta(base: Iterable[str], addition: Iterable[str]) -> dict:
     }
 
 
+def mutation_parent_events(lineage: Iterable[dict], parent_hashes: Iterable[str]) -> list[dict]:
+    """Return only real mutation events attributed to one of the requested parents."""
+    parents = set(parent_hashes)
+    return [
+        event for event in lineage
+        if event.get("kind") == "mutation"
+        and not parents.isdisjoint(event.get("parent_hashes") or [])
+    ]
+
+
 def segmented_metrics(fixture_id: str, warmup_report: dict, campaign_report: dict) -> dict:
     warmup = snapshot(fixture_id, _complete_sequences(warmup_report))
     lineage = campaign_report.get("lineage")

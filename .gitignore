@@ -4,6 +4,7 @@ __pycache__/
 *.pyc
 .DS_Store
 runs/
+artifacts/*.tar.gz
 .bin/
 configs/toolchain.local.json
 tmp/

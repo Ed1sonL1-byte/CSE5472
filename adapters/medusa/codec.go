@@ -79,18 +79,26 @@ func readSequence(path string, fx *fixture) (calls.CallSequence, error) {
 }
 
 func writeSequence(path string, seq calls.CallSequence) (string, error) {
-	b, err := json.MarshalIndent(seq, "", "  ")
+	b, digest, err := marshalSequence(seq)
 	if err != nil {
-		return "", fmt.Errorf("native CallSequence encode: %w", err)
+		return "", err
 	}
-	b = append(b, '\n')
 	if err := os.MkdirAll(filepath.Dir(path), 0755); err != nil {
 		return "", err
 	}
 	if err := os.WriteFile(path, b, 0644); err != nil {
 		return "", err
 	}
-	return sha256Hex(b), nil
+	return digest, nil
+}
+
+func marshalSequence(seq calls.CallSequence) ([]byte, string, error) {
+	b, err := json.MarshalIndent(seq, "", "  ")
+	if err != nil {
+		return nil, "", fmt.Errorf("native CallSequence encode: %w", err)
+	}
+	b = append(b, '\n')
+	return b, sha256Hex(b), nil
 }
 
 func appendCandidate(seq calls.CallSequence, fx *fixture, decimal string) (calls.CallSequence, error) {

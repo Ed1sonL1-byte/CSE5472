@@ -3,6 +3,7 @@ from copy import deepcopy
 import pytest
 
 from seedbridge.metrics import (
+    mutation_parent_events,
     normalized_sequence_identity,
     projected_state,
     set_delta,
@@ -57,3 +58,12 @@ def test_replaying_same_seed_adds_hits_without_new_sequence_state_or_coverage():
     assert once["states"] == twice["states"]
     assert once["coverage_markers"] == twice["coverage_markers"]
     assert twice["coverage_marker_hits"]["runtime:0x01"] == 2
+
+
+def test_seed_parent_selection_excludes_startup_replay():
+    lineage = [
+        {"kind": "startup_replay", "parent_hashes": ["seed"]},
+        {"kind": "mutation", "parent_hashes": ["other"]},
+        {"kind": "mutation", "parent_hashes": ["seed"]},
+    ]
+    assert mutation_parent_events(lineage, {"seed"}) == [lineage[2]]

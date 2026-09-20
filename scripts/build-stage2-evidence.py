@@ -13,10 +13,19 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from seedbridge.io import read_json, write_json  # noqa: E402
+from seedbridge.metrics import mutation_parent_events  # noqa: E402
 
 
 RUNS = ROOT / "runs"
 DESTINATION = ROOT / "evidence/stage2"
+OFFICIAL_FILES = {
+    "INDEX.md", "audit.json", "benchmark-config.json", "checksums.sha256",
+    "formal-symbolic-sample.json", "goal-hits.svg", "manifest.json",
+    "mechanism-child-sequence.json", "mechanism-parent-seed.json", "mechanism.json",
+    "new-fixture-stage1-validation.json", "recording-neutrality.json",
+    "summary.csv", "summary.json", "summary.md", "superseded-run.json",
+    "three-arm-smoke.json",
+}
 
 
 def _sanitize(value: object) -> object:
@@ -48,9 +57,7 @@ def _sequence_projection(report: dict) -> dict:
 
 
 def build() -> None:
-    if DESTINATION.exists():
-        shutil.rmtree(DESTINATION)
-    DESTINATION.mkdir(parents=True)
+    DESTINATION.mkdir(parents=True, exist_ok=True)
 
     formal = RUNS / "stage2-formal-02"
     shutil.copy2(ROOT / "configs/stage2-benchmark.json", DESTINATION / "benchmark-config.json")
@@ -68,8 +75,7 @@ def build() -> None:
                  and event.get("different_child") is True
                  and event.get("executed") is True)
     parent_hash = event["parent_hashes"][0]
-    imported_selections = [row for row in mechanism["lineage"]
-                           if parent_hash in (row.get("parent_hashes") or [])]
+    imported_selections = mutation_parent_events(mechanism["lineage"], {parent_hash})
     mechanism_summary = {
         "schema_version": 1,
         "fixture": mechanism["fixture"],
@@ -145,11 +151,9 @@ def build() -> None:
         "sequence_identity", "validation_status")}
         for row in sample_augmentation["accepted"]]
     accepted_hashes = {row["medusa_hash"] for row in accepted}
-    selected = [event for event in sample_native["lineage"]
-                if event.get("kind") == "mutation"
-                and accepted_hashes.intersection(event.get("parent_hashes") or [])]
-    if len(selected) != 170 or not selected:
-        raise ValueError("formal symbolic sample must contain 170 mutation parent selections")
+    selected = mutation_parent_events(sample_native["lineage"], accepted_hashes)
+    if not selected:
+        raise ValueError("formal symbolic sample has no mutation parent selections")
     write_json(DESTINATION / "formal-symbolic-sample.json", _sanitize({
         "schema_version": 1,
         "spec": sample_record["spec"],
@@ -208,8 +212,8 @@ The benchmark covers repository-owned teaching state machines. Goal reachability
     (DESTINATION / "INDEX.md").write_text(index)
 
     lines = []
-    for path in sorted(DESTINATION.rglob("*")):
-        if path.is_file() and path.name != "checksums.sha256":
+    for path in sorted(DESTINATION.iterdir()):
+        if path.is_file() and path.name in OFFICIAL_FILES and path.name != "checksums.sha256":
             digest = hashlib.sha256(path.read_bytes()).hexdigest()
             lines.append(f"{digest}  {path.relative_to(DESTINATION)}")
     (DESTINATION / "checksums.sha256").write_text("\n".join(lines) + "\n")

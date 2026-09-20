@@ -3,7 +3,7 @@
   "different_executed_children": 85,
   "fixture": "phase_counter",
   "imported_seed_hash": "0x5328334aea1bc4a9629a764c13d67bd66a54bed165af64dcfa2b5c45c5ab9a23",
-  "imported_seed_parent_selections": 111,
+  "imported_seed_parent_selections": 110,
   "mutation_sequences": 207,
   "new_sequences": 92,
   "representative_child": {

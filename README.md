@@ -2,9 +2,9 @@
 
 SeedBridge 是 CSE 5472 semester project 的本地工具原型：把 Medusa 实际执行过的具体调用前缀交给 Halmos，只求解下一步的一个参数，再将经过具体重放验证的序列回灌 Medusa。
 
-Stage 1 使用两个无害教学状态机验证跨工具流程。Stage 2 保留这两个场景，新增容易探索的 `RangeGate` 和 goal 后仍可继续变化的 `WorkflowGate`，让已验证种子真正参加 Medusa mutation，并在同一总 wall-clock 预算下比较三种策略。正式矩阵的 4 × 5 × 3 共 60 条结果全部通过完整性审计。
+Stage 1 使用两个无害教学状态机验证跨工具流程。Stage 2 保留这两个场景，新增容易探索的 `RangeGate` 和 goal 后仍可继续变化的 `WorkflowGate`，让已验证种子真正参加 Medusa mutation，并在同一总 wall-clock 预算下比较三种策略。正式矩阵的 4 × 5 × 3 共 60 条结果全部通过完整性审计。Stage 3 增加版本化 study、真实观察边界、隔离缓存、紧凑原始事件、独立审计和离线归档，在两档总预算与三档目标调用限额下完成 320/320 条有效记录。
 
-设计、结果与证据分别见 [Stage 1 Tech Plan](docs/STAGE1_TECH_PLAN.md)、[Stage 2 Tech Plan](docs/STAGE2_TECH_PLAN.md)、[Stage 2 benchmark 说明](docs/STAGE2_BENCHMARKS.md)、[Stage 2 验收记录](docs/STAGE2_VALIDATION.md) 和 [可提交证据索引](evidence/stage2/INDEX.md)。目标可达不等于发现漏洞；四个自建场景的结果也不代表第三方合约上的性能。
+设计、结果与证据分别见 [Stage 1 Tech Plan](docs/STAGE1_TECH_PLAN.md)、[Stage 2 Tech Plan](docs/STAGE2_TECH_PLAN.md)、[Stage 2 benchmark 说明](docs/STAGE2_BENCHMARKS.md)、[Stage 2 验收记录](docs/STAGE2_VALIDATION.md)、[Stage 3 Tech Plan](docs/STAGE3_TECH_PLAN.md)、[Stage 3 Results](docs/STAGE3_RESULTS.md)、[Stage 3 验收记录](docs/STAGE3_VALIDATION.md) 和 [Stage 3 证据索引](evidence/stage3/INDEX.md)。[英文项目报告](docs/PROJECT_REPORT.md) 汇总完整方法、实验、失败历史和限制。目标可达不等于发现漏洞；四个自建场景的结果也不代表第三方合约上的性能。
 
 ## 流程与支持范围
 
@@ -126,6 +126,42 @@ uv run --frozen python scripts/build-stage2-evidence.py
 
 三个 arm 是 `native_resume`、`concrete_augment` 和 `symbolic_augment`。每个 `(fixture, repeat)` 只执行一次共同 warmup，三组从相同 corpus 副本开始；共同成本分别计入每组的 8 秒总预算。未命中按实际计费观察结束时间右截尾，8 秒只作为预算上限另行保存。原始运行保存在被 Git 忽略的 `runs/`，小型、无本机绝对路径的证据保存在 `evidence/stage2/`。
 
+## 运行与复核 Stage 3 study
+
+正式配置位于 `configs/stage3-study.json`，展开为 320 个不同槽位和 40 个共同区组。先检查矩阵；正式运行的输出目录必须不存在：
+
+```sh
+./seedbridge study-plan --config configs/stage3-study.json
+./seedbridge study --config configs/stage3-study.json --output runs/stage3-review
+```
+
+运行只能在已核验的完整 common-block 边界恢复，并会核对冻结配置、源码内容和 adapter 哈希：
+
+```sh
+./seedbridge study --resume --config configs/stage3-study.json \
+  --output runs/stage3-review
+```
+
+从原始 gzip JSONL 独立审计和离线生成报告：
+
+```sh
+./seedbridge study-audit runs/stage3-review \
+  --output runs/stage3-review/derived/audit.json
+./seedbridge study-report runs/stage3-review \
+  --output runs/stage3-review/derived
+```
+
+完整归档包含冻结源码、配置、compact 原始记录、native seed、模型/重放证据、派生报告、逐文件校验和与标准库重建脚本：
+
+```sh
+./seedbridge study-export runs/stage3-review \
+  --output artifacts/stage3-review.tar.gz
+./seedbridge study-verify-archive artifacts/stage3-review.tar.gz \
+  --output runs/stage3-review-offline-verify
+```
+
+正式 `stage3-formal-v1` 的结果是 320/320 valid、243 个 goal-hit 槽位、791,282 条完整序列和 553,708 条 mutation。完整档案的 SHA-256 为 `91bf6e5063a4d7644e0f84a1c8187480a35c66185e4f929d275384db6ad2ad25`；其 3.1 GB 单文件被 Git 忽略，本地路径和两次离线重建哈希记录在 `evidence/stage3/archive.json`。可提交的小型证据包包含全部 320 行 observations、审计、结构化汇总和图表。
+
 ## Warmup 与随机种子的边界
 
 Stage 1 warmup 采用 Medusa 原生的 **new-sequence-only generator** 固定策略，并使用单 worker，以减少语料 mutation 调度对集成复现的影响。具体调用仍由原生生成器产生；编排器不手写目标调用顺序或目标解。
@@ -156,6 +192,11 @@ Stage 2 campaign 恢复 Medusa v1.5.1 的默认生成和 mutation 策略。仓�
 | `metrics.json` / `coverage.json` / `states.json` | 分开保存序列、有限状态和目标 runtime coverage 的 warmup/import/continuation 集合 |
 | `campaign.json` | 保存 Stage 2 各阶段状态、总预算计费、合法未命中及工具／证据错误分类 |
 | `summary.{json,csv,md}` | 从原始事件离线生成 60 条逐次结果与分组汇总 |
+| `events.jsonl.gz` / `events.meta.json` | Stage 3 compact v2 原始执行、native payload、前缀引用、lineage、时点、EOF 和校验和 |
+| `manifest.json` / `frozen-config.json` | Stage 3 完整区组、预注册矩阵、执行源码与工具哈希、缓存协议和恢复边界 |
+| `derived/audit.json` | 不复用生产指标函数的 320 槽位独立原始记录审计 |
+| `derived/summary.*` / `derived/*.svg` | 预算、目标调用限额、逐槽观测、成本和未命中原因的离线报告 |
+| `artifacts/*.tar.gz` | 自包含完整档案；含逐文件 manifest、冻结源码和标准库重建入口，不提交大文件本体 |
 
 一次场景运行只有同时取得以下证据，才应标记为 `stage1_confirmed`：
 
@@ -208,6 +249,17 @@ GOTOOLCHAIN=local go test -mod=readonly ./...
 
 单元测试主要检查数据校验、模型解析、重放接受条件和进程清理；端到端实测与通过统计由 `docs/STAGE1_VALIDATION.md` 单独记录。
 
+Stage 3 还要求配置展开、compact corruption、时间边界、隔离缓存、完整区组恢复、独立审计和离线归档测试。正式证据核查使用：
+
+```sh
+./scripts/audit-stage3-protocol.py
+./seedbridge study-audit runs/stage3-formal-02
+./scripts/build-stage3-evidence.py
+(cd evidence/stage3 && shasum -a 256 -c checksums.sha256)
+```
+
+完整原始 run 被 `.gitignore` 排除；公开仓库中的 `evidence/stage3/` 是路径清理后的审计与逐槽结果，不替代本地完整档案。
+
 ## 目录与来源
 
 | 路径 | 内容 |
@@ -216,12 +268,19 @@ GOTOOLCHAIN=local go test -mod=readonly ./...
 | `adapters/medusa/` | Go 原生 codec、执行观察、continuation 与固定版本 lineage 接入 |
 | `fixtures/` | 四个教学状态机与 Foundry 配置、测试 |
 | `configs/stage2-benchmark.json` | 冻结的正式实验矩阵、预算、顺序和随机种子 |
+| `configs/stage3-study.json` | 冻结的 320 槽位预算/调用限额矩阵、顺序和随机种子 |
 | `evidence/stage2/` | 路径清理后的正式汇总、机制链条、审计结果和校验和 |
+| `evidence/stage3/` | 320 槽位逐次结果、独立审计、图表、协议与归档验证索引 |
+| `artifacts/` | 本地完整离线档案说明与已跟踪的 SHA-256 文件；大档案本体忽略 |
 | `scripts/bootstrap.sh` | 锁定依赖安装和适配器构建 |
+| `scripts/build-stage3-evidence.py` | 从冻结正式 run 构建路径清理后的 Stage 3 小型证据包 |
 | `tests/unit/` | Python 单元测试 |
 | `runs/` | 每次运行的原始证据和报告 |
 | `docs/STAGE1_TECH_PLAN.md` | S0–S6 的范围、验收与产出 |
 | `docs/STAGE2_TECH_PLAN.md` | P0–P5 的范围、完成状态、验收与产出 |
+| `docs/STAGE3_TECH_PLAN.md` | P0–P6 的范围、完成状态、验收与产出 |
+| `docs/STAGE3_RESULTS.md` | Stage 3 RQ1–RQ3、成本、负结果和限制 |
+| `docs/PROJECT_REPORT.md` | 英文课程项目报告草稿 |
 | `output/pdf/` | 课程 proposal 及其生成材料 |
 
 项目建立在 [Medusa](https://github.com/crytic/medusa)、[Halmos](https://github.com/a16z/halmos) 和 [Foundry](https://github.com/foundry-rs/foundry) 上。[Optik](https://github.com/crytic/optik) 已有符号执行辅助 fuzzing 的相关实践；本项目的定位是受限接口集成与评估，不将 hybrid fuzzing 本身作为新的方法。

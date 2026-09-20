@@ -1,0 +1,28 @@
+{
+  "archive_bytes": 3358084381,
+  "archive_path": "artifacts/stage3-formal-v1.tar.gz",
+  "archive_sha256": "91bf6e5063a4d7644e0f84a1c8187480a35c66185e4f929d275384db6ad2ad25",
+  "archived_study_bytes": 5333122321,
+  "archived_study_file_count": 43482,
+  "distribution": "The complete archive is retained locally because its single-file size exceeds the GitHub release per-asset limit. This public evidence bundle contains its checksum, manifest summary, all 320 observations, and independently rebuilt reports.",
+  "offline_rebuilds": [
+    {
+      "attempt": 1,
+      "logical_summary_sha256": "73144e81b36688b25414374f55fafd359c7443da09e7751c1e1bdad17442d1ea",
+      "markdown_sha256": "7622228db94e8b69e467ad98f649815255ff2018da3d45a03a7df022cbeac7b5",
+      "observations_sha256": "e9e05d881aabe296bbea12991a900d86c3d85e942844f463d1758e927a49ecee",
+      "summary_sha256": "16c5498bee97a3654d16b15befc74f54a922ec5654538033c3a5a52ef665294d"
+    },
+    {
+      "attempt": 2,
+      "logical_summary_sha256": "73144e81b36688b25414374f55fafd359c7443da09e7751c1e1bdad17442d1ea",
+      "markdown_sha256": "7622228db94e8b69e467ad98f649815255ff2018da3d45a03a7df022cbeac7b5",
+      "observations_sha256": "e9e05d881aabe296bbea12991a900d86c3d85e942844f463d1758e927a49ecee",
+      "summary_sha256": "16c5498bee97a3654d16b15befc74f54a922ec5654538033c3a5a52ef665294d"
+    }
+  ],
+  "original_logical_summary_sha256": "73144e81b36688b25414374f55fafd359c7443da09e7751c1e1bdad17442d1ea",
+  "schema_version": 1,
+  "status": "passed",
+  "study_manifest_sha256": "b066e2c1fcaeb27f769b638ead01612ef12fbda68935f9b8dd935bc9d980f849"
+}

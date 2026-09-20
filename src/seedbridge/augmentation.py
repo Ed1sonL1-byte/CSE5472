@@ -85,13 +85,27 @@ def warmup_sequence_ids(warmup: dict) -> set[str]:
     }
 
 
+def prune_incomplete_native_candidates(entries: list[dict], corpus: Path) -> list[str]:
+    """Remove codec outputs whose attempt timed out before an entry was committed."""
+    corpus = Path(corpus)
+    retained = {str(Path(entry["native_path"]).resolve()) for entry in entries}
+    removed = []
+    if not corpus.exists():
+        return removed
+    for path in sorted(corpus.glob("*.json")):
+        if str(path.resolve()) not in retained:
+            path.unlink()
+            removed.append(str(path))
+    return removed
+
+
 def validate_native_batch(fixture_id: str, entries: list[dict], directory: Path, *,
                           seed: int, timeout: float, existing_ids: set[str],
-                          max_candidates: int) -> dict:
+                          max_candidates: int, project: Path | None = None) -> dict:
     if not entries:
         return {"status": "no_candidate", "attempts": [], "accepted": []}
     observation = observe(fixture_id, directory, seed=seed, tests=len(entries),
-                          timeout=timeout, corpus=directory / "corpus")
+                          timeout=timeout, corpus=directory / "corpus", project=project)
     by_source = {
         str(Path(sequence.get("source_native_path", "")).resolve()): sequence
         for sequence in observation.get("sequences", [])
@@ -146,7 +160,8 @@ def validate_native_batch(fixture_id: str, entries: list[dict], directory: Path,
 
 def concrete_augment(fixture_id: str, prefixes: list[dict], warmup: dict, directory: Path, *,
                      seed: int, attempts_per_prefix: int, max_candidates: int,
-                     timeout: float, boundary_values: tuple[int, ...] = DEFAULT_BOUNDARY_VALUES) -> dict:
+                     timeout: float, boundary_values: tuple[int, ...] = DEFAULT_BOUNDARY_VALUES,
+                     project: Path | None = None) -> dict:
     started = time.monotonic()
     entries: list[dict] = []
     values = concrete_values(seed, attempts_per_prefix, boundary_values)
@@ -163,7 +178,8 @@ def concrete_augment(fixture_id: str, prefixes: list[dict], warmup: dict, direct
     plan = directory / "codec-batch-plan.json"
     write_json(plan, [{key: request[key] for key in ("input", "output", "argument")}
                       for request in requests])
-    manifest = codec_batch(fixture_id, plan, directory / "codec-batch-result.json", timeout)
+    manifest = codec_batch(
+        fixture_id, plan, directory / "codec-batch-result.json", timeout, project=project)
     if len(manifest["entries"]) != len(requests):
         raise RuntimeError("native codec batch result count differs from its plan")
     for request, encoded in zip(requests, manifest["entries"]):
@@ -182,7 +198,7 @@ def concrete_augment(fixture_id: str, prefixes: list[dict], warmup: dict, direct
         entries.append(entry)
     result = validate_native_batch(
         fixture_id, entries, directory, seed=seed, timeout=timeout,
-        existing_ids=warmup_sequence_ids(warmup), max_candidates=max_candidates,
+        existing_ids=warmup_sequence_ids(warmup), max_candidates=max_candidates, project=project,
     )
     result["elapsed_seconds"] = time.monotonic() - started
     result["attempt_limit_per_prefix"] = attempts_per_prefix
@@ -191,12 +207,14 @@ def concrete_augment(fixture_id: str, prefixes: list[dict], warmup: dict, direct
 
 
 def symbolic_augment(fixture_id: str, prefixes: list[dict], warmup: dict, directory: Path, *,
-                     seed: int, max_candidates: int, query_timeout: float,
+                     seed: int, max_candidates: int, prefix_query_timeout: float,
+                     goal_query_timeout: float,
                      process_timeout: float, total_timeout: float,
                      solver: str, executable: str,
-                     baseline_build: dict) -> dict:
+                     baseline_build: dict, project: Path | None = None) -> dict:
     started = time.monotonic()
     deadline = started + total_timeout
+    fixture_project = project
 
     def remaining(limit: float, *, validation_reserve: float = 0.0) -> float:
         value = min(limit, deadline - time.monotonic() - validation_reserve)
@@ -219,9 +237,14 @@ def symbolic_augment(fixture_id: str, prefixes: list[dict], warmup: dict, direct
         attempts.append(attempt)
         try:
             generated = generate_harness(fixture_id, prefix, case / "symbolic")
-            project = Path(generated["project_path"])
-            prefix_result = run_halmos(project, "check_prefix()", case / "prefix-check",
-                                       remaining(query_timeout, validation_reserve=0.5), solver, executable)
+            harness_project = Path(generated["project_path"])
+            prefix_effective = remaining(prefix_query_timeout, validation_reserve=0.5)
+            attempt["prefix_limit"] = {
+                "requested_seconds": prefix_query_timeout,
+                "effective_seconds": prefix_effective,
+            }
+            prefix_result = run_halmos(harness_project, "check_prefix()", case / "prefix-check",
+                                       prefix_effective, solver, executable)
             attempt["prefix_check"] = prefix_result
             prefix_status = _checked_result_status(
                 prefix_result, stage="symbolic prefix check",
@@ -233,11 +256,16 @@ def symbolic_augment(fixture_id: str, prefixes: list[dict], warmup: dict, direct
                 attempt["elapsed_seconds"] = time.monotonic() - attempt_started
                 continue
             generated_build = build_manifest(
-                project, scenario.contract, case / "build",
+                harness_project, scenario.contract, case / "build",
                 remaining(process_timeout, validation_reserve=0.5))
             assert_same_target(baseline_build, generated_build)
-            solved = run_halmos(project, "check_goal(uint256)", case / "solve",
-                                remaining(query_timeout, validation_reserve=0.5), solver, executable)
+            goal_effective = remaining(goal_query_timeout, validation_reserve=0.5)
+            attempt["goal_invocation_limit"] = {
+                "requested_seconds": goal_query_timeout,
+                "effective_seconds": goal_effective,
+            }
+            solved = run_halmos(harness_project, "check_goal(uint256)", case / "solve",
+                                goal_effective, solver, executable)
             attempt["solve"] = solved
             solve_status = _checked_result_status(
                 solved, stage="symbolic goal solve",
@@ -268,10 +296,11 @@ def symbolic_augment(fixture_id: str, prefixes: list[dict], warmup: dict, direct
             assert_same_target(baseline_build, concrete_build)
             native = directory / "native-validation/corpus/call_sequences" / f"p{prefix_index:02d}.json"
             codec(fixture_id, "encode-candidate", Path(prefix["native_path"]), native,
-                  remaining(process_timeout, validation_reserve=0.5), argument)
+                  remaining(process_timeout, validation_reserve=0.5), argument,
+                  project=fixture_project)
             decoded_path = case / "decoded.json"
             codec(fixture_id, "decode-corpus", native, decoded_path,
-                  remaining(process_timeout, validation_reserve=0.5))
+                  remaining(process_timeout, validation_reserve=0.5), project=fixture_project)
             decoded = read_json(decoded_path)
             entry = {
                 "policy": "halmos_one_uint256_query",
@@ -303,11 +332,13 @@ def symbolic_augment(fixture_id: str, prefixes: list[dict], warmup: dict, direct
             break
         if len(entries) >= max_candidates:
             break
+    discarded = prune_incomplete_native_candidates(
+        entries, directory / "native-validation/corpus/call_sequences")
     try:
         validation = validate_native_batch(
             fixture_id, entries, directory / "native-validation", seed=seed,
             timeout=remaining(process_timeout), existing_ids=warmup_sequence_ids(warmup),
-            max_candidates=max_candidates,
+            max_candidates=max_candidates, project=fixture_project,
         )
     except TimeoutError as error:
         unsuccessful_statuses.append("timeout")
@@ -322,6 +353,7 @@ def symbolic_augment(fixture_id: str, prefixes: list[dict], warmup: dict, direct
     if not validation.get("accepted") and validation.get("status") == "no_candidate":
         validation["status"] = _unsuccessful_symbolic_status(unsuccessful_statuses)
     validation["symbolic_attempts"] = attempts
+    validation["discarded_incomplete_native_candidates"] = discarded
     validation["elapsed_seconds"] = time.monotonic() - started
     return validation
 

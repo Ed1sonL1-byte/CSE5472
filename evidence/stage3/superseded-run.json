@@ -1,0 +1,22 @@
+{
+  "completed_blocks": 10,
+  "failed_block_attempts": [
+    {
+      "common_block_id": "bounded_ledger/repeat-01",
+      "common_cache_sha256": "b070261a2f6dfa09d6fb0f988776e4b5f3f664d3b1053cd4ea0b130d56258767",
+      "common_corpus_sha256": "4e01a6898f856c84ffea398b4c64c2c29f5faf1c556647335291f425ac6a1d72",
+      "path": "runs/stage3-formal-01/blocks/bounded_ledger/repeat-01",
+      "profile_count": 8,
+      "reason": "one or more profiles were evaluation-invalid",
+      "valid_profiles": 7
+    }
+  ],
+  "planned_results": 320,
+  "reason": "A symbolic augmentation timeout left a newly encoded native candidate that had not been committed to the accepted-entry list. Restart validation correctly rejected the entry/corpus count mismatch. The incomplete attempt was preserved, the fresh orphan was pruned with a regression test, and the complete 320-slot matrix was rerun from a new frozen execution snapshot as stage3-formal-02.",
+  "replacement": "runs/stage3-formal-02",
+  "run": "runs/stage3-formal-01",
+  "schema_version": 1,
+  "selected_for_results": false,
+  "status": "superseded",
+  "valid_results": 80
+}

@@ -165,11 +165,15 @@ class BudgetLedger:
                 record["reason"] = "stage completed after the chargeable campaign deadline"
             self._active = None
 
-    def summary(self) -> dict:
+    def summary(self, *, charged_end_seconds: float | None = None) -> dict:
         if self._active is not None:
             raise RuntimeError("cannot summarize while a stage is active")
-        wall = self.elapsed_seconds
-        stage_total = sum(float(record["elapsed_seconds"]) for record in self.records)
+        current = self.elapsed_seconds
+        wall = current if charged_end_seconds is None else float(charged_end_seconds)
+        if not 0 <= wall <= current:
+            raise ValueError("charged end must be within the ledger lifetime")
+        stage_total = min(
+            sum(float(record["elapsed_seconds"]) for record in self.records), wall)
         return {
             "budget_seconds": self.total_seconds,
             "initial_common_charge_seconds": self.initial_charge_seconds,
@@ -177,7 +181,7 @@ class BudgetLedger:
             "charged_wall_seconds": wall,
             "stage_elapsed_seconds": stage_total,
             "unattributed_wall_seconds": max(0.0, wall - stage_total),
-            "remaining_seconds": self.remaining_seconds,
+            "remaining_seconds": max(0.0, self.total_seconds - wall),
             "deadline_reached": wall >= self.total_seconds,
             "cpu_usage": {
                 "status": "unavailable",

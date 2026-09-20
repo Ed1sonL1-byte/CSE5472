@@ -1,0 +1,6029 @@
+{
+  "controlled_flush_delay": {
+    "checks": {
+      "injected_delay": true,
+      "observation_before_stop": true,
+      "search_before_stream": true,
+      "time_stop": true
+    },
+    "compact_events": {
+      "compressed_bytes": 525921,
+      "encoding": "gzip-jsonl",
+      "eof_record": true,
+      "partial_records": 0,
+      "path": "runs/stage3-timing-smoke-02/campaign/events.jsonl.gz",
+      "schema_version": 2,
+      "sequence_records": 124,
+      "sha256": "0fad1ff5f8aea0f2d41e5d10d6ff06feaa6d732d0508d06706fc3fa459e136c0"
+    },
+    "completed_sequences": 124,
+    "partial_sequences": 0,
+    "schema_version": 1,
+    "status": "passed",
+    "timing": {
+      "event_stream_finished": 1.864306375,
+      "evidence_flush_finished": 1.86689725,
+      "last_observed_event": 1.30376775,
+      "schema_version": 1,
+      "search_started": 0.302703459,
+      "search_stopped": 1.354330292,
+      "status": "timeout",
+      "stop_reason": "time_limit"
+    }
+  },
+  "inputs": {
+    "conversion_audit": {
+      "path": "runs/stage3-stage2-compact-01/conversion-audit.json",
+      "sha256": "ed2ea72eedb4178a68c5d8d6a802cc55745959c7cdf8c7fbed38d1abd19d28b5"
+    },
+    "native_hash_audit": {
+      "path": "runs/stage3-p3-native-hash-smoke-04/audit.json",
+      "sha256": "86094c6274187812b5045bc5067833e229fbeb834e77b9379dc4afe2185c02bc"
+    },
+    "sequence_limit_audit": {
+      "path": "runs/stage3-sequence-limit-smoke-01/audit.json",
+      "sha256": "9372667718704a38041847785df4323c526996df7dadb5cfd96067d9172697bd"
+    },
+    "smoke_manifest": {
+      "path": "runs/stage3-protocol-smoke-06/manifest.json",
+      "sha256": "ab25a7c0c4b3568c8cb5a5f8597f9e705e4828952dc16207f7f4c7e324bcf357"
+    },
+    "timing_audit": {
+      "path": "runs/stage3-timing-smoke-02/audit.json",
+      "sha256": "6255c165f7aef0ec7e300a08b5d3c12606578891d4ac61c0191b81f6e25cc772"
+    }
+  },
+  "native_hash_spot_check": {
+    "sample_count": 3,
+    "samples": [
+      {
+        "decoded_medusa_hash": "0x3f43429405d1bfb11bba2d48f9b22c90f66d1ade235c4a27b9fe22e05d281e18",
+        "expected_medusa_hash": "0x3f43429405d1bfb11bba2d48f9b22c90f66d1ade235c4a27b9fe22e05d281e18",
+        "kind": "mutation",
+        "match": true,
+        "native_digest": "30b6ef304730d7d72f95f3f4a7c0955738ddd7ce53b4449e1a4a4d1829898878",
+        "profile_id": "smoke-concrete",
+        "sequence_index": 4
+      },
+      {
+        "decoded_medusa_hash": "0xff0dbdab6a557e6fe2abb4e53621782e5e425cacf3b253e0559422d4b1b13354",
+        "expected_medusa_hash": "0xff0dbdab6a557e6fe2abb4e53621782e5e425cacf3b253e0559422d4b1b13354",
+        "kind": "mutation",
+        "match": true,
+        "native_digest": "962748dbb392d113f8ea3b8eec11627b89747389947c19e0574537cd0355a91d",
+        "profile_id": "smoke-native",
+        "sequence_index": 3
+      },
+      {
+        "decoded_medusa_hash": "0x8ce357d5c9ad87f8b99dfba390edd3c6972e8277d1e90a0a739f3adadb3a0fa7",
+        "expected_medusa_hash": "0x8ce357d5c9ad87f8b99dfba390edd3c6972e8277d1e90a0a739f3adadb3a0fa7",
+        "kind": "mutation",
+        "match": true,
+        "native_digest": "211f937a83bfe0702f3cf7a3e5fa97a459c743f2f221f99f3d9db2640c1289c7",
+        "profile_id": "smoke-symbolic",
+        "sequence_index": 4
+      }
+    ],
+    "schema_version": 1,
+    "status": "passed"
+  },
+  "schema_version": 1,
+  "sequence_limit": {
+    "compact_events": {
+      "compressed_bytes": 10086,
+      "encoding": "gzip-jsonl",
+      "eof_record": true,
+      "partial_records": 0,
+      "path": "runs/stage3-sequence-limit-smoke-01/campaign/events.jsonl.gz",
+      "schema_version": 2,
+      "sequence_records": 3,
+      "sha256": "797b3975a160f1d88fe2765d7b9429dae95c8aa4ac8ec7e1b3baaa563e9beefd"
+    },
+    "completed_sequences": 3,
+    "schema_version": 1,
+    "sequence_safety_limit": 3,
+    "status": "passed",
+    "stop_reason": "sequence_limit",
+    "timed_out": false
+  },
+  "smoke": {
+    "campaigns": [
+      {
+        "cache_start_sha256": "bbf04f588cd5e6b8df19478bf7a1b3c9439f8a5123e99673175d51f56ad50995",
+        "compact_bytes": 2524229,
+        "completed_sequences": 554,
+        "corpus_start_sha256": "da87e57b64e6fc29a69ab468113325cbe7c05468d2a9aca5b3b50e1c6839da87",
+        "goal_reached": true,
+        "profile_id": "smoke-concrete",
+        "timing": {
+          "after_deadline_sequence_indices": [],
+          "basis": "adapter offsets mapped from the charged native-stage start",
+          "budget_deadline": 8.0,
+          "charged_end": 6.298120833002031,
+          "event_stream_finished": 6.1474980419856315,
+          "evidence_flush_finished": 6.148563749985632,
+          "last_observed_event": 6.0835419999856315,
+          "metric_observation_end": 6.083544373985632,
+          "native_stage_started": 2.2123001249856316,
+          "search_started": 2.5447597079856314,
+          "search_stopped": 6.134812416985632,
+          "unused_budget_seconds": 1.7018791669979692
+        }
+      },
+      {
+        "cache_start_sha256": "bbf04f588cd5e6b8df19478bf7a1b3c9439f8a5123e99673175d51f56ad50995",
+        "compact_bytes": 3322357,
+        "completed_sequences": 757,
+        "corpus_start_sha256": "da87e57b64e6fc29a69ab468113325cbe7c05468d2a9aca5b3b50e1c6839da87",
+        "goal_reached": false,
+        "profile_id": "smoke-native",
+        "timing": {
+          "after_deadline_sequence_indices": [],
+          "basis": "adapter offsets mapped from the charged native-stage start",
+          "budget_deadline": 8.0,
+          "charged_end": 6.327236708020791,
+          "event_stream_finished": 6.133717874996726,
+          "evidence_flush_finished": 6.134925291996725,
+          "last_observed_event": 6.074536457996725,
+          "metric_observation_end": 6.074549124996726,
+          "native_stage_started": 1.0513464999967255,
+          "search_started": 1.3744686669967254,
+          "search_stopped": 6.125770541996726,
+          "unused_budget_seconds": 1.6727632919792086
+        }
+      },
+      {
+        "cache_start_sha256": "bbf04f588cd5e6b8df19478bf7a1b3c9439f8a5123e99673175d51f56ad50995",
+        "compact_bytes": 1481682,
+        "completed_sequences": 323,
+        "corpus_start_sha256": "da87e57b64e6fc29a69ab468113325cbe7c05468d2a9aca5b3b50e1c6839da87",
+        "goal_reached": true,
+        "profile_id": "smoke-symbolic",
+        "timing": {
+          "after_deadline_sequence_indices": [],
+          "basis": "adapter offsets mapped from the charged native-stage start",
+          "budget_deadline": 8.0,
+          "charged_end": 6.2582030420308,
+          "event_stream_finished": 6.131362209012531,
+          "evidence_flush_finished": 6.132414417012532,
+          "last_observed_event": 6.0733895420125315,
+          "metric_observation_end": 6.0733990420125314,
+          "native_stage_started": 3.4617307920125313,
+          "search_started": 3.7840287920125313,
+          "search_stopped": 6.124659292012531,
+          "unused_budget_seconds": 1.7417969579691999
+        }
+      }
+    ],
+    "common_cache_sha256": "bbf04f588cd5e6b8df19478bf7a1b3c9439f8a5123e99673175d51f56ad50995",
+    "common_corpus_sha256": "da87e57b64e6fc29a69ab468113325cbe7c05468d2a9aca5b3b50e1c6839da87",
+    "compact_event_bytes": 7328268,
+    "compact_sequences": 1634,
+    "total_bytes": 40881444,
+    "total_file_count": 781,
+    "valid_profiles": 3
+  },
+  "stage2_conversion": {
+    "campaign_count": 60,
+    "compact_event_bytes": 129776533,
+    "elapsed_seconds": 104.65484024997568,
+    "lineage_counts": {
+      "mutation": 20382,
+      "new_sequence": 8781,
+      "startup_replay": 96
+    },
+    "sequence_count": 29259,
+    "source_report_bytes": 5589753302
+  },
+  "status": "passed",
+  "storage": {
+    "configured_maximum_study_bytes": 53687091200,
+    "conservative_projection_bytes": 17497258032,
+    "preflight": {
+      "free_bytes": 250824921088,
+      "maximum_study_bytes": 5368709120,
+      "minimum_free_bytes": 1073741824,
+      "ok": true,
+      "path": "runs/stage3-protocol-smoke-06",
+      "reason": null,
+      "schema_version": 1,
+      "total_bytes": 994662584320
+    },
+    "projection_method": "entire three-profile smoke bytes scaled to 320 profiles and multiplied by four"
+  },
+  "study_plan": {
+    "blocks": [
+      {
+        "common_block_id": "phase_counter/repeat-01",
+        "fixture_id": "phase_counter",
+        "profile_order": [
+          "b08-native",
+          "b08-concrete",
+          "b08-symbolic-q075",
+          "b32-native",
+          "b32-concrete",
+          "b32-symbolic-q075",
+          "b32-symbolic-q050",
+          "b32-symbolic-q150"
+        ],
+        "repeat_id": 1,
+        "seed": 51001
+      },
+      {
+        "common_block_id": "phase_counter/repeat-02",
+        "fixture_id": "phase_counter",
+        "profile_order": [
+          "b08-concrete",
+          "b08-symbolic-q075",
+          "b32-native",
+          "b32-concrete",
+          "b32-symbolic-q075",
+          "b32-symbolic-q050",
+          "b32-symbolic-q150",
+          "b08-native"
+        ],
+        "repeat_id": 2,
+        "seed": 51002
+      },
+      {
+        "common_block_id": "phase_counter/repeat-03",
+        "fixture_id": "phase_counter",
+        "profile_order": [
+          "b08-symbolic-q075",
+          "b32-native",
+          "b32-concrete",
+          "b32-symbolic-q075",
+          "b32-symbolic-q050",
+          "b32-symbolic-q150",
+          "b08-native",
+          "b08-concrete"
+        ],
+        "repeat_id": 3,
+        "seed": 51003
+      },
+      {
+        "common_block_id": "phase_counter/repeat-04",
+        "fixture_id": "phase_counter",
+        "profile_order": [
+          "b32-native",
+          "b32-concrete",
+          "b32-symbolic-q075",
+          "b32-symbolic-q050",
+          "b32-symbolic-q150",
+          "b08-native",
+          "b08-concrete",
+          "b08-symbolic-q075"
+        ],
+        "repeat_id": 4,
+        "seed": 51004
+      },
+      {
+        "common_block_id": "phase_counter/repeat-05",
+        "fixture_id": "phase_counter",
+        "profile_order": [
+          "b32-concrete",
+          "b32-symbolic-q075",
+          "b32-symbolic-q050",
+          "b32-symbolic-q150",
+          "b08-native",
+          "b08-concrete",
+          "b08-symbolic-q075",
+          "b32-native"
+        ],
+        "repeat_id": 5,
+        "seed": 51005
+      },
+      {
+        "common_block_id": "phase_counter/repeat-06",
+        "fixture_id": "phase_counter",
+        "profile_order": [
+          "b32-symbolic-q075",
+          "b32-symbolic-q050",
+          "b32-symbolic-q150",
+          "b08-native",
+          "b08-concrete",
+          "b08-symbolic-q075",
+          "b32-native",
+          "b32-concrete"
+        ],
+        "repeat_id": 6,
+        "seed": 51006
+      },
+      {
+        "common_block_id": "phase_counter/repeat-07",
+        "fixture_id": "phase_counter",
+        "profile_order": [
+          "b32-symbolic-q050",
+          "b32-symbolic-q150",
+          "b08-native",
+          "b08-concrete",
+          "b08-symbolic-q075",
+          "b32-native",
+          "b32-concrete",
+          "b32-symbolic-q075"
+        ],
+        "repeat_id": 7,
+        "seed": 51007
+      },
+      {
+        "common_block_id": "phase_counter/repeat-08",
+        "fixture_id": "phase_counter",
+        "profile_order": [
+          "b32-symbolic-q150",
+          "b08-native",
+          "b08-concrete",
+          "b08-symbolic-q075",
+          "b32-native",
+          "b32-concrete",
+          "b32-symbolic-q075",
+          "b32-symbolic-q050"
+        ],
+        "repeat_id": 8,
+        "seed": 51008
+      },
+      {
+        "common_block_id": "phase_counter/repeat-09",
+        "fixture_id": "phase_counter",
+        "profile_order": [
+          "b08-native",
+          "b08-concrete",
+          "b08-symbolic-q075",
+          "b32-native",
+          "b32-concrete",
+          "b32-symbolic-q075",
+          "b32-symbolic-q050",
+          "b32-symbolic-q150"
+        ],
+        "repeat_id": 9,
+        "seed": 51009
+      },
+      {
+        "common_block_id": "phase_counter/repeat-10",
+        "fixture_id": "phase_counter",
+        "profile_order": [
+          "b08-concrete",
+          "b08-symbolic-q075",
+          "b32-native",
+          "b32-concrete",
+          "b32-symbolic-q075",
+          "b32-symbolic-q050",
+          "b32-symbolic-q150",
+          "b08-native"
+        ],
+        "repeat_id": 10,
+        "seed": 51010
+      },
+      {
+        "common_block_id": "bounded_ledger/repeat-01",
+        "fixture_id": "bounded_ledger",
+        "profile_order": [
+          "b08-native",
+          "b08-concrete",
+          "b08-symbolic-q075",
+          "b32-native",
+          "b32-concrete",
+          "b32-symbolic-q075",
+          "b32-symbolic-q050",
+          "b32-symbolic-q150"
+        ],
+        "repeat_id": 1,
+        "seed": 52001
+      },
+      {
+        "common_block_id": "bounded_ledger/repeat-02",
+        "fixture_id": "bounded_ledger",
+        "profile_order": [
+          "b08-concrete",
+          "b08-symbolic-q075",
+          "b32-native",
+          "b32-concrete",
+          "b32-symbolic-q075",
+          "b32-symbolic-q050",
+          "b32-symbolic-q150",
+          "b08-native"
+        ],
+        "repeat_id": 2,
+        "seed": 52002
+      },
+      {
+        "common_block_id": "bounded_ledger/repeat-03",
+        "fixture_id": "bounded_ledger",
+        "profile_order": [
+          "b08-symbolic-q075",
+          "b32-native",
+          "b32-concrete",
+          "b32-symbolic-q075",
+          "b32-symbolic-q050",
+          "b32-symbolic-q150",
+          "b08-native",
+          "b08-concrete"
+        ],
+        "repeat_id": 3,
+        "seed": 52003
+      },
+      {
+        "common_block_id": "bounded_ledger/repeat-04",
+        "fixture_id": "bounded_ledger",
+        "profile_order": [
+          "b32-native",
+          "b32-concrete",
+          "b32-symbolic-q075",
+          "b32-symbolic-q050",
+          "b32-symbolic-q150",
+          "b08-native",
+          "b08-concrete",
+          "b08-symbolic-q075"
+        ],
+        "repeat_id": 4,
+        "seed": 52004
+      },
+      {
+        "common_block_id": "bounded_ledger/repeat-05",
+        "fixture_id": "bounded_ledger",
+        "profile_order": [
+          "b32-concrete",
+          "b32-symbolic-q075",
+          "b32-symbolic-q050",
+          "b32-symbolic-q150",
+          "b08-native",
+          "b08-concrete",
+          "b08-symbolic-q075",
+          "b32-native"
+        ],
+        "repeat_id": 5,
+        "seed": 52005
+      },
+      {
+        "common_block_id": "bounded_ledger/repeat-06",
+        "fixture_id": "bounded_ledger",
+        "profile_order": [
+          "b32-symbolic-q075",
+          "b32-symbolic-q050",
+          "b32-symbolic-q150",
+          "b08-native",
+          "b08-concrete",
+          "b08-symbolic-q075",
+          "b32-native",
+          "b32-concrete"
+        ],
+        "repeat_id": 6,
+        "seed": 52006
+      },
+      {
+        "common_block_id": "bounded_ledger/repeat-07",
+        "fixture_id": "bounded_ledger",
+        "profile_order": [
+          "b32-symbolic-q050",
+          "b32-symbolic-q150",
+          "b08-native",
+          "b08-concrete",
+          "b08-symbolic-q075",
+          "b32-native",
+          "b32-concrete",
+          "b32-symbolic-q075"
+        ],
+        "repeat_id": 7,
+        "seed": 52007
+      },
+      {
+        "common_block_id": "bounded_ledger/repeat-08",
+        "fixture_id": "bounded_ledger",
+        "profile_order": [
+          "b32-symbolic-q150",
+          "b08-native",
+          "b08-concrete",
+          "b08-symbolic-q075",
+          "b32-native",
+          "b32-concrete",
+          "b32-symbolic-q075",
+          "b32-symbolic-q050"
+        ],
+        "repeat_id": 8,
+        "seed": 52008
+      },
+      {
+        "common_block_id": "bounded_ledger/repeat-09",
+        "fixture_id": "bounded_ledger",
+        "profile_order": [
+          "b08-native",
+          "b08-concrete",
+          "b08-symbolic-q075",
+          "b32-native",
+          "b32-concrete",
+          "b32-symbolic-q075",
+          "b32-symbolic-q050",
+          "b32-symbolic-q150"
+        ],
+        "repeat_id": 9,
+        "seed": 52009
+      },
+      {
+        "common_block_id": "bounded_ledger/repeat-10",
+        "fixture_id": "bounded_ledger",
+        "profile_order": [
+          "b08-concrete",
+          "b08-symbolic-q075",
+          "b32-native",
+          "b32-concrete",
+          "b32-symbolic-q075",
+          "b32-symbolic-q050",
+          "b32-symbolic-q150",
+          "b08-native"
+        ],
+        "repeat_id": 10,
+        "seed": 52010
+      },
+      {
+        "common_block_id": "range_gate/repeat-01",
+        "fixture_id": "range_gate",
+        "profile_order": [
+          "b08-native",
+          "b08-concrete",
+          "b08-symbolic-q075",
+          "b32-native",
+          "b32-concrete",
+          "b32-symbolic-q075",
+          "b32-symbolic-q050",
+          "b32-symbolic-q150"
+        ],
+        "repeat_id": 1,
+        "seed": 53001
+      },
+      {
+        "common_block_id": "range_gate/repeat-02",
+        "fixture_id": "range_gate",
+        "profile_order": [
+          "b08-concrete",
+          "b08-symbolic-q075",
+          "b32-native",
+          "b32-concrete",
+          "b32-symbolic-q075",
+          "b32-symbolic-q050",
+          "b32-symbolic-q150",
+          "b08-native"
+        ],
+        "repeat_id": 2,
+        "seed": 53002
+      },
+      {
+        "common_block_id": "range_gate/repeat-03",
+        "fixture_id": "range_gate",
+        "profile_order": [
+          "b08-symbolic-q075",
+          "b32-native",
+          "b32-concrete",
+          "b32-symbolic-q075",
+          "b32-symbolic-q050",
+          "b32-symbolic-q150",
+          "b08-native",
+          "b08-concrete"
+        ],
+        "repeat_id": 3,
+        "seed": 53003
+      },
+      {
+        "common_block_id": "range_gate/repeat-04",
+        "fixture_id": "range_gate",
+        "profile_order": [
+          "b32-native",
+          "b32-concrete",
+          "b32-symbolic-q075",
+          "b32-symbolic-q050",
+          "b32-symbolic-q150",
+          "b08-native",
+          "b08-concrete",
+          "b08-symbolic-q075"
+        ],
+        "repeat_id": 4,
+        "seed": 53004
+      },
+      {
+        "common_block_id": "range_gate/repeat-05",
+        "fixture_id": "range_gate",
+        "profile_order": [
+          "b32-concrete",
+          "b32-symbolic-q075",
+          "b32-symbolic-q050",
+          "b32-symbolic-q150",
+          "b08-native",
+          "b08-concrete",
+          "b08-symbolic-q075",
+          "b32-native"
+        ],
+        "repeat_id": 5,
+        "seed": 53005
+      },
+      {
+        "common_block_id": "range_gate/repeat-06",
+        "fixture_id": "range_gate",
+        "profile_order": [
+          "b32-symbolic-q075",
+          "b32-symbolic-q050",
+          "b32-symbolic-q150",
+          "b08-native",
+          "b08-concrete",
+          "b08-symbolic-q075",
+          "b32-native",
+          "b32-concrete"
+        ],
+        "repeat_id": 6,
+        "seed": 53006
+      },
+      {
+        "common_block_id": "range_gate/repeat-07",
+        "fixture_id": "range_gate",
+        "profile_order": [
+          "b32-symbolic-q050",
+          "b32-symbolic-q150",
+          "b08-native",
+          "b08-concrete",
+          "b08-symbolic-q075",
+          "b32-native",
+          "b32-concrete",
+          "b32-symbolic-q075"
+        ],
+        "repeat_id": 7,
+        "seed": 53007
+      },
+      {
+        "common_block_id": "range_gate/repeat-08",
+        "fixture_id": "range_gate",
+        "profile_order": [
+          "b32-symbolic-q150",
+          "b08-native",
+          "b08-concrete",
+          "b08-symbolic-q075",
+          "b32-native",
+          "b32-concrete",
+          "b32-symbolic-q075",
+          "b32-symbolic-q050"
+        ],
+        "repeat_id": 8,
+        "seed": 53008
+      },
+      {
+        "common_block_id": "range_gate/repeat-09",
+        "fixture_id": "range_gate",
+        "profile_order": [
+          "b08-native",
+          "b08-concrete",
+          "b08-symbolic-q075",
+          "b32-native",
+          "b32-concrete",
+          "b32-symbolic-q075",
+          "b32-symbolic-q050",
+          "b32-symbolic-q150"
+        ],
+        "repeat_id": 9,
+        "seed": 53009
+      },
+      {
+        "common_block_id": "range_gate/repeat-10",
+        "fixture_id": "range_gate",
+        "profile_order": [
+          "b08-concrete",
+          "b08-symbolic-q075",
+          "b32-native",
+          "b32-concrete",
+          "b32-symbolic-q075",
+          "b32-symbolic-q050",
+          "b32-symbolic-q150",
+          "b08-native"
+        ],
+        "repeat_id": 10,
+        "seed": 53010
+      },
+      {
+        "common_block_id": "workflow_gate/repeat-01",
+        "fixture_id": "workflow_gate",
+        "profile_order": [
+          "b08-native",
+          "b08-concrete",
+          "b08-symbolic-q075",
+          "b32-native",
+          "b32-concrete",
+          "b32-symbolic-q075",
+          "b32-symbolic-q050",
+          "b32-symbolic-q150"
+        ],
+        "repeat_id": 1,
+        "seed": 54001
+      },
+      {
+        "common_block_id": "workflow_gate/repeat-02",
+        "fixture_id": "workflow_gate",
+        "profile_order": [
+          "b08-concrete",
+          "b08-symbolic-q075",
+          "b32-native",
+          "b32-concrete",
+          "b32-symbolic-q075",
+          "b32-symbolic-q050",
+          "b32-symbolic-q150",
+          "b08-native"
+        ],
+        "repeat_id": 2,
+        "seed": 54002
+      },
+      {
+        "common_block_id": "workflow_gate/repeat-03",
+        "fixture_id": "workflow_gate",
+        "profile_order": [
+          "b08-symbolic-q075",
+          "b32-native",
+          "b32-concrete",
+          "b32-symbolic-q075",
+          "b32-symbolic-q050",
+          "b32-symbolic-q150",
+          "b08-native",
+          "b08-concrete"
+        ],
+        "repeat_id": 3,
+        "seed": 54003
+      },
+      {
+        "common_block_id": "workflow_gate/repeat-04",
+        "fixture_id": "workflow_gate",
+        "profile_order": [
+          "b32-native",
+          "b32-concrete",
+          "b32-symbolic-q075",
+          "b32-symbolic-q050",
+          "b32-symbolic-q150",
+          "b08-native",
+          "b08-concrete",
+          "b08-symbolic-q075"
+        ],
+        "repeat_id": 4,
+        "seed": 54004
+      },
+      {
+        "common_block_id": "workflow_gate/repeat-05",
+        "fixture_id": "workflow_gate",
+        "profile_order": [
+          "b32-concrete",
+          "b32-symbolic-q075",
+          "b32-symbolic-q050",
+          "b32-symbolic-q150",
+          "b08-native",
+          "b08-concrete",
+          "b08-symbolic-q075",
+          "b32-native"
+        ],
+        "repeat_id": 5,
+        "seed": 54005
+      },
+      {
+        "common_block_id": "workflow_gate/repeat-06",
+        "fixture_id": "workflow_gate",
+        "profile_order": [
+          "b32-symbolic-q075",
+          "b32-symbolic-q050",
+          "b32-symbolic-q150",
+          "b08-native",
+          "b08-concrete",
+          "b08-symbolic-q075",
+          "b32-native",
+          "b32-concrete"
+        ],
+        "repeat_id": 6,
+        "seed": 54006
+      },
+      {
+        "common_block_id": "workflow_gate/repeat-07",
+        "fixture_id": "workflow_gate",
+        "profile_order": [
+          "b32-symbolic-q050",
+          "b32-symbolic-q150",
+          "b08-native",
+          "b08-concrete",
+          "b08-symbolic-q075",
+          "b32-native",
+          "b32-concrete",
+          "b32-symbolic-q075"
+        ],
+        "repeat_id": 7,
+        "seed": 54007
+      },
+      {
+        "common_block_id": "workflow_gate/repeat-08",
+        "fixture_id": "workflow_gate",
+        "profile_order": [
+          "b32-symbolic-q150",
+          "b08-native",
+          "b08-concrete",
+          "b08-symbolic-q075",
+          "b32-native",
+          "b32-concrete",
+          "b32-symbolic-q075",
+          "b32-symbolic-q050"
+        ],
+        "repeat_id": 8,
+        "seed": 54008
+      },
+      {
+        "common_block_id": "workflow_gate/repeat-09",
+        "fixture_id": "workflow_gate",
+        "profile_order": [
+          "b08-native",
+          "b08-concrete",
+          "b08-symbolic-q075",
+          "b32-native",
+          "b32-concrete",
+          "b32-symbolic-q075",
+          "b32-symbolic-q050",
+          "b32-symbolic-q150"
+        ],
+        "repeat_id": 9,
+        "seed": 54009
+      },
+      {
+        "common_block_id": "workflow_gate/repeat-10",
+        "fixture_id": "workflow_gate",
+        "profile_order": [
+          "b08-concrete",
+          "b08-symbolic-q075",
+          "b32-native",
+          "b32-concrete",
+          "b32-symbolic-q075",
+          "b32-symbolic-q050",
+          "b32-symbolic-q150",
+          "b08-native"
+        ],
+        "repeat_id": 10,
+        "seed": 54010
+      }
+    ],
+    "common_block_count": 40,
+    "distinct_slot_count": 320,
+    "goal_limit_comparison_slot_count": 120,
+    "goal_limit_new_slot_count": 80,
+    "goal_limit_reused_slot_count": 40,
+    "mode": "formal",
+    "schema_version": 1,
+    "slots": [
+      {
+        "arm": "native_resume",
+        "common_block_id": "phase_counter/repeat-01",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 1,
+        "seed": 51001,
+        "slot_id": "phase_counter/repeat-01/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "phase_counter/repeat-01",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 1,
+        "seed": 51001,
+        "slot_id": "phase_counter/repeat-01/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-01",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 1,
+        "seed": 51001,
+        "slot_id": "phase_counter/repeat-01/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "phase_counter/repeat-01",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 1,
+        "seed": 51001,
+        "slot_id": "phase_counter/repeat-01/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "phase_counter/repeat-01",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 1,
+        "seed": 51001,
+        "slot_id": "phase_counter/repeat-01/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-01",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 1,
+        "seed": 51001,
+        "slot_id": "phase_counter/repeat-01/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-01",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 1,
+        "seed": 51001,
+        "slot_id": "phase_counter/repeat-01/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-01",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 1,
+        "seed": 51001,
+        "slot_id": "phase_counter/repeat-01/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "phase_counter/repeat-02",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 2,
+        "seed": 51002,
+        "slot_id": "phase_counter/repeat-02/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-02",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 2,
+        "seed": 51002,
+        "slot_id": "phase_counter/repeat-02/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "phase_counter/repeat-02",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 2,
+        "seed": 51002,
+        "slot_id": "phase_counter/repeat-02/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "phase_counter/repeat-02",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 2,
+        "seed": 51002,
+        "slot_id": "phase_counter/repeat-02/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-02",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 2,
+        "seed": 51002,
+        "slot_id": "phase_counter/repeat-02/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-02",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 2,
+        "seed": 51002,
+        "slot_id": "phase_counter/repeat-02/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-02",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 2,
+        "seed": 51002,
+        "slot_id": "phase_counter/repeat-02/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "phase_counter/repeat-02",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 2,
+        "seed": 51002,
+        "slot_id": "phase_counter/repeat-02/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-03",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 3,
+        "seed": 51003,
+        "slot_id": "phase_counter/repeat-03/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "phase_counter/repeat-03",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 3,
+        "seed": 51003,
+        "slot_id": "phase_counter/repeat-03/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "phase_counter/repeat-03",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 3,
+        "seed": 51003,
+        "slot_id": "phase_counter/repeat-03/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-03",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 3,
+        "seed": 51003,
+        "slot_id": "phase_counter/repeat-03/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-03",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 3,
+        "seed": 51003,
+        "slot_id": "phase_counter/repeat-03/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-03",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 3,
+        "seed": 51003,
+        "slot_id": "phase_counter/repeat-03/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "phase_counter/repeat-03",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 3,
+        "seed": 51003,
+        "slot_id": "phase_counter/repeat-03/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "phase_counter/repeat-03",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 3,
+        "seed": 51003,
+        "slot_id": "phase_counter/repeat-03/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "phase_counter/repeat-04",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 4,
+        "seed": 51004,
+        "slot_id": "phase_counter/repeat-04/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "phase_counter/repeat-04",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 4,
+        "seed": 51004,
+        "slot_id": "phase_counter/repeat-04/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-04",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 4,
+        "seed": 51004,
+        "slot_id": "phase_counter/repeat-04/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-04",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 4,
+        "seed": 51004,
+        "slot_id": "phase_counter/repeat-04/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-04",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 4,
+        "seed": 51004,
+        "slot_id": "phase_counter/repeat-04/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "phase_counter/repeat-04",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 4,
+        "seed": 51004,
+        "slot_id": "phase_counter/repeat-04/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "phase_counter/repeat-04",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 4,
+        "seed": 51004,
+        "slot_id": "phase_counter/repeat-04/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-04",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 4,
+        "seed": 51004,
+        "slot_id": "phase_counter/repeat-04/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "phase_counter/repeat-05",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 5,
+        "seed": 51005,
+        "slot_id": "phase_counter/repeat-05/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-05",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 5,
+        "seed": 51005,
+        "slot_id": "phase_counter/repeat-05/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-05",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 5,
+        "seed": 51005,
+        "slot_id": "phase_counter/repeat-05/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-05",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 5,
+        "seed": 51005,
+        "slot_id": "phase_counter/repeat-05/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "phase_counter/repeat-05",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 5,
+        "seed": 51005,
+        "slot_id": "phase_counter/repeat-05/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "phase_counter/repeat-05",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 5,
+        "seed": 51005,
+        "slot_id": "phase_counter/repeat-05/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-05",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 5,
+        "seed": 51005,
+        "slot_id": "phase_counter/repeat-05/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "phase_counter/repeat-05",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 5,
+        "seed": 51005,
+        "slot_id": "phase_counter/repeat-05/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-06",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 6,
+        "seed": 51006,
+        "slot_id": "phase_counter/repeat-06/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-06",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 6,
+        "seed": 51006,
+        "slot_id": "phase_counter/repeat-06/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-06",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 6,
+        "seed": 51006,
+        "slot_id": "phase_counter/repeat-06/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "phase_counter/repeat-06",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 6,
+        "seed": 51006,
+        "slot_id": "phase_counter/repeat-06/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "phase_counter/repeat-06",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 6,
+        "seed": 51006,
+        "slot_id": "phase_counter/repeat-06/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-06",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 6,
+        "seed": 51006,
+        "slot_id": "phase_counter/repeat-06/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "phase_counter/repeat-06",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 6,
+        "seed": 51006,
+        "slot_id": "phase_counter/repeat-06/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "phase_counter/repeat-06",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 6,
+        "seed": 51006,
+        "slot_id": "phase_counter/repeat-06/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-07",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 7,
+        "seed": 51007,
+        "slot_id": "phase_counter/repeat-07/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-07",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 7,
+        "seed": 51007,
+        "slot_id": "phase_counter/repeat-07/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "phase_counter/repeat-07",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 7,
+        "seed": 51007,
+        "slot_id": "phase_counter/repeat-07/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "phase_counter/repeat-07",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 7,
+        "seed": 51007,
+        "slot_id": "phase_counter/repeat-07/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-07",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 7,
+        "seed": 51007,
+        "slot_id": "phase_counter/repeat-07/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "phase_counter/repeat-07",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 7,
+        "seed": 51007,
+        "slot_id": "phase_counter/repeat-07/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "phase_counter/repeat-07",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 7,
+        "seed": 51007,
+        "slot_id": "phase_counter/repeat-07/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-07",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 7,
+        "seed": 51007,
+        "slot_id": "phase_counter/repeat-07/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-08",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 8,
+        "seed": 51008,
+        "slot_id": "phase_counter/repeat-08/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "phase_counter/repeat-08",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 8,
+        "seed": 51008,
+        "slot_id": "phase_counter/repeat-08/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "phase_counter/repeat-08",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 8,
+        "seed": 51008,
+        "slot_id": "phase_counter/repeat-08/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-08",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 8,
+        "seed": 51008,
+        "slot_id": "phase_counter/repeat-08/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "phase_counter/repeat-08",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 8,
+        "seed": 51008,
+        "slot_id": "phase_counter/repeat-08/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "phase_counter/repeat-08",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 8,
+        "seed": 51008,
+        "slot_id": "phase_counter/repeat-08/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-08",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 8,
+        "seed": 51008,
+        "slot_id": "phase_counter/repeat-08/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-08",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 8,
+        "seed": 51008,
+        "slot_id": "phase_counter/repeat-08/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "phase_counter/repeat-09",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 9,
+        "seed": 51009,
+        "slot_id": "phase_counter/repeat-09/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "phase_counter/repeat-09",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 9,
+        "seed": 51009,
+        "slot_id": "phase_counter/repeat-09/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-09",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 9,
+        "seed": 51009,
+        "slot_id": "phase_counter/repeat-09/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "phase_counter/repeat-09",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 9,
+        "seed": 51009,
+        "slot_id": "phase_counter/repeat-09/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "phase_counter/repeat-09",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 9,
+        "seed": 51009,
+        "slot_id": "phase_counter/repeat-09/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-09",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 9,
+        "seed": 51009,
+        "slot_id": "phase_counter/repeat-09/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-09",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 9,
+        "seed": 51009,
+        "slot_id": "phase_counter/repeat-09/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-09",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 9,
+        "seed": 51009,
+        "slot_id": "phase_counter/repeat-09/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "phase_counter/repeat-10",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 10,
+        "seed": 51010,
+        "slot_id": "phase_counter/repeat-10/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-10",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 10,
+        "seed": 51010,
+        "slot_id": "phase_counter/repeat-10/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "phase_counter/repeat-10",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 10,
+        "seed": 51010,
+        "slot_id": "phase_counter/repeat-10/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "phase_counter/repeat-10",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 10,
+        "seed": 51010,
+        "slot_id": "phase_counter/repeat-10/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-10",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 10,
+        "seed": 51010,
+        "slot_id": "phase_counter/repeat-10/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-10",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 10,
+        "seed": 51010,
+        "slot_id": "phase_counter/repeat-10/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "phase_counter/repeat-10",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 10,
+        "seed": 51010,
+        "slot_id": "phase_counter/repeat-10/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "phase_counter/repeat-10",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "phase_counter",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 10,
+        "seed": 51010,
+        "slot_id": "phase_counter/repeat-10/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "bounded_ledger/repeat-01",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 1,
+        "seed": 52001,
+        "slot_id": "bounded_ledger/repeat-01/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "bounded_ledger/repeat-01",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 1,
+        "seed": 52001,
+        "slot_id": "bounded_ledger/repeat-01/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-01",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 1,
+        "seed": 52001,
+        "slot_id": "bounded_ledger/repeat-01/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "bounded_ledger/repeat-01",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 1,
+        "seed": 52001,
+        "slot_id": "bounded_ledger/repeat-01/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "bounded_ledger/repeat-01",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 1,
+        "seed": 52001,
+        "slot_id": "bounded_ledger/repeat-01/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-01",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 1,
+        "seed": 52001,
+        "slot_id": "bounded_ledger/repeat-01/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-01",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 1,
+        "seed": 52001,
+        "slot_id": "bounded_ledger/repeat-01/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-01",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 1,
+        "seed": 52001,
+        "slot_id": "bounded_ledger/repeat-01/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "bounded_ledger/repeat-02",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 2,
+        "seed": 52002,
+        "slot_id": "bounded_ledger/repeat-02/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-02",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 2,
+        "seed": 52002,
+        "slot_id": "bounded_ledger/repeat-02/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "bounded_ledger/repeat-02",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 2,
+        "seed": 52002,
+        "slot_id": "bounded_ledger/repeat-02/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "bounded_ledger/repeat-02",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 2,
+        "seed": 52002,
+        "slot_id": "bounded_ledger/repeat-02/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-02",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 2,
+        "seed": 52002,
+        "slot_id": "bounded_ledger/repeat-02/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-02",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 2,
+        "seed": 52002,
+        "slot_id": "bounded_ledger/repeat-02/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-02",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 2,
+        "seed": 52002,
+        "slot_id": "bounded_ledger/repeat-02/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "bounded_ledger/repeat-02",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 2,
+        "seed": 52002,
+        "slot_id": "bounded_ledger/repeat-02/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-03",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 3,
+        "seed": 52003,
+        "slot_id": "bounded_ledger/repeat-03/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "bounded_ledger/repeat-03",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 3,
+        "seed": 52003,
+        "slot_id": "bounded_ledger/repeat-03/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "bounded_ledger/repeat-03",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 3,
+        "seed": 52003,
+        "slot_id": "bounded_ledger/repeat-03/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-03",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 3,
+        "seed": 52003,
+        "slot_id": "bounded_ledger/repeat-03/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-03",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 3,
+        "seed": 52003,
+        "slot_id": "bounded_ledger/repeat-03/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-03",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 3,
+        "seed": 52003,
+        "slot_id": "bounded_ledger/repeat-03/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "bounded_ledger/repeat-03",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 3,
+        "seed": 52003,
+        "slot_id": "bounded_ledger/repeat-03/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "bounded_ledger/repeat-03",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 3,
+        "seed": 52003,
+        "slot_id": "bounded_ledger/repeat-03/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "bounded_ledger/repeat-04",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 4,
+        "seed": 52004,
+        "slot_id": "bounded_ledger/repeat-04/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "bounded_ledger/repeat-04",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 4,
+        "seed": 52004,
+        "slot_id": "bounded_ledger/repeat-04/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-04",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 4,
+        "seed": 52004,
+        "slot_id": "bounded_ledger/repeat-04/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-04",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 4,
+        "seed": 52004,
+        "slot_id": "bounded_ledger/repeat-04/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-04",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 4,
+        "seed": 52004,
+        "slot_id": "bounded_ledger/repeat-04/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "bounded_ledger/repeat-04",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 4,
+        "seed": 52004,
+        "slot_id": "bounded_ledger/repeat-04/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "bounded_ledger/repeat-04",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 4,
+        "seed": 52004,
+        "slot_id": "bounded_ledger/repeat-04/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-04",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 4,
+        "seed": 52004,
+        "slot_id": "bounded_ledger/repeat-04/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "bounded_ledger/repeat-05",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 5,
+        "seed": 52005,
+        "slot_id": "bounded_ledger/repeat-05/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-05",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 5,
+        "seed": 52005,
+        "slot_id": "bounded_ledger/repeat-05/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-05",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 5,
+        "seed": 52005,
+        "slot_id": "bounded_ledger/repeat-05/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-05",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 5,
+        "seed": 52005,
+        "slot_id": "bounded_ledger/repeat-05/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "bounded_ledger/repeat-05",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 5,
+        "seed": 52005,
+        "slot_id": "bounded_ledger/repeat-05/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "bounded_ledger/repeat-05",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 5,
+        "seed": 52005,
+        "slot_id": "bounded_ledger/repeat-05/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-05",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 5,
+        "seed": 52005,
+        "slot_id": "bounded_ledger/repeat-05/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "bounded_ledger/repeat-05",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 5,
+        "seed": 52005,
+        "slot_id": "bounded_ledger/repeat-05/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-06",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 6,
+        "seed": 52006,
+        "slot_id": "bounded_ledger/repeat-06/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-06",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 6,
+        "seed": 52006,
+        "slot_id": "bounded_ledger/repeat-06/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-06",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 6,
+        "seed": 52006,
+        "slot_id": "bounded_ledger/repeat-06/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "bounded_ledger/repeat-06",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 6,
+        "seed": 52006,
+        "slot_id": "bounded_ledger/repeat-06/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "bounded_ledger/repeat-06",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 6,
+        "seed": 52006,
+        "slot_id": "bounded_ledger/repeat-06/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-06",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 6,
+        "seed": 52006,
+        "slot_id": "bounded_ledger/repeat-06/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "bounded_ledger/repeat-06",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 6,
+        "seed": 52006,
+        "slot_id": "bounded_ledger/repeat-06/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "bounded_ledger/repeat-06",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 6,
+        "seed": 52006,
+        "slot_id": "bounded_ledger/repeat-06/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-07",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 7,
+        "seed": 52007,
+        "slot_id": "bounded_ledger/repeat-07/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-07",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 7,
+        "seed": 52007,
+        "slot_id": "bounded_ledger/repeat-07/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "bounded_ledger/repeat-07",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 7,
+        "seed": 52007,
+        "slot_id": "bounded_ledger/repeat-07/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "bounded_ledger/repeat-07",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 7,
+        "seed": 52007,
+        "slot_id": "bounded_ledger/repeat-07/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-07",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 7,
+        "seed": 52007,
+        "slot_id": "bounded_ledger/repeat-07/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "bounded_ledger/repeat-07",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 7,
+        "seed": 52007,
+        "slot_id": "bounded_ledger/repeat-07/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "bounded_ledger/repeat-07",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 7,
+        "seed": 52007,
+        "slot_id": "bounded_ledger/repeat-07/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-07",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 7,
+        "seed": 52007,
+        "slot_id": "bounded_ledger/repeat-07/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-08",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 8,
+        "seed": 52008,
+        "slot_id": "bounded_ledger/repeat-08/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "bounded_ledger/repeat-08",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 8,
+        "seed": 52008,
+        "slot_id": "bounded_ledger/repeat-08/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "bounded_ledger/repeat-08",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 8,
+        "seed": 52008,
+        "slot_id": "bounded_ledger/repeat-08/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-08",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 8,
+        "seed": 52008,
+        "slot_id": "bounded_ledger/repeat-08/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "bounded_ledger/repeat-08",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 8,
+        "seed": 52008,
+        "slot_id": "bounded_ledger/repeat-08/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "bounded_ledger/repeat-08",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 8,
+        "seed": 52008,
+        "slot_id": "bounded_ledger/repeat-08/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-08",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 8,
+        "seed": 52008,
+        "slot_id": "bounded_ledger/repeat-08/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-08",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 8,
+        "seed": 52008,
+        "slot_id": "bounded_ledger/repeat-08/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "bounded_ledger/repeat-09",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 9,
+        "seed": 52009,
+        "slot_id": "bounded_ledger/repeat-09/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "bounded_ledger/repeat-09",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 9,
+        "seed": 52009,
+        "slot_id": "bounded_ledger/repeat-09/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-09",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 9,
+        "seed": 52009,
+        "slot_id": "bounded_ledger/repeat-09/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "bounded_ledger/repeat-09",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 9,
+        "seed": 52009,
+        "slot_id": "bounded_ledger/repeat-09/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "bounded_ledger/repeat-09",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 9,
+        "seed": 52009,
+        "slot_id": "bounded_ledger/repeat-09/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-09",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 9,
+        "seed": 52009,
+        "slot_id": "bounded_ledger/repeat-09/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-09",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 9,
+        "seed": 52009,
+        "slot_id": "bounded_ledger/repeat-09/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-09",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 9,
+        "seed": 52009,
+        "slot_id": "bounded_ledger/repeat-09/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "bounded_ledger/repeat-10",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 10,
+        "seed": 52010,
+        "slot_id": "bounded_ledger/repeat-10/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-10",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 10,
+        "seed": 52010,
+        "slot_id": "bounded_ledger/repeat-10/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "bounded_ledger/repeat-10",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 10,
+        "seed": 52010,
+        "slot_id": "bounded_ledger/repeat-10/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "bounded_ledger/repeat-10",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 10,
+        "seed": 52010,
+        "slot_id": "bounded_ledger/repeat-10/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-10",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 10,
+        "seed": 52010,
+        "slot_id": "bounded_ledger/repeat-10/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-10",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 10,
+        "seed": 52010,
+        "slot_id": "bounded_ledger/repeat-10/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "bounded_ledger/repeat-10",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 10,
+        "seed": 52010,
+        "slot_id": "bounded_ledger/repeat-10/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "bounded_ledger/repeat-10",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "bounded_ledger",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 10,
+        "seed": 52010,
+        "slot_id": "bounded_ledger/repeat-10/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "range_gate/repeat-01",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 1,
+        "seed": 53001,
+        "slot_id": "range_gate/repeat-01/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "range_gate/repeat-01",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 1,
+        "seed": 53001,
+        "slot_id": "range_gate/repeat-01/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-01",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 1,
+        "seed": 53001,
+        "slot_id": "range_gate/repeat-01/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "range_gate/repeat-01",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 1,
+        "seed": 53001,
+        "slot_id": "range_gate/repeat-01/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "range_gate/repeat-01",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 1,
+        "seed": 53001,
+        "slot_id": "range_gate/repeat-01/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-01",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 1,
+        "seed": 53001,
+        "slot_id": "range_gate/repeat-01/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-01",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 1,
+        "seed": 53001,
+        "slot_id": "range_gate/repeat-01/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-01",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 1,
+        "seed": 53001,
+        "slot_id": "range_gate/repeat-01/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "range_gate/repeat-02",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 2,
+        "seed": 53002,
+        "slot_id": "range_gate/repeat-02/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-02",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 2,
+        "seed": 53002,
+        "slot_id": "range_gate/repeat-02/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "range_gate/repeat-02",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 2,
+        "seed": 53002,
+        "slot_id": "range_gate/repeat-02/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "range_gate/repeat-02",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 2,
+        "seed": 53002,
+        "slot_id": "range_gate/repeat-02/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-02",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 2,
+        "seed": 53002,
+        "slot_id": "range_gate/repeat-02/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-02",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 2,
+        "seed": 53002,
+        "slot_id": "range_gate/repeat-02/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-02",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 2,
+        "seed": 53002,
+        "slot_id": "range_gate/repeat-02/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "range_gate/repeat-02",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 2,
+        "seed": 53002,
+        "slot_id": "range_gate/repeat-02/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-03",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 3,
+        "seed": 53003,
+        "slot_id": "range_gate/repeat-03/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "range_gate/repeat-03",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 3,
+        "seed": 53003,
+        "slot_id": "range_gate/repeat-03/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "range_gate/repeat-03",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 3,
+        "seed": 53003,
+        "slot_id": "range_gate/repeat-03/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-03",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 3,
+        "seed": 53003,
+        "slot_id": "range_gate/repeat-03/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-03",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 3,
+        "seed": 53003,
+        "slot_id": "range_gate/repeat-03/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-03",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 3,
+        "seed": 53003,
+        "slot_id": "range_gate/repeat-03/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "range_gate/repeat-03",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 3,
+        "seed": 53003,
+        "slot_id": "range_gate/repeat-03/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "range_gate/repeat-03",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 3,
+        "seed": 53003,
+        "slot_id": "range_gate/repeat-03/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "range_gate/repeat-04",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 4,
+        "seed": 53004,
+        "slot_id": "range_gate/repeat-04/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "range_gate/repeat-04",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 4,
+        "seed": 53004,
+        "slot_id": "range_gate/repeat-04/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-04",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 4,
+        "seed": 53004,
+        "slot_id": "range_gate/repeat-04/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-04",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 4,
+        "seed": 53004,
+        "slot_id": "range_gate/repeat-04/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-04",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 4,
+        "seed": 53004,
+        "slot_id": "range_gate/repeat-04/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "range_gate/repeat-04",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 4,
+        "seed": 53004,
+        "slot_id": "range_gate/repeat-04/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "range_gate/repeat-04",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 4,
+        "seed": 53004,
+        "slot_id": "range_gate/repeat-04/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-04",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 4,
+        "seed": 53004,
+        "slot_id": "range_gate/repeat-04/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "range_gate/repeat-05",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 5,
+        "seed": 53005,
+        "slot_id": "range_gate/repeat-05/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-05",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 5,
+        "seed": 53005,
+        "slot_id": "range_gate/repeat-05/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-05",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 5,
+        "seed": 53005,
+        "slot_id": "range_gate/repeat-05/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-05",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 5,
+        "seed": 53005,
+        "slot_id": "range_gate/repeat-05/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "range_gate/repeat-05",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 5,
+        "seed": 53005,
+        "slot_id": "range_gate/repeat-05/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "range_gate/repeat-05",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 5,
+        "seed": 53005,
+        "slot_id": "range_gate/repeat-05/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-05",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 5,
+        "seed": 53005,
+        "slot_id": "range_gate/repeat-05/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "range_gate/repeat-05",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 5,
+        "seed": 53005,
+        "slot_id": "range_gate/repeat-05/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-06",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 6,
+        "seed": 53006,
+        "slot_id": "range_gate/repeat-06/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-06",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 6,
+        "seed": 53006,
+        "slot_id": "range_gate/repeat-06/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-06",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 6,
+        "seed": 53006,
+        "slot_id": "range_gate/repeat-06/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "range_gate/repeat-06",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 6,
+        "seed": 53006,
+        "slot_id": "range_gate/repeat-06/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "range_gate/repeat-06",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 6,
+        "seed": 53006,
+        "slot_id": "range_gate/repeat-06/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-06",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 6,
+        "seed": 53006,
+        "slot_id": "range_gate/repeat-06/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "range_gate/repeat-06",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 6,
+        "seed": 53006,
+        "slot_id": "range_gate/repeat-06/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "range_gate/repeat-06",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 6,
+        "seed": 53006,
+        "slot_id": "range_gate/repeat-06/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-07",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 7,
+        "seed": 53007,
+        "slot_id": "range_gate/repeat-07/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-07",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 7,
+        "seed": 53007,
+        "slot_id": "range_gate/repeat-07/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "range_gate/repeat-07",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 7,
+        "seed": 53007,
+        "slot_id": "range_gate/repeat-07/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "range_gate/repeat-07",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 7,
+        "seed": 53007,
+        "slot_id": "range_gate/repeat-07/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-07",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 7,
+        "seed": 53007,
+        "slot_id": "range_gate/repeat-07/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "range_gate/repeat-07",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 7,
+        "seed": 53007,
+        "slot_id": "range_gate/repeat-07/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "range_gate/repeat-07",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 7,
+        "seed": 53007,
+        "slot_id": "range_gate/repeat-07/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-07",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 7,
+        "seed": 53007,
+        "slot_id": "range_gate/repeat-07/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-08",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 8,
+        "seed": 53008,
+        "slot_id": "range_gate/repeat-08/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "range_gate/repeat-08",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 8,
+        "seed": 53008,
+        "slot_id": "range_gate/repeat-08/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "range_gate/repeat-08",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 8,
+        "seed": 53008,
+        "slot_id": "range_gate/repeat-08/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-08",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 8,
+        "seed": 53008,
+        "slot_id": "range_gate/repeat-08/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "range_gate/repeat-08",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 8,
+        "seed": 53008,
+        "slot_id": "range_gate/repeat-08/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "range_gate/repeat-08",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 8,
+        "seed": 53008,
+        "slot_id": "range_gate/repeat-08/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-08",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 8,
+        "seed": 53008,
+        "slot_id": "range_gate/repeat-08/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-08",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 8,
+        "seed": 53008,
+        "slot_id": "range_gate/repeat-08/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "range_gate/repeat-09",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 9,
+        "seed": 53009,
+        "slot_id": "range_gate/repeat-09/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "range_gate/repeat-09",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 9,
+        "seed": 53009,
+        "slot_id": "range_gate/repeat-09/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-09",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 9,
+        "seed": 53009,
+        "slot_id": "range_gate/repeat-09/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "range_gate/repeat-09",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 9,
+        "seed": 53009,
+        "slot_id": "range_gate/repeat-09/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "range_gate/repeat-09",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 9,
+        "seed": 53009,
+        "slot_id": "range_gate/repeat-09/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-09",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 9,
+        "seed": 53009,
+        "slot_id": "range_gate/repeat-09/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-09",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 9,
+        "seed": 53009,
+        "slot_id": "range_gate/repeat-09/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-09",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 9,
+        "seed": 53009,
+        "slot_id": "range_gate/repeat-09/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "range_gate/repeat-10",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 10,
+        "seed": 53010,
+        "slot_id": "range_gate/repeat-10/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-10",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 10,
+        "seed": 53010,
+        "slot_id": "range_gate/repeat-10/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "range_gate/repeat-10",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 10,
+        "seed": 53010,
+        "slot_id": "range_gate/repeat-10/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "range_gate/repeat-10",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 10,
+        "seed": 53010,
+        "slot_id": "range_gate/repeat-10/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-10",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 10,
+        "seed": 53010,
+        "slot_id": "range_gate/repeat-10/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-10",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 10,
+        "seed": 53010,
+        "slot_id": "range_gate/repeat-10/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "range_gate/repeat-10",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 10,
+        "seed": 53010,
+        "slot_id": "range_gate/repeat-10/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "range_gate/repeat-10",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "range_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 10,
+        "seed": 53010,
+        "slot_id": "range_gate/repeat-10/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "workflow_gate/repeat-01",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 1,
+        "seed": 54001,
+        "slot_id": "workflow_gate/repeat-01/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "workflow_gate/repeat-01",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 1,
+        "seed": 54001,
+        "slot_id": "workflow_gate/repeat-01/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-01",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 1,
+        "seed": 54001,
+        "slot_id": "workflow_gate/repeat-01/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "workflow_gate/repeat-01",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 1,
+        "seed": 54001,
+        "slot_id": "workflow_gate/repeat-01/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "workflow_gate/repeat-01",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 1,
+        "seed": 54001,
+        "slot_id": "workflow_gate/repeat-01/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-01",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 1,
+        "seed": 54001,
+        "slot_id": "workflow_gate/repeat-01/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-01",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 1,
+        "seed": 54001,
+        "slot_id": "workflow_gate/repeat-01/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-01",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 1,
+        "seed": 54001,
+        "slot_id": "workflow_gate/repeat-01/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "workflow_gate/repeat-02",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 2,
+        "seed": 54002,
+        "slot_id": "workflow_gate/repeat-02/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-02",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 2,
+        "seed": 54002,
+        "slot_id": "workflow_gate/repeat-02/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "workflow_gate/repeat-02",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 2,
+        "seed": 54002,
+        "slot_id": "workflow_gate/repeat-02/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "workflow_gate/repeat-02",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 2,
+        "seed": 54002,
+        "slot_id": "workflow_gate/repeat-02/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-02",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 2,
+        "seed": 54002,
+        "slot_id": "workflow_gate/repeat-02/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-02",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 2,
+        "seed": 54002,
+        "slot_id": "workflow_gate/repeat-02/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-02",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 2,
+        "seed": 54002,
+        "slot_id": "workflow_gate/repeat-02/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "workflow_gate/repeat-02",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 2,
+        "seed": 54002,
+        "slot_id": "workflow_gate/repeat-02/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-03",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 3,
+        "seed": 54003,
+        "slot_id": "workflow_gate/repeat-03/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "workflow_gate/repeat-03",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 3,
+        "seed": 54003,
+        "slot_id": "workflow_gate/repeat-03/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "workflow_gate/repeat-03",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 3,
+        "seed": 54003,
+        "slot_id": "workflow_gate/repeat-03/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-03",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 3,
+        "seed": 54003,
+        "slot_id": "workflow_gate/repeat-03/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-03",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 3,
+        "seed": 54003,
+        "slot_id": "workflow_gate/repeat-03/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-03",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 3,
+        "seed": 54003,
+        "slot_id": "workflow_gate/repeat-03/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "workflow_gate/repeat-03",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 3,
+        "seed": 54003,
+        "slot_id": "workflow_gate/repeat-03/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "workflow_gate/repeat-03",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 3,
+        "seed": 54003,
+        "slot_id": "workflow_gate/repeat-03/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "workflow_gate/repeat-04",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 4,
+        "seed": 54004,
+        "slot_id": "workflow_gate/repeat-04/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "workflow_gate/repeat-04",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 4,
+        "seed": 54004,
+        "slot_id": "workflow_gate/repeat-04/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-04",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 4,
+        "seed": 54004,
+        "slot_id": "workflow_gate/repeat-04/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-04",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 4,
+        "seed": 54004,
+        "slot_id": "workflow_gate/repeat-04/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-04",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 4,
+        "seed": 54004,
+        "slot_id": "workflow_gate/repeat-04/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "workflow_gate/repeat-04",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 4,
+        "seed": 54004,
+        "slot_id": "workflow_gate/repeat-04/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "workflow_gate/repeat-04",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 4,
+        "seed": 54004,
+        "slot_id": "workflow_gate/repeat-04/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-04",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 4,
+        "seed": 54004,
+        "slot_id": "workflow_gate/repeat-04/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "workflow_gate/repeat-05",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 5,
+        "seed": 54005,
+        "slot_id": "workflow_gate/repeat-05/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-05",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 5,
+        "seed": 54005,
+        "slot_id": "workflow_gate/repeat-05/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-05",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 5,
+        "seed": 54005,
+        "slot_id": "workflow_gate/repeat-05/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-05",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 5,
+        "seed": 54005,
+        "slot_id": "workflow_gate/repeat-05/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "workflow_gate/repeat-05",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 5,
+        "seed": 54005,
+        "slot_id": "workflow_gate/repeat-05/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "workflow_gate/repeat-05",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 5,
+        "seed": 54005,
+        "slot_id": "workflow_gate/repeat-05/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-05",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 5,
+        "seed": 54005,
+        "slot_id": "workflow_gate/repeat-05/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "workflow_gate/repeat-05",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 5,
+        "seed": 54005,
+        "slot_id": "workflow_gate/repeat-05/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-06",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 6,
+        "seed": 54006,
+        "slot_id": "workflow_gate/repeat-06/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-06",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 6,
+        "seed": 54006,
+        "slot_id": "workflow_gate/repeat-06/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-06",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 6,
+        "seed": 54006,
+        "slot_id": "workflow_gate/repeat-06/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "workflow_gate/repeat-06",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 6,
+        "seed": 54006,
+        "slot_id": "workflow_gate/repeat-06/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "workflow_gate/repeat-06",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 6,
+        "seed": 54006,
+        "slot_id": "workflow_gate/repeat-06/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-06",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 6,
+        "seed": 54006,
+        "slot_id": "workflow_gate/repeat-06/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "workflow_gate/repeat-06",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 6,
+        "seed": 54006,
+        "slot_id": "workflow_gate/repeat-06/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "workflow_gate/repeat-06",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 6,
+        "seed": 54006,
+        "slot_id": "workflow_gate/repeat-06/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-07",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 7,
+        "seed": 54007,
+        "slot_id": "workflow_gate/repeat-07/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-07",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 7,
+        "seed": 54007,
+        "slot_id": "workflow_gate/repeat-07/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "workflow_gate/repeat-07",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 7,
+        "seed": 54007,
+        "slot_id": "workflow_gate/repeat-07/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "workflow_gate/repeat-07",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 7,
+        "seed": 54007,
+        "slot_id": "workflow_gate/repeat-07/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-07",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 7,
+        "seed": 54007,
+        "slot_id": "workflow_gate/repeat-07/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "workflow_gate/repeat-07",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 7,
+        "seed": 54007,
+        "slot_id": "workflow_gate/repeat-07/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "workflow_gate/repeat-07",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 7,
+        "seed": 54007,
+        "slot_id": "workflow_gate/repeat-07/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-07",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 7,
+        "seed": 54007,
+        "slot_id": "workflow_gate/repeat-07/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-08",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 8,
+        "seed": 54008,
+        "slot_id": "workflow_gate/repeat-08/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "workflow_gate/repeat-08",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 8,
+        "seed": 54008,
+        "slot_id": "workflow_gate/repeat-08/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "workflow_gate/repeat-08",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 8,
+        "seed": 54008,
+        "slot_id": "workflow_gate/repeat-08/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-08",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 8,
+        "seed": 54008,
+        "slot_id": "workflow_gate/repeat-08/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "workflow_gate/repeat-08",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 8,
+        "seed": 54008,
+        "slot_id": "workflow_gate/repeat-08/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "workflow_gate/repeat-08",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 8,
+        "seed": 54008,
+        "slot_id": "workflow_gate/repeat-08/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-08",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 8,
+        "seed": 54008,
+        "slot_id": "workflow_gate/repeat-08/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-08",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 8,
+        "seed": 54008,
+        "slot_id": "workflow_gate/repeat-08/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "workflow_gate/repeat-09",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 9,
+        "seed": 54009,
+        "slot_id": "workflow_gate/repeat-09/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "workflow_gate/repeat-09",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 9,
+        "seed": 54009,
+        "slot_id": "workflow_gate/repeat-09/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-09",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 9,
+        "seed": 54009,
+        "slot_id": "workflow_gate/repeat-09/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "workflow_gate/repeat-09",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 9,
+        "seed": 54009,
+        "slot_id": "workflow_gate/repeat-09/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "workflow_gate/repeat-09",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 9,
+        "seed": 54009,
+        "slot_id": "workflow_gate/repeat-09/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-09",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 9,
+        "seed": 54009,
+        "slot_id": "workflow_gate/repeat-09/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-09",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 9,
+        "seed": 54009,
+        "slot_id": "workflow_gate/repeat-09/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-09",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 9,
+        "seed": 54009,
+        "slot_id": "workflow_gate/repeat-09/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "workflow_gate/repeat-10",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-concrete",
+        "repeat_id": 10,
+        "seed": 54010,
+        "slot_id": "workflow_gate/repeat-10/b08-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-10",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-symbolic-q075",
+        "repeat_id": 10,
+        "seed": 54010,
+        "slot_id": "workflow_gate/repeat-10/b08-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "workflow_gate/repeat-10",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-native",
+        "repeat_id": 10,
+        "seed": 54010,
+        "slot_id": "workflow_gate/repeat-10/b32-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "concrete_augment",
+        "common_block_id": "workflow_gate/repeat-10",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-concrete",
+        "repeat_id": 10,
+        "seed": 54010,
+        "slot_id": "workflow_gate/repeat-10/b32-concrete",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-10",
+        "families": [
+          "total_budget",
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 0.75,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q075",
+        "repeat_id": 10,
+        "seed": 54010,
+        "slot_id": "workflow_gate/repeat-10/b32-symbolic-q075",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-10",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 0.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q050",
+        "repeat_id": 10,
+        "seed": 54010,
+        "slot_id": "workflow_gate/repeat-10/b32-symbolic-q050",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "symbolic_augment",
+        "common_block_id": "workflow_gate/repeat-10",
+        "families": [
+          "goal_invocation_limit"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": 1.5,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b32-symbolic-q150",
+        "repeat_id": 10,
+        "seed": 54010,
+        "slot_id": "workflow_gate/repeat-10/b32-symbolic-q150",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 32.0
+      },
+      {
+        "arm": "native_resume",
+        "common_block_id": "workflow_gate/repeat-10",
+        "families": [
+          "total_budget"
+        ],
+        "fixture_id": "workflow_gate",
+        "goal_invocation_limit_seconds": null,
+        "prefix_check_limit_seconds": 0.75,
+        "profile_id": "b08-native",
+        "repeat_id": 10,
+        "seed": 54010,
+        "slot_id": "workflow_gate/repeat-10/b08-native",
+        "study_id": "stage3-formal-v1",
+        "total_budget_seconds": 8.0
+      }
+    ],
+    "study_id": "stage3-formal-v1",
+    "total_budget_slot_count": 240
+  }
+}

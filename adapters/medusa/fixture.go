@@ -55,6 +55,10 @@ func repositoryRoot() (string, error) {
 }
 
 func loadFixture(id string) (*fixture, error) {
+	return loadFixtureProject(id, "")
+}
+
+func loadFixtureProject(id string, project string) (*fixture, error) {
 	f := &fixture{ID: id, Allowed: map[string]bool{}}
 	switch id {
 	case "phase_counter":
@@ -76,12 +80,32 @@ func loadFixture(id string) (*fixture, error) {
 	if err != nil {
 		return nil, err
 	}
-	f.Root, f.Project = root, filepath.Join(root, "fixtures", id)
-	resolved, err := filepath.EvalSymlinks(f.Project)
-	if err != nil || resolved != f.Project {
-		return nil, fmt.Errorf("fixture project must be a real repository directory: %s", f.Project)
+	f.Root = root
+	canonicalProject := filepath.Join(root, "fixtures", id)
+	f.Project = canonicalProject
+	if project != "" {
+		absolute, err := filepath.Abs(project)
+		if err != nil {
+			return nil, err
+		}
+		f.Project = absolute
 	}
+	resolved, err := filepath.EvalSymlinks(f.Project)
+	if err != nil {
+		return nil, fmt.Errorf("fixture project must be a real directory: %s", f.Project)
+	}
+	f.Project = resolved
 	f.SourcePath = filepath.Join(f.Project, "src", f.Contract+".sol")
+	if project != "" {
+		canonicalSource := filepath.Join(canonicalProject, "src", f.Contract+".sol")
+		expectedSource, sourceErr := fileSHA(canonicalSource)
+		actualSource, actualErr := fileSHA(f.SourcePath)
+		expectedConfig, configErr := fileSHA(filepath.Join(canonicalProject, "foundry.toml"))
+		actualConfig, actualConfigErr := fileSHA(filepath.Join(f.Project, "foundry.toml"))
+		if sourceErr != nil || actualErr != nil || configErr != nil || actualConfigErr != nil || expectedSource != actualSource || expectedConfig != actualConfig {
+			return nil, fmt.Errorf("fixture project source or Foundry config differs from built-in %s", id)
+		}
+	}
 	f.ArtifactPath = filepath.Join(f.Project, "out", f.Contract+".sol", f.Contract+".json")
 	data, err := os.ReadFile(f.ArtifactPath)
 	if err != nil {

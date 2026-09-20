@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="666" viewBox="0 0 1100 666">
+<rect width="100%" height="100%" fill="white"/>
+<text x="20" y="30" font-family="sans-serif" font-size="18" font-weight="bold">Goal hits by total-budget profile</text>
+<text x="20" y="70" font-family="monospace" font-size="12">bounded_ledger / b08-concrete</text>
+<rect x="360" y="58" width="134.00" height="15" fill="#3366cc"/>
+<text x="500.00" y="70" font-family="sans-serif" font-size="12">2/10</text>
+<text x="20" y="94" font-family="monospace" font-size="12">bounded_ledger / b08-native</text>
+<rect x="360" y="82" width="0.00" height="15" fill="#3366cc"/>
+<text x="366.00" y="94" font-family="sans-serif" font-size="12">0/10</text>
+<text x="20" y="118" font-family="monospace" font-size="12">bounded_ledger / b08-symbolic-q075</text>
+<rect x="360" y="106" width="670.00" height="15" fill="#3366cc"/>
+<text x="1036.00" y="118" font-family="sans-serif" font-size="12">10/10</text>
+<text x="20" y="142" font-family="monospace" font-size="12">bounded_ledger / b32-concrete</text>
+<rect x="360" y="130" width="134.00" height="15" fill="#3366cc"/>
+<text x="500.00" y="142" font-family="sans-serif" font-size="12">2/10</text>
+<text x="20" y="166" font-family="monospace" font-size="12">bounded_ledger / b32-native</text>
+<rect x="360" y="154" width="0.00" height="15" fill="#3366cc"/>
+<text x="366.00" y="166" font-family="sans-serif" font-size="12">0/10</text>
+<text x="20" y="190" font-family="monospace" font-size="12">bounded_ledger / b32-symbolic-q075</text>
+<rect x="360" y="178" width="670.00" height="15" fill="#3366cc"/>
+<text x="1036.00" y="190" font-family="sans-serif" font-size="12">10/10</text>
+<text x="20" y="214" font-family="monospace" font-size="12">phase_counter / b08-concrete</text>
+<rect x="360" y="202" width="201.00" height="15" fill="#3366cc"/>
+<text x="567.00" y="214" font-family="sans-serif" font-size="12">3/10</text>
+<text x="20" y="238" font-family="monospace" font-size="12">phase_counter / b08-native</text>
+<rect x="360" y="226" width="0.00" height="15" fill="#3366cc"/>
+<text x="366.00" y="238" font-family="sans-serif" font-size="12">0/10</text>
+<text x="20" y="262" font-family="monospace" font-size="12">phase_counter / b08-symbolic-q075</text>
+<rect x="360" y="250" width="670.00" height="15" fill="#3366cc"/>
+<text x="1036.00" y="262" font-family="sans-serif" font-size="12">10/10</text>
+<text x="20" y="286" font-family="monospace" font-size="12">phase_counter / b32-concrete</text>
+<rect x="360" y="274" width="201.00" height="15" fill="#3366cc"/>
+<text x="567.00" y="286" font-family="sans-serif" font-size="12">3/10</text>
+<text x="20" y="310" font-family="monospace" font-size="12">phase_counter / b32-native</text>
+<rect x="360" y="298" width="0.00" height="15" fill="#3366cc"/>
+<text x="366.00" y="310" font-family="sans-serif" font-size="12">0/10</text>
+<text x="20" y="334" font-family="monospace" font-size="12">phase_counter / b32-symbolic-q075</text>
+<rect x="360" y="322" width="670.00" height="15" fill="#3366cc"/>
+<text x="1036.00" y="334" font-family="sans-serif" font-size="12">10/10</text>
+<text x="20" y="358" font-family="monospace" font-size="12">range_gate / b08-concrete</text>
+<rect x="360" y="346" width="603.00" height="15" fill="#3366cc"/>
+<text x="969.00" y="358" font-family="sans-serif" font-size="12">9/10</text>
+<text x="20" y="382" font-family="monospace" font-size="12">range_gate / b08-native</text>
+<rect x="360" y="370" width="670.00" height="15" fill="#3366cc"/>
+<text x="1036.00" y="382" font-family="sans-serif" font-size="12">10/10</text>
+<text x="20" y="406" font-family="monospace" font-size="12">range_gate / b08-symbolic-q075</text>
+<rect x="360" y="394" width="670.00" height="15" fill="#3366cc"/>
+<text x="1036.00" y="406" font-family="sans-serif" font-size="12">10/10</text>
+<text x="20" y="430" font-family="monospace" font-size="12">range_gate / b32-concrete</text>
+<rect x="360" y="418" width="670.00" height="15" fill="#3366cc"/>
+<text x="1036.00" y="430" font-family="sans-serif" font-size="12">10/10</text>
+<text x="20" y="454" font-family="monospace" font-size="12">range_gate / b32-native</text>
+<rect x="360" y="442" width="670.00" height="15" fill="#3366cc"/>
+<text x="1036.00" y="454" font-family="sans-serif" font-size="12">10/10</text>
+<text x="20" y="478" font-family="monospace" font-size="12">range_gate / b32-symbolic-q075</text>
+<rect x="360" y="466" width="670.00" height="15" fill="#3366cc"/>
+<text x="1036.00" y="478" font-family="sans-serif" font-size="12">10/10</text>
+<text x="20" y="502" font-family="monospace" font-size="12">workflow_gate / b08-concrete</text>
+<rect x="360" y="490" width="536.00" height="15" fill="#3366cc"/>
+<text x="902.00" y="502" font-family="sans-serif" font-size="12">8/10</text>
+<text x="20" y="526" font-family="monospace" font-size="12">workflow_gate / b08-native</text>
+<rect x="360" y="514" width="469.00" height="15" fill="#3366cc"/>
+<text x="835.00" y="526" font-family="sans-serif" font-size="12">7/10</text>
+<text x="20" y="550" font-family="monospace" font-size="12">workflow_gate / b08-symbolic-q075</text>
+<rect x="360" y="538" width="603.00" height="15" fill="#3366cc"/>
+<text x="969.00" y="550" font-family="sans-serif" font-size="12">9/10</text>
+<text x="20" y="574" font-family="monospace" font-size="12">workflow_gate / b32-concrete</text>
+<rect x="360" y="562" width="670.00" height="15" fill="#3366cc"/>
+<text x="1036.00" y="574" font-family="sans-serif" font-size="12">10/10</text>
+<text x="20" y="598" font-family="monospace" font-size="12">workflow_gate / b32-native</text>
+<rect x="360" y="586" width="670.00" height="15" fill="#3366cc"/>
+<text x="1036.00" y="598" font-family="sans-serif" font-size="12">10/10</text>
+<text x="20" y="622" font-family="monospace" font-size="12">workflow_gate / b32-symbolic-q075</text>
+<rect x="360" y="610" width="670.00" height="15" fill="#3366cc"/>
+<text x="1036.00" y="622" font-family="sans-serif" font-size="12">10/10</text>
+</svg>

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -29,18 +30,23 @@ func runCLI(args []string) error {
 	}
 	fs := flag.NewFlagSet(args[0], flag.ContinueOnError)
 	fixtureID := fs.String("fixture", "", "one of the four repository teaching fixtures")
+	projectDir := fs.String("project-dir", "", "optional isolated copy of the selected built-in fixture")
 	input := fs.String("input", "", "native sequence file")
 	output := fs.String("output", "", "new output JSON file")
 	argument := fs.String("argument", "", "decimal uint256 suffix argument")
 	prefixLength := fs.Int("prefix-length", 0, "optional positive prefix length for codec commands")
 	corpusDir := fs.String("corpus-dir", "", "local corpus directory")
 	lineageOutput := fs.String("lineage-output", "", "new JSONL lineage output for run-campaign")
+	eventOutput := fs.String("event-output", "", "new gzip JSONL compact event output")
+	completionOutput := fs.String("completion-output", "", "new compact timing completion marker")
 	seed := fs.Int64("seed", 1, "single worker RNG seed")
 	tests := fs.Int("tests", 100, "number of complete sequences; stop only at the completion event")
 	maxSteps := fs.Int("max-steps", 3, "new sequence length, 1 to 4")
 	timeout := fs.Duration("timeout", 30*time.Second, "fuzzing wall-clock limit after compilation")
 	observe := fs.Bool("observe", true, "read fixture state after every call")
 	recordLineage := fs.Bool("record-lineage", true, "record patched native parent selection lineage")
+	compact := fs.Bool("compact", false, "write one compact event per completed sequence")
+	flushDelay := fs.Duration("flush-delay", 0, "test-only delay after search stops and before evidence flush")
 	if err := fs.Parse(args[1:]); err != nil {
 		return err
 	}
@@ -57,7 +63,7 @@ func runCLI(args []string) error {
 	if _, err := os.Stat(outputPath); err == nil {
 		return fmt.Errorf("output already exists: %s", outputPath)
 	}
-	fx, err := loadFixture(*fixtureID)
+	fx, err := loadFixtureProject(*fixtureID, *projectDir)
 	if err != nil {
 		return err
 	}
@@ -72,8 +78,12 @@ func runCLI(args []string) error {
 		}
 		return runObserved(fx, runOptions{Output: outputPath, CorpusDir: corpusPath, Seed: *seed, Tests: *tests, MaxSteps: *maxSteps, Timeout: *timeout, Observe: *observe})
 	case "run-campaign":
-		if *corpusDir == "" || *tests < 2 || *tests > 10000 || *maxSteps != 4 || *timeout <= 0 || *timeout > 5*time.Minute {
-			return errors.New("campaign requires --corpus-dir, 2..10000 tests, --max-steps 4, and timeout in (0,5m]")
+		maxTests := 10000
+		if *compact {
+			maxTests = 1000000
+		}
+		if *corpusDir == "" || *tests < 2 || *tests > maxTests || *maxSteps != 4 || *timeout <= 0 || *timeout > 5*time.Minute || *flushDelay < 0 {
+			return fmt.Errorf("campaign requires --corpus-dir, 2..%d tests, --max-steps 4, timeout in (0,5m], and nonnegative flush delay", maxTests)
 		}
 		corpusPath, err := filepath.Abs(*corpusDir)
 		if err != nil {
@@ -89,7 +99,27 @@ func runCLI(args []string) error {
 				return fmt.Errorf("lineage output already exists: %s", lineagePath)
 			}
 		}
-		return runObserved(fx, runOptions{Output: outputPath, CorpusDir: corpusPath, LineageOutput: lineagePath, Seed: *seed, Tests: *tests, MaxSteps: *maxSteps, Timeout: *timeout, Observe: *observe, Campaign: true, RecordLineage: *recordLineage})
+		eventPath, completionPath := "", ""
+		if *compact {
+			eventPath = *eventOutput
+			if eventPath == "" {
+				eventPath = strings.TrimSuffix(outputPath, filepath.Ext(outputPath)) + ".events.jsonl.gz"
+			}
+			completionPath = *completionOutput
+			if completionPath == "" {
+				completionPath = strings.TrimSuffix(outputPath, filepath.Ext(outputPath)) + ".completion.json"
+			}
+			for _, candidate := range []*string{&eventPath, &completionPath} {
+				*candidate, err = filepath.Abs(*candidate)
+				if err != nil {
+					return err
+				}
+				if _, err := os.Stat(*candidate); err == nil {
+					return fmt.Errorf("compact output already exists: %s", *candidate)
+				}
+			}
+		}
+		return runObserved(fx, runOptions{Output: outputPath, CorpusDir: corpusPath, LineageOutput: lineagePath, EventOutput: eventPath, CompletionOutput: completionPath, Seed: *seed, Tests: *tests, MaxSteps: *maxSteps, Timeout: *timeout, FlushDelay: *flushDelay, Observe: *observe, Campaign: true, RecordLineage: *recordLineage, Compact: *compact})
 	case "roundtrip", "decode-corpus", "encode-candidate":
 		if *input == "" {
 			return errors.New("--input is required")

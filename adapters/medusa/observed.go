@@ -30,11 +30,11 @@ import (
 )
 
 type runOptions struct {
-	Output, CorpusDir, LineageOutput string
-	Seed                             int64
-	Tests, MaxSteps                  int
-	Timeout                          time.Duration
-	Observe, Campaign, RecordLineage bool
+	Output, CorpusDir, LineageOutput, EventOutput, CompletionOutput string
+	Seed                                                            int64
+	Tests, MaxSteps                                                 int
+	Timeout, FlushDelay                                             time.Duration
+	Observe, Campaign, RecordLineage, Compact                       bool
 }
 
 type stepRecord struct {
@@ -85,40 +85,45 @@ type sequenceRecord struct {
 }
 
 type runReport struct {
-	SchemaVersion      int                `json:"schema_version"`
-	AdapterVersion     string             `json:"adapter_version"`
-	MedusaVersion      string             `json:"medusa_version"`
-	GoVersion          string             `json:"go_version"`
-	Fixture            string             `json:"fixture"`
-	Mode               string             `json:"mode"`
-	Seed               int64              `json:"seed"`
-	RNGStrategy        string             `json:"rng_strategy"`
-	ObserverEnabled    bool               `json:"observer_enabled"`
-	WorkerCount        int                `json:"worker_count"`
-	MaxSteps           int                `json:"max_steps"`
-	CompletedSequences int                `json:"completed_sequences"`
-	ImportedSequences  int                `json:"imported_sequences"`
-	TimedOut           bool               `json:"timed_out"`
-	Status             string             `json:"status"`
-	Error              string             `json:"error,omitempty"`
-	CorpusDirectory    string             `json:"corpus_directory"`
-	Deployment         map[string]any     `json:"deployment"`
-	Build              map[string]any     `json:"build"`
-	ConfigPath         string             `json:"config_path"`
-	Sequences          []*sequenceRecord  `json:"sequences"`
-	CoverageBranches   uint64             `json:"coverage_branches"`
-	CoverageDigest     string             `json:"coverage_digest_sha256"`
-	ElapsedSeconds     float64            `json:"elapsed_seconds"`
-	GeneratorConfig    map[string]any     `json:"generator_config,omitempty"`
-	StartupReplays     int                `json:"startup_replays"`
-	NewSequences       int                `json:"new_sequences"`
-	MutationSequences  int                `json:"mutation_sequences"`
-	LineagePath        string             `json:"lineage_path,omitempty"`
-	Lineage            []lineageRecord    `json:"lineage,omitempty"`
-	LineageEnabled     bool               `json:"lineage_enabled"`
-	CoverageMarkers    []string           `json:"coverage_markers"`
-	CoverageMarkerHits map[string]uint64  `json:"coverage_marker_hits"`
-	NativeTiming       map[string]float64 `json:"native_timing_seconds,omitempty"`
+	SchemaVersion       int                `json:"schema_version"`
+	AdapterVersion      string             `json:"adapter_version"`
+	MedusaVersion       string             `json:"medusa_version"`
+	GoVersion           string             `json:"go_version"`
+	Fixture             string             `json:"fixture"`
+	Mode                string             `json:"mode"`
+	Seed                int64              `json:"seed"`
+	RNGStrategy         string             `json:"rng_strategy"`
+	ObserverEnabled     bool               `json:"observer_enabled"`
+	WorkerCount         int                `json:"worker_count"`
+	MaxSteps            int                `json:"max_steps"`
+	CompletedSequences  int                `json:"completed_sequences"`
+	ImportedSequences   int                `json:"imported_sequences"`
+	TimedOut            bool               `json:"timed_out"`
+	Status              string             `json:"status"`
+	Error               string             `json:"error,omitempty"`
+	CorpusDirectory     string             `json:"corpus_directory"`
+	Deployment          map[string]any     `json:"deployment"`
+	Build               map[string]any     `json:"build"`
+	ConfigPath          string             `json:"config_path"`
+	Sequences           []*sequenceRecord  `json:"sequences"`
+	CoverageBranches    uint64             `json:"coverage_branches"`
+	CoverageDigest      string             `json:"coverage_digest_sha256"`
+	ElapsedSeconds      float64            `json:"elapsed_seconds"`
+	GeneratorConfig     map[string]any     `json:"generator_config,omitempty"`
+	StartupReplays      int                `json:"startup_replays"`
+	NewSequences        int                `json:"new_sequences"`
+	MutationSequences   int                `json:"mutation_sequences"`
+	LineagePath         string             `json:"lineage_path,omitempty"`
+	Lineage             []lineageRecord    `json:"lineage,omitempty"`
+	LineageEnabled      bool               `json:"lineage_enabled"`
+	CoverageMarkers     []string           `json:"coverage_markers"`
+	CoverageMarkerHits  map[string]uint64  `json:"coverage_marker_hits"`
+	NativeTiming        map[string]float64 `json:"native_timing_seconds,omitempty"`
+	OnlineTiming        map[string]float64 `json:"online_timing_seconds,omitempty"`
+	StopReason          string             `json:"stop_reason,omitempty"`
+	SequenceSafetyLimit int                `json:"sequence_safety_limit,omitempty"`
+	CompactEvents       map[string]any     `json:"compact_events,omitempty"`
+	CompletionPath      string             `json:"completion_path,omitempty"`
 }
 
 type importedSequence struct {
@@ -208,8 +213,10 @@ func runObserved(fx *fixture, opts runOptions) error {
 		return err
 	}
 	nativeDir := strings.TrimSuffix(opts.Output, filepath.Ext(opts.Output)) + ".native"
-	if err := os.Mkdir(nativeDir, 0755); err != nil {
-		return fmt.Errorf("native evidence directory must be new: %w", err)
+	if !opts.Compact {
+		if err := os.Mkdir(nativeDir, 0755); err != nil {
+			return fmt.Errorf("native evidence directory must be new: %w", err)
+		}
 	}
 	imports := []importedSequence{}
 	paths, err := filepath.Glob(filepath.Join(opts.CorpusDir, "call_sequences", "*.json"))
@@ -290,11 +297,18 @@ func runObserved(fx *fixture, opts runOptions) error {
 		report.Mode = "native_campaign"
 		report.RNGStrategy = "single_worker_seeded_worker_rng_default_medusa_v1.5.1_generator_and_mutator_internal_choosers_uncontrolled"
 		report.LineageEnabled = opts.RecordLineage
-		if opts.RecordLineage && opts.LineageOutput == "" {
+		if opts.Compact {
+			report.SchemaVersion = 3
+			report.SequenceSafetyLimit = opts.Tests
+			report.CompletionPath = opts.CompletionOutput
+		}
+		if opts.RecordLineage && !opts.Compact && opts.LineageOutput == "" {
 			opts.LineageOutput = strings.TrimSuffix(opts.Output, filepath.Ext(opts.Output)) + ".lineage.jsonl"
 		}
-		if opts.RecordLineage {
+		if opts.RecordLineage && !opts.Compact {
 			report.LineagePath = opts.LineageOutput
+		} else if opts.RecordLineage && opts.Compact {
+			report.LineagePath = opts.EventOutput
 		}
 	}
 	report.Deployment = map[string]any{"actor": actor.Hex(), "deployer": deployer.Hex(), "target": targetAddress.Hex(), "contract": fx.Contract, "constructor_arguments": []any{}}
@@ -375,9 +389,18 @@ func runObserved(fx *fixture, opts runOptions) error {
 		cfg.ValueGenerator, cfg.ValueMutator = nativeRandom, nativeRandom
 		return cfg, nil
 	}
+	var eventWriter *compactEventWriter
+	if opts.Compact {
+		eventWriter, err = newCompactEventWriter(opts.EventOutput)
+		if err != nil {
+			return err
+		}
+	}
 	var timedOut atomic.Bool
+	var limitReached atomic.Bool
 	var current []stepRecord
 	var currentRecords []*sequenceRecord
+	var currentSequence calls.CallSequence
 	knownIdentities := make(map[string]string, len(imports)+opts.Tests)
 	importedHashes := make(map[string]bool, len(imports))
 	for _, imported := range imports {
@@ -388,6 +411,8 @@ func runObserved(fx *fixture, opts runOptions) error {
 	markers := coverageMarkers(fx.Runtime)
 	var sequenceIndex int
 	var fuzzStarted time.Time
+	var startupElapsed float64
+	var lastObservedOffset float64
 	f.Events.WorkerCreated.Subscribe(func(event fuzzing.FuzzerWorkerCreatedEvent) error {
 		event.Worker.Events.FuzzerWorkerChainSetup.Subscribe(func(setup fuzzing.FuzzerWorkerChainSetupEvent) error {
 			if def := setup.Worker.DeployedContract(targetAddress); def == nil || def.Name() != fx.Contract {
@@ -440,7 +465,7 @@ func runObserved(fx *fixture, opts runOptions) error {
 			return nil
 		})
 		event.Worker.Events.CallSequenceTesting.Subscribe(func(_ fuzzing.FuzzerWorkerCallSequenceTestingEvent) error {
-			current, currentRecords = nil, nil
+			current, currentRecords, currentSequence = nil, nil, nil
 			sequenceIndex++
 			return nil
 		})
@@ -451,6 +476,8 @@ func runObserved(fx *fixture, opts runOptions) error {
 			}
 			last := currentRecords[len(currentRecords)-1]
 			last.Complete = true
+			lastObservedOffset = time.Since(runStarted).Seconds()
+			var completedLineage *lineageRecord
 			if opts.Campaign && opts.RecordLineage {
 				// Medusa may admit an intermediate prefix when it adds coverage.
 				// Retain every executed prefix identity so a later native parent
@@ -467,7 +494,7 @@ func runObserved(fx *fixture, opts runOptions) error {
 				if err != nil {
 					return err
 				}
-				lineage := lineageRecord{
+				lineage := &lineageRecord{
 					GenerationID: generation.GenerationID, SequenceIndex: sequenceIndex,
 					Kind: generation.Kind, Strategy: generation.Strategy,
 					ParentHashes: append([]string(nil), generation.ParentHashes...),
@@ -502,10 +529,16 @@ func runObserved(fx *fixture, opts runOptions) error {
 					}
 				}
 				knownIdentities[last.MedusaHash] = identity
-				report.Lineage = append(report.Lineage, lineage)
+				completedLineage = lineage
+				if !opts.Compact {
+					report.Lineage = append(report.Lineage, *lineage)
+				}
 				switch generation.Kind {
 				case "startup_replay":
 					report.StartupReplays++
+					if lineage.CompletedOffset > startupElapsed {
+						startupElapsed = lineage.CompletedOffset
+					}
 				case "mutation":
 					report.MutationSequences++
 				case "new_sequence":
@@ -536,7 +569,23 @@ func runObserved(fx *fixture, opts runOptions) error {
 					last.AdmissionEvidence = map[string]any{"kind": "medusa_v1.5.1_post_sequence_event", "event": "FuzzerWorker.CallSequenceTested", "native_input_hash_matched": true, "full_sequence_executed": true, "shrink_requests": 0, "cancellation_before_event": false, "source": "https://github.com/crytic/medusa/blob/v1.5.1/fuzzing/fuzzer_worker.go", "limitation": "source-bound control-flow evidence; no private chooser introspection"}
 				}
 			}
+			if opts.Compact {
+				payload, digest, encodeErr := marshalSequence(currentSequence)
+				if encodeErr != nil {
+					return encodeErr
+				}
+				refs, refsErr := compactPrefixReferences(currentRecords)
+				if refsErr != nil {
+					return refsErr
+				}
+				last.NativeDigest = digest
+				last.NativePath = fmt.Sprintf("compact-events://sequence/%d", sequenceIndex)
+				if writeErr := eventWriter.writeSequence(last, completedLineage, refs, payload); writeErr != nil {
+					return writeErr
+				}
+			}
 			if report.CompletedSequences >= opts.Tests {
+				limitReached.Store(true)
 				f.Stop()
 			}
 			return nil
@@ -550,10 +599,18 @@ func runObserved(fx *fixture, opts runOptions) error {
 			return nil, err
 		}
 		current = append(current, step)
-		path := filepath.Join(nativeDir, fmt.Sprintf("sequence-%05d-prefix-%d.json", sequenceIndex, len(seq)))
-		digest, err := writeSequence(path, seq)
-		if err != nil {
-			return nil, err
+		path, digest := fmt.Sprintf("compact-events://pending/%d", sequenceIndex), ""
+		if opts.Compact {
+			currentSequence, err = seq.Clone()
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			path = filepath.Join(nativeDir, fmt.Sprintf("sequence-%05d-prefix-%d.json", sequenceIndex, len(seq)))
+			digest, err = writeSequence(path, seq)
+			if err != nil {
+				return nil, err
+			}
 		}
 		hash, err := seq.Hash()
 		if err != nil {
@@ -565,29 +622,61 @@ func runObserved(fx *fixture, opts runOptions) error {
 		}
 		record := &sequenceRecord{SequenceIndex: sequenceIndex, Origin: origin, NativePath: path, NativeDigest: digest, MedusaHash: hash.Hex(), Steps: append([]stepRecord(nil), current...), AdmissionStatus: "not_checked"}
 		currentRecords = append(currentRecords, record)
-		report.Sequences = append(report.Sequences, record)
+		if !opts.Compact {
+			report.Sequences = append(report.Sequences, record)
+		}
 		return nil, nil
 	})
 	started := time.Now()
 	fuzzStarted = started
+	searchStartedOffset := time.Since(runStarted).Seconds()
 	timer := time.AfterFunc(opts.Timeout, func() { timedOut.Store(true); f.Stop() })
 	err = f.Start()
 	timer.Stop()
+	searchStoppedOffset := time.Since(runStarted).Seconds()
 	report.ElapsedSeconds = time.Since(started).Seconds()
-	if opts.Campaign {
-		startupElapsed := 0.0
-		for _, event := range report.Lineage {
-			if event.Kind == "startup_replay" && event.CompletedOffset > startupElapsed {
-				startupElapsed = event.CompletedOffset
+	if opts.FlushDelay > 0 {
+		time.Sleep(opts.FlushDelay)
+	}
+	if opts.Compact {
+		if len(currentRecords) > 0 && !currentRecords[len(currentRecords)-1].Complete {
+			partial := currentRecords[len(currentRecords)-1]
+			payload, digest, encodeErr := marshalSequence(currentSequence)
+			var refs []compactPrefixReference
+			if encodeErr == nil {
+				refs, encodeErr = compactPrefixReferences(currentRecords)
+			}
+			if encodeErr == nil {
+				partial.NativeDigest = digest
+				partial.NativePath = fmt.Sprintf("compact-events://partial/%d", sequenceIndex)
+				encodeErr = eventWriter.writePartial(partial, refs, payload)
+			}
+			if encodeErr != nil && err == nil {
+				err = encodeErr
 			}
 		}
+		metadata, closeErr := eventWriter.close()
+		if closeErr != nil && err == nil {
+			err = closeErr
+		} else if closeErr == nil {
+			report.CompactEvents = metadata
+		}
+	}
+	evidencePayloadFinishedOffset := time.Since(runStarted).Seconds()
+	if opts.Campaign {
 		totalElapsed := time.Since(runStarted).Seconds()
 		report.NativeTiming = map[string]float64{
-			"setup_before_fuzz": totalElapsed - report.ElapsedSeconds,
+			"setup_before_fuzz": searchStartedOffset,
 			"startup_replay":    startupElapsed,
 			"continuation":      max(0, report.ElapsedSeconds-startupElapsed),
 			"fuzz_total":        report.ElapsedSeconds,
 			"adapter_total":     totalElapsed,
+		}
+		report.OnlineTiming = map[string]float64{
+			"search_started":            searchStartedOffset,
+			"search_stopped":            searchStoppedOffset,
+			"last_observed_event":       lastObservedOffset,
+			"evidence_payload_finished": evidencePayloadFinishedOffset,
 		}
 	}
 	report.CoverageBranches = cumulativeCoverage.BranchesHit()
@@ -595,13 +684,37 @@ func runObserved(fx *fixture, opts runOptions) error {
 	report.CoverageMarkers, report.CoverageMarkerHits, _ = coverageMarkerSnapshot(cumulativeCoverage, fx.Runtime, markers)
 	report.TimedOut = timedOut.Load()
 	report.Status, report.Error = classifyRunOutcome(err, report.TimedOut)
-	if opts.Campaign && opts.RecordLineage {
+	if err != nil {
+		report.StopReason = "tool_error"
+	} else if report.TimedOut {
+		report.StopReason = "time_limit"
+	} else if limitReached.Load() {
+		report.StopReason = "sequence_limit"
+	} else {
+		report.StopReason = "cancelled"
+	}
+	if opts.Campaign && opts.RecordLineage && !opts.Compact {
 		if writeErr := writeJSONLines(opts.LineageOutput, report.Lineage); writeErr != nil {
 			return writeErr
 		}
 	}
 	if writeErr := writeJSON(opts.Output, report); writeErr != nil {
 		return writeErr
+	}
+	if opts.Compact {
+		reportFinishedOffset := time.Since(runStarted).Seconds()
+		if writeErr := writeJSON(opts.CompletionOutput, map[string]any{
+			"schema_version":          1,
+			"status":                  report.Status,
+			"stop_reason":             report.StopReason,
+			"search_started":          searchStartedOffset,
+			"search_stopped":          searchStoppedOffset,
+			"last_observed_event":     lastObservedOffset,
+			"event_stream_finished":   evidencePayloadFinishedOffset,
+			"evidence_flush_finished": reportFinishedOffset,
+		}); writeErr != nil {
+			return writeErr
+		}
 	}
 	if err != nil {
 		return err

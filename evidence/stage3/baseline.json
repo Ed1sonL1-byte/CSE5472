@@ -1,0 +1,1005 @@
+{
+  "git_status": "M README.md\n M evidence/stage2/checksums.sha256\n M evidence/stage2/mechanism.json\n M scripts/build-stage2-evidence.py\n M src/seedbridge/benchmark.py\n M src/seedbridge/metrics.py\n M tests/unit/test_metrics.py\n?? docs/STAGE3_GOAL_PROMPT.md\n?? docs/STAGE3_TECH_PLAN.md\n?? docs/STAGE3_VALIDATION.md\n?? \"evidence/stage2/INDEX 2.md\"\n?? \"evidence/stage2/INDEX 3.md\"\n?? \"evidence/stage2/audit 2.json\"\n?? \"evidence/stage2/audit 3.json\"\n?? \"evidence/stage2/benchmark-config 2.json\"\n?? \"evidence/stage2/benchmark-config 3.json\"\n?? \"evidence/stage2/checksums 2.sha256\"\n?? \"evidence/stage2/checksums 3.sha256\"\n?? \"evidence/stage2/formal-symbolic-sample 2.json\"\n?? \"evidence/stage2/formal-symbolic-sample 3.json\"\n?? \"evidence/stage2/goal-hits 2.svg\"\n?? \"evidence/stage2/goal-hits 3.svg\"\n?? \"evidence/stage2/manifest 2.json\"\n?? \"evidence/stage2/manifest 3.json\"\n?? \"evidence/stage2/mechanism 2.json\"\n?? \"evidence/stage2/mechanism 3.json\"\n?? \"evidence/stage2/mechanism-child-sequence 2.json\"\n?? \"evidence/stage2/mechanism-child-sequence 3.json\"\n?? \"evidence/stage2/mechanism-parent-seed 2.json\"\n?? \"evidence/stage2/mechanism-parent-seed 3.json\"\n?? \"evidence/stage2/new-fixture-stage1-validation 2.json\"\n?? \"evidence/stage2/new-fixture-stage1-validation 3.json\"\n?? \"evidence/stage2/recording-neutrality 2.json\"\n?? \"evidence/stage2/recording-neutrality 3.json\"\n?? \"evidence/stage2/summary 2.csv\"\n?? \"evidence/stage2/summary 2.json\"\n?? \"evidence/stage2/summary 2.md\"\n?? \"evidence/stage2/summary 3.csv\"\n?? \"evidence/stage2/summary 3.json\"\n?? \"evidence/stage2/summary 3.md\"\n?? \"evidence/stage2/superseded-run 2.json\"\n?? \"evidence/stage2/superseded-run 3.json\"\n?? \"evidence/stage2/three-arm-smoke 2.json\"\n?? \"evidence/stage2/three-arm-smoke 3.json\"\n?? scripts/snapshot-stage3-baseline.py",
+  "notes": [
+    "Stage 2 raw campaign files are read-only inputs for Stage 3.",
+    "Files with ' 2' or ' 3' suffixes are inventoried but excluded from official evidence.",
+    "Formal Stage 3 archives must include a fresh execution-source snapshot, not only this baseline."
+  ],
+  "observed_git_head": "abad61ad9039890eeddd3c11bdb1575faf602ad6",
+  "schema_version": 1,
+  "source_inventory": [
+    {
+      "bytes": 5,
+      "path": ".python-version",
+      "sha256": "7b55f8e67b5623c4bef3fa691288da9437d79d3aba156de48d481db32ac7d16d"
+    },
+    {
+      "bytes": 6427,
+      "path": "adapters/medusa/codec.go",
+      "sha256": "beb71498ac79185858667eec62ac27b269e4f325f2a86c1cb5a78b7f8b23d814"
+    },
+    {
+      "bytes": 6333,
+      "path": "adapters/medusa/codec_test.go",
+      "sha256": "4352473f54a3a9654a3e052c883f28333340524b824bf2bffd7dcdbefa724083"
+    },
+    {
+      "bytes": 2941,
+      "path": "adapters/medusa/coverage.go",
+      "sha256": "ec771267002cedb1cf0a1012e8c5a2a35387d794509c717be96989cab1c4a462"
+    },
+    {
+      "bytes": 3982,
+      "path": "adapters/medusa/fixture.go",
+      "sha256": "67ef3d60d6efb5ae72c17e291c82434b282504ec46e5b3303aadec2be73fd24e"
+    },
+    {
+      "bytes": 2833,
+      "path": "adapters/medusa/go.mod",
+      "sha256": "c727e7cda19f62f416f51e25d5f57d3160176f92b56150d5ac006e782bd0acb1"
+    },
+    {
+      "bytes": 27808,
+      "path": "adapters/medusa/go.sum",
+      "sha256": "90e986e41579557091067d15a8fe7d88d08c4e61608c7e273005c634ffc10a1d"
+    },
+    {
+      "bytes": 4032,
+      "path": "adapters/medusa/integration_test.go",
+      "sha256": "3c215a26913474d5e4bc28bf21895badc2cbdcaa2d7250ab38550dd94d9cfffd"
+    },
+    {
+      "bytes": 4711,
+      "path": "adapters/medusa/main.go",
+      "sha256": "54ff47e20f9618b413633212d1afc97e9e5dd8411761d389854fb36056a84fcd"
+    },
+    {
+      "bytes": 31764,
+      "path": "adapters/medusa/observed.go",
+      "sha256": "77882befd1f1fa7299449934c524677c305191a1f5fd355261c3b828bf80d973"
+    },
+    {
+      "bytes": 8262,
+      "path": "adapters/medusa/patches/medusa-v1.5.1-lineage.patch",
+      "sha256": "0038fba13210126f6866abc06a236593ddecc6ec80e0a27b3710c21baa14c702"
+    },
+    {
+      "bytes": 2000,
+      "path": "configs/stage2-benchmark.json",
+      "sha256": "d4764e88dc3621e3a32a8ccbefb9bc0894eda741ea31963f3ff5ee896fdf3cd1"
+    },
+    {
+      "bytes": 3706,
+      "path": "configs/toolchain.local.json",
+      "sha256": "d7d07371186fcb28e861effd0aab7e263e141c644860811b6c85f61c1f91ab2d"
+    },
+    {
+      "bytes": 177,
+      "path": "fixtures/bounded_ledger/foundry.toml",
+      "sha256": "5b19c29a5aa229da322d24cf81e870549710b6adb6018b04d67db17b32e04f86"
+    },
+    {
+      "bytes": 1196,
+      "path": "fixtures/bounded_ledger/src/BoundedLedger.sol",
+      "sha256": "1e3be9739e02247ce7d65a1ff91f1b459e438380ea3cba5bed4e8fa258f755c6"
+    },
+    {
+      "bytes": 177,
+      "path": "fixtures/phase_counter/foundry.toml",
+      "sha256": "5b19c29a5aa229da322d24cf81e870549710b6adb6018b04d67db17b32e04f86"
+    },
+    {
+      "bytes": 1073,
+      "path": "fixtures/phase_counter/src/PhaseCounter.sol",
+      "sha256": "0744b30d92ee3ea3a1cd579b1d5958824c843fa3f5fafd01ddc0ad3ee4a0340f"
+    },
+    {
+      "bytes": 177,
+      "path": "fixtures/range_gate/foundry.toml",
+      "sha256": "5b19c29a5aa229da322d24cf81e870549710b6adb6018b04d67db17b32e04f86"
+    },
+    {
+      "bytes": 1227,
+      "path": "fixtures/range_gate/src/RangeGate.sol",
+      "sha256": "b7cf7146b56d31ef95b9b7918207fd88e8d9e053e826b8deb4f704626ebe0be8"
+    },
+    {
+      "bytes": 177,
+      "path": "fixtures/workflow_gate/foundry.toml",
+      "sha256": "5b19c29a5aa229da322d24cf81e870549710b6adb6018b04d67db17b32e04f86"
+    },
+    {
+      "bytes": 1785,
+      "path": "fixtures/workflow_gate/src/WorkflowGate.sol",
+      "sha256": "36df2df4eb928934a51651683e4093017c8a006ac6fca7a6761c7c13ba82fad0"
+    },
+    {
+      "bytes": 636,
+      "path": "pyproject.toml",
+      "sha256": "bf229d6bdb95dc1f85dc48436a32dc44c3d1bb891a0ca50a4f23901daca0aea0"
+    },
+    {
+      "bytes": 12554,
+      "path": "scripts/audit-stage2.py",
+      "sha256": "421f0a600e838adc7fa1dcc411f3cc124fd58f9a9c4d1605e5acee3a8c9562a0"
+    },
+    {
+      "bytes": 812,
+      "path": "scripts/bootstrap.sh",
+      "sha256": "5ebc621ec8262e603ea8526a937df273e1535cb1169df4a2628825d9596067cd"
+    },
+    {
+      "bytes": 10595,
+      "path": "scripts/build-stage2-evidence.py",
+      "sha256": "34de63736a7b500f4f3958ddb53176e3362c97c96c0ba60690932fd186d9b27c"
+    },
+    {
+      "bytes": 1554,
+      "path": "scripts/prepare-medusa-lineage.sh",
+      "sha256": "f9f73b575e9206adb387919402631fe41cbf4a611b715e35f3776e05928aa06e"
+    },
+    {
+      "bytes": 3909,
+      "path": "scripts/snapshot-stage3-baseline.py",
+      "sha256": "8872d24b22bc803672b5f85d10ce29de3ec801668d7320714b54b5db0c50db3a"
+    },
+    {
+      "bytes": 98,
+      "path": "src/seedbridge/__init__.py",
+      "sha256": "1becd5994960196cef42ad5d691928105b3bfd1590cd3ffe2e6445b9503a6fb5"
+    },
+    {
+      "bytes": 15379,
+      "path": "src/seedbridge/augmentation.py",
+      "sha256": "28b0b9e74a722d4a0330e45c7e4b7d3e118f420db0d1bebef8a1ed8e56a8cdeb"
+    },
+    {
+      "bytes": 33531,
+      "path": "src/seedbridge/benchmark.py",
+      "sha256": "093b43ff3664669dedf6828bcbcae7b293065e9c9b06dddd306e0a2c5ea34d34"
+    },
+    {
+      "bytes": 9090,
+      "path": "src/seedbridge/budget.py",
+      "sha256": "d51aa8bbfe0aa634f85ef5e0fe94449b9fe4ba67bb95c4ac8d53ab775f504451"
+    },
+    {
+      "bytes": 3169,
+      "path": "src/seedbridge/build.py",
+      "sha256": "cb204886caf13586b2d272702ec90bc477c516c6de75e405edf4ce26d19cf716"
+    },
+    {
+      "bytes": 6435,
+      "path": "src/seedbridge/campaign.py",
+      "sha256": "2a4eb1148a988818e4ca4a629c39a46435ca2bc8fe9267ffcdf126ce35e6e925"
+    },
+    {
+      "bytes": 4679,
+      "path": "src/seedbridge/cli.py",
+      "sha256": "27ce940ff2dc72c80ae06155ad0ea8c6d3337203c4d80e954f0a975be101a425"
+    },
+    {
+      "bytes": 6088,
+      "path": "src/seedbridge/config.py",
+      "sha256": "b1aea7df834ca02458c5f114d5d2c14f9a80168b70366a0af8f18ff174e2d10a"
+    },
+    {
+      "bytes": 3689,
+      "path": "src/seedbridge/doctor.py",
+      "sha256": "400e1a3de9c3b188b648f9abd1fe5a8711865a2678787575ca59acba4302c370"
+    },
+    {
+      "bytes": 7941,
+      "path": "src/seedbridge/halmos.py",
+      "sha256": "5303ae61b5cee6a3f3d053d4b7a49cef8f928cdd83d15a7dfda20e7f4fe1393d"
+    },
+    {
+      "bytes": 10675,
+      "path": "src/seedbridge/harness.py",
+      "sha256": "89352edad70786c7188dea13689a697c55643161a6cecd00b3f5add90bfabc29"
+    },
+    {
+      "bytes": 536,
+      "path": "src/seedbridge/io.py",
+      "sha256": "06658a0004faa7016de35ee37ea9ea20f5b22a42e0cbc264adf89d9cd27916c8"
+    },
+    {
+      "bytes": 7107,
+      "path": "src/seedbridge/medusa.py",
+      "sha256": "8fabd7dc54478879a1c1dfa01aed83d34a694e0df57826dca00a59bf49b7350c"
+    },
+    {
+      "bytes": 8243,
+      "path": "src/seedbridge/metrics.py",
+      "sha256": "57ed8e258ea6e67d7408665370b1dfdcc58f72dc1924f6463d4756bd90bb00bf"
+    },
+    {
+      "bytes": 15836,
+      "path": "src/seedbridge/pipeline.py",
+      "sha256": "b14f714e1f3e0ff2aa6079b7f59fa73accdb17dbf8351e5aa63bbef178e04a82"
+    },
+    {
+      "bytes": 3187,
+      "path": "src/seedbridge/process.py",
+      "sha256": "4036a70277ae794f9c058d7c9a8a7e126cb1f993bb202448efa7f6b35810eecc"
+    },
+    {
+      "bytes": 4026,
+      "path": "src/seedbridge/replay.py",
+      "sha256": "1f072532c9c90c1b23eace2ce665cb6cf0565407bd8335f766fbaefaeb220483"
+    },
+    {
+      "bytes": 2234,
+      "path": "src/seedbridge/report.py",
+      "sha256": "c760ec5fbd21352439ab511f7e441d7ac28a3de3b891bf94ba70d234f46a749a"
+    },
+    {
+      "bytes": 4298,
+      "path": "src/seedbridge/trace.py",
+      "sha256": "7021b8800e1cfecb2d33e439713b85fb30892e2c0d7263ad034499e060560142"
+    },
+    {
+      "bytes": 49884,
+      "path": "uv.lock",
+      "sha256": "3293b6a580846513515bc8cbdb1c1130bbc59588f21cbaec0f66cc0c6962f757"
+    }
+  ],
+  "stage2_raw_inventory": [
+    {
+      "bytes": 7115,
+      "path": "runs/stage2-formal-02/manifest.json",
+      "sha256": "315aa1d45d1d3e7254b3568f5c82a8ec82259e7dec06667aae8713b1c3eb8828"
+    },
+    {
+      "bytes": 315,
+      "path": "runs/stage2-formal-02/audit.json",
+      "sha256": "14b374970bf663cad7556c678b55ce2660d74158346b7466fa0a3f66ab84b92d"
+    },
+    {
+      "bytes": 5555,
+      "path": "runs/stage2-formal-02/blocks/bounded_ledger/repeat-1/warmup/common.json",
+      "sha256": "97a4bac9166a5339d91fe932a69b5a82ad793d4fbe0b2ed55e4a0b1986d71612"
+    },
+    {
+      "bytes": 5555,
+      "path": "runs/stage2-formal-02/blocks/bounded_ledger/repeat-2/warmup/common.json",
+      "sha256": "9122d531fadeb1f580119474939785aaf69b0cdb73bb04925cd3ce2175f19d1a"
+    },
+    {
+      "bytes": 5556,
+      "path": "runs/stage2-formal-02/blocks/bounded_ledger/repeat-3/warmup/common.json",
+      "sha256": "99e413fcdcde867aedf5183c08888cc29aefd574421c6cff6fb7f3361178fc65"
+    },
+    {
+      "bytes": 5556,
+      "path": "runs/stage2-formal-02/blocks/bounded_ledger/repeat-4/warmup/common.json",
+      "sha256": "453717febce5a49ca0c868e685a764bd2986565b0f55b60adedde18faba96ecd"
+    },
+    {
+      "bytes": 5556,
+      "path": "runs/stage2-formal-02/blocks/bounded_ledger/repeat-5/warmup/common.json",
+      "sha256": "5da76ae976ba9f5ec25993bad577e99d126532c48f4f29319c4b3026bf7ecdbe"
+    },
+    {
+      "bytes": 5546,
+      "path": "runs/stage2-formal-02/blocks/phase_counter/repeat-1/warmup/common.json",
+      "sha256": "7608e4272ccdffed6437322f57b3e566cd0f760c5f1fb53dfe420b2a1ce19148"
+    },
+    {
+      "bytes": 5546,
+      "path": "runs/stage2-formal-02/blocks/phase_counter/repeat-2/warmup/common.json",
+      "sha256": "c6ea31da1512e85a3e2e81190b307f0c605034a04a3f5f5ddcb43a63d2d5cb9d"
+    },
+    {
+      "bytes": 5546,
+      "path": "runs/stage2-formal-02/blocks/phase_counter/repeat-3/warmup/common.json",
+      "sha256": "cebb1a0c2d71677a5ea958f73f1f4874262d4639cc3fcea37c532ec6c62b3c17"
+    },
+    {
+      "bytes": 5546,
+      "path": "runs/stage2-formal-02/blocks/phase_counter/repeat-4/warmup/common.json",
+      "sha256": "d4bbc50c1b7a69d5c1d0c6f5b98000b2971d58d44dc2167078a139487edbc9b0"
+    },
+    {
+      "bytes": 5546,
+      "path": "runs/stage2-formal-02/blocks/phase_counter/repeat-5/warmup/common.json",
+      "sha256": "b046e42a290b76804e119bce0a7ff48a6ff62a1362b9b8274b0b3df66aac6344"
+    },
+    {
+      "bytes": 5516,
+      "path": "runs/stage2-formal-02/blocks/range_gate/repeat-1/warmup/common.json",
+      "sha256": "98f9763632414e614b568fcb6ceae37cba9526430db13d9b8a11ce71551687dc"
+    },
+    {
+      "bytes": 5516,
+      "path": "runs/stage2-formal-02/blocks/range_gate/repeat-2/warmup/common.json",
+      "sha256": "20671cfc0dab9e1e5fadf002b7c6a304ac41f01d579c01d82075c7c6ff5afc59"
+    },
+    {
+      "bytes": 5515,
+      "path": "runs/stage2-formal-02/blocks/range_gate/repeat-3/warmup/common.json",
+      "sha256": "cfc1baab90826ca0d4dc23e7ec6b071fac3494cf3fbe7dd518a6023ce83d6456"
+    },
+    {
+      "bytes": 5516,
+      "path": "runs/stage2-formal-02/blocks/range_gate/repeat-4/warmup/common.json",
+      "sha256": "ddc4e1dc597712cad8243203e4559c594115e96d5928b7342433af8e8bc489c2"
+    },
+    {
+      "bytes": 5516,
+      "path": "runs/stage2-formal-02/blocks/range_gate/repeat-5/warmup/common.json",
+      "sha256": "4702c40befb7c6e73d3ce370b686debc57b6e03d97fc4d3efb2f5f156e203fa5"
+    },
+    {
+      "bytes": 5545,
+      "path": "runs/stage2-formal-02/blocks/workflow_gate/repeat-1/warmup/common.json",
+      "sha256": "ef7c7a797c8532d1a936b5f820d6c90b6a1e3041c751d3afc9db76e5266beb20"
+    },
+    {
+      "bytes": 5546,
+      "path": "runs/stage2-formal-02/blocks/workflow_gate/repeat-2/warmup/common.json",
+      "sha256": "55e4b547576c6846ab8091b628a3774720022eaf55ffb0373ac60fe5896b8c22"
+    },
+    {
+      "bytes": 5546,
+      "path": "runs/stage2-formal-02/blocks/workflow_gate/repeat-3/warmup/common.json",
+      "sha256": "c305dd6100087c8499326f3ed39d553beed6623137e2a19ee065f161c3a20dbb"
+    },
+    {
+      "bytes": 5546,
+      "path": "runs/stage2-formal-02/blocks/workflow_gate/repeat-4/warmup/common.json",
+      "sha256": "830624276d0bc1e5c401f73ded2e2de5c60f83d7307902a70f00a3ffe3043c84"
+    },
+    {
+      "bytes": 5545,
+      "path": "runs/stage2-formal-02/blocks/workflow_gate/repeat-5/warmup/common.json",
+      "sha256": "ea53195e68dc7bf333df6dcb33a2b7e939040c1486d8842f9158c19fe31cfe75"
+    },
+    {
+      "bytes": 7893764,
+      "path": "runs/stage2-formal-02/blocks/bounded_ledger/repeat-1/warmup/warmup/campaign.json",
+      "sha256": "98f76910bee69e1b76afc578a6a7a0e7fb36d7dedfec734338594cdf859a5585"
+    },
+    {
+      "bytes": 7812695,
+      "path": "runs/stage2-formal-02/blocks/bounded_ledger/repeat-2/warmup/warmup/campaign.json",
+      "sha256": "1d2528e8f2e41efc373d5fa22b4ee6a509c22db0347fb2ace3fb1a38dd0460b6"
+    },
+    {
+      "bytes": 7515377,
+      "path": "runs/stage2-formal-02/blocks/bounded_ledger/repeat-3/warmup/warmup/campaign.json",
+      "sha256": "89d79f1348e072e8f51c4e13f757f14c9bc5d9b7b6eae0d29c7757c6bc5566c8"
+    },
+    {
+      "bytes": 6403355,
+      "path": "runs/stage2-formal-02/blocks/bounded_ledger/repeat-4/warmup/warmup/campaign.json",
+      "sha256": "f545be40674ae2cef63ab305e49418c3cdd8dd18e93fa7bc6a861a7a55882262"
+    },
+    {
+      "bytes": 7384368,
+      "path": "runs/stage2-formal-02/blocks/bounded_ledger/repeat-5/warmup/warmup/campaign.json",
+      "sha256": "643eb2b5b5b05bd19e16b920aef5ec4fdb6e32fbd6eecd271f9dc0735cb96ff5"
+    },
+    {
+      "bytes": 6795808,
+      "path": "runs/stage2-formal-02/blocks/phase_counter/repeat-1/warmup/warmup/campaign.json",
+      "sha256": "30ff00b41dcc058a87090580fb1b602cb1e5ab29e9a9ddff307518c5376c5a43"
+    },
+    {
+      "bytes": 6364246,
+      "path": "runs/stage2-formal-02/blocks/phase_counter/repeat-2/warmup/warmup/campaign.json",
+      "sha256": "13c6c5cedab35b64561551fe46c95e6be3699e59b47a1bb60fa255681368e2a5"
+    },
+    {
+      "bytes": 7009977,
+      "path": "runs/stage2-formal-02/blocks/phase_counter/repeat-3/warmup/warmup/campaign.json",
+      "sha256": "7650a38b2d63538da1bd78484865b75c42088774b9e8576fe3dbf5db1274334c"
+    },
+    {
+      "bytes": 6893063,
+      "path": "runs/stage2-formal-02/blocks/phase_counter/repeat-4/warmup/warmup/campaign.json",
+      "sha256": "fe004540c5f6680879ea0416d9a0663014df3e64965261c7d7ef00c03ecaa487"
+    },
+    {
+      "bytes": 7202223,
+      "path": "runs/stage2-formal-02/blocks/phase_counter/repeat-5/warmup/warmup/campaign.json",
+      "sha256": "4115a5b863198c3f31f25997969d639d2b6cf9dbe949aacc08eca421cd0d335d"
+    },
+    {
+      "bytes": 6547929,
+      "path": "runs/stage2-formal-02/blocks/range_gate/repeat-1/warmup/warmup/campaign.json",
+      "sha256": "d07bf86081c85fcbf6b4bcf054d011ecb2c2f27a29bc3d65254ee80e1fdb2f54"
+    },
+    {
+      "bytes": 6717603,
+      "path": "runs/stage2-formal-02/blocks/range_gate/repeat-2/warmup/warmup/campaign.json",
+      "sha256": "beccff06d11c379076d129930ec7b0334df242a9bed7b52d653d189462a4c954"
+    },
+    {
+      "bytes": 6546686,
+      "path": "runs/stage2-formal-02/blocks/range_gate/repeat-3/warmup/warmup/campaign.json",
+      "sha256": "786e55158671dc959b689872029808542fd2b44fca83efed52a0e0146f92db73"
+    },
+    {
+      "bytes": 6731602,
+      "path": "runs/stage2-formal-02/blocks/range_gate/repeat-4/warmup/warmup/campaign.json",
+      "sha256": "8200374906ddcce1598aaf0b8d14e8e0b50051f18354887df42407613f6a55a5"
+    },
+    {
+      "bytes": 6404847,
+      "path": "runs/stage2-formal-02/blocks/range_gate/repeat-5/warmup/warmup/campaign.json",
+      "sha256": "f18cf8c351ed0c08c25f9482c732257c8dd6d012ce7f3edb681397cff1a1ba71"
+    },
+    {
+      "bytes": 6903590,
+      "path": "runs/stage2-formal-02/blocks/workflow_gate/repeat-1/warmup/warmup/campaign.json",
+      "sha256": "d6009d2a08c10f5c8b08e03e564d16868394a8e2f149fde571414b69c3240d9d"
+    },
+    {
+      "bytes": 6815019,
+      "path": "runs/stage2-formal-02/blocks/workflow_gate/repeat-2/warmup/warmup/campaign.json",
+      "sha256": "d6eab2550bf9e824e28d93eef7055739692e8ff9fc932f54a5cb4542d91949d6"
+    },
+    {
+      "bytes": 6271798,
+      "path": "runs/stage2-formal-02/blocks/workflow_gate/repeat-3/warmup/warmup/campaign.json",
+      "sha256": "3d364da81800eb7e5dffb10142d718163731ef909d333751ce378de670c39ad0"
+    },
+    {
+      "bytes": 7197260,
+      "path": "runs/stage2-formal-02/blocks/workflow_gate/repeat-4/warmup/warmup/campaign.json",
+      "sha256": "737eac388c286e0ed72eef78ec48b8f219af8e7a13b0c1c48ec912fcaf8d3a6e"
+    },
+    {
+      "bytes": 7091838,
+      "path": "runs/stage2-formal-02/blocks/workflow_gate/repeat-5/warmup/warmup/campaign.json",
+      "sha256": "db4f94cab604845cb8328dfbd5ab1a5b1fadcb359085eb790390400d2c25161c"
+    },
+    {
+      "bytes": 79175,
+      "path": "runs/stage2-formal-02/blocks/bounded_ledger/repeat-1/arms/concrete_augment/campaign.json",
+      "sha256": "43c480d231203dc9fc64de20f99c721f278820cef94018dca35623760684a9ca"
+    },
+    {
+      "bytes": 97011,
+      "path": "runs/stage2-formal-02/blocks/bounded_ledger/repeat-1/arms/native_resume/campaign.json",
+      "sha256": "3e6757ff34916cc92a2dd29bdd40e36ab8c06197342da7c690ee3616fda4ca01"
+    },
+    {
+      "bytes": 53566,
+      "path": "runs/stage2-formal-02/blocks/bounded_ledger/repeat-1/arms/symbolic_augment/campaign.json",
+      "sha256": "ae4ef516540c8ee2b99936d17fd20a3c771ab5fba555525428ede60294be23d3"
+    },
+    {
+      "bytes": 86531,
+      "path": "runs/stage2-formal-02/blocks/bounded_ledger/repeat-2/arms/concrete_augment/campaign.json",
+      "sha256": "91690855b00377dd9c7906385a931930075a3905f656bfce939ae2340352dba8"
+    },
+    {
+      "bytes": 105656,
+      "path": "runs/stage2-formal-02/blocks/bounded_ledger/repeat-2/arms/native_resume/campaign.json",
+      "sha256": "c2a6f54d2316df44a60582ae97b8e13f9adec82e3c9c7053c0a50350c25be5a7"
+    },
+    {
+      "bytes": 54677,
+      "path": "runs/stage2-formal-02/blocks/bounded_ledger/repeat-2/arms/symbolic_augment/campaign.json",
+      "sha256": "b8e3e0a672e93c8822963fa6b1d8665edef6df0277add84881d3e5f2473bc8ae"
+    },
+    {
+      "bytes": 85723,
+      "path": "runs/stage2-formal-02/blocks/bounded_ledger/repeat-3/arms/concrete_augment/campaign.json",
+      "sha256": "5e3588f432e82861f602a2e4e8ccf15333c49d381b69de9e361cbd3113406bcd"
+    },
+    {
+      "bytes": 103091,
+      "path": "runs/stage2-formal-02/blocks/bounded_ledger/repeat-3/arms/native_resume/campaign.json",
+      "sha256": "2351cd33fc96f163dabfd850d8b5168c91cdc110ae08454871d1a92c4fbb0de6"
+    },
+    {
+      "bytes": 52929,
+      "path": "runs/stage2-formal-02/blocks/bounded_ledger/repeat-3/arms/symbolic_augment/campaign.json",
+      "sha256": "ba6f65e1b51b3734cec82fbc55e728aef4ae188b448e70ccc2b32273885bd22e"
+    },
+    {
+      "bytes": 89127,
+      "path": "runs/stage2-formal-02/blocks/bounded_ledger/repeat-4/arms/concrete_augment/campaign.json",
+      "sha256": "98dc5e72f8290fb3c02e5d3ce37f6ccc3ad93100a84f11b5c6b2d59429c58b99"
+    },
+    {
+      "bytes": 107441,
+      "path": "runs/stage2-formal-02/blocks/bounded_ledger/repeat-4/arms/native_resume/campaign.json",
+      "sha256": "ceb13b60cebab1b694fef006547c75310446bf12b4d86400487ed3009ce1740c"
+    },
+    {
+      "bytes": 56466,
+      "path": "runs/stage2-formal-02/blocks/bounded_ledger/repeat-4/arms/symbolic_augment/campaign.json",
+      "sha256": "0bce4f9fba8c0e916b6f20931d46f6aec55a9ac611875759d6fe3e77ce59b539"
+    },
+    {
+      "bytes": 84136,
+      "path": "runs/stage2-formal-02/blocks/bounded_ledger/repeat-5/arms/concrete_augment/campaign.json",
+      "sha256": "45fe045979c073d6849c929b938057cea6172af1b4fb8ffcfa4ed3c4e37b2c3e"
+    },
+    {
+      "bytes": 105334,
+      "path": "runs/stage2-formal-02/blocks/bounded_ledger/repeat-5/arms/native_resume/campaign.json",
+      "sha256": "14b2b9193885ee912af7a108503792b4d10fa9cd0f610ba607566bcb61354837"
+    },
+    {
+      "bytes": 54851,
+      "path": "runs/stage2-formal-02/blocks/bounded_ledger/repeat-5/arms/symbolic_augment/campaign.json",
+      "sha256": "30360683fadf70cef654363ee9fd7a5c0e107ba4d15bd3a9c0ee8033b359f136"
+    },
+    {
+      "bytes": 104446,
+      "path": "runs/stage2-formal-02/blocks/phase_counter/repeat-1/arms/concrete_augment/campaign.json",
+      "sha256": "5abd98dfa49587038f27cf323a8fce5d8f7589082c302d26cbde95716f7e8cd2"
+    },
+    {
+      "bytes": 132214,
+      "path": "runs/stage2-formal-02/blocks/phase_counter/repeat-1/arms/native_resume/campaign.json",
+      "sha256": "5411077f17471d0ed156f104462eb36462b477c90a824f5ce3ab228b21268a77"
+    },
+    {
+      "bytes": 65880,
+      "path": "runs/stage2-formal-02/blocks/phase_counter/repeat-1/arms/symbolic_augment/campaign.json",
+      "sha256": "9af2e52c92d35713b58d14b44ed440588eb5fcc0cc945c926da52ca6684ef27e"
+    },
+    {
+      "bytes": 102518,
+      "path": "runs/stage2-formal-02/blocks/phase_counter/repeat-2/arms/concrete_augment/campaign.json",
+      "sha256": "99a4883fa5bf95981b57041848f7c19c3d25b306eca97bb8c191b2e6dcb294af"
+    },
+    {
+      "bytes": 130129,
+      "path": "runs/stage2-formal-02/blocks/phase_counter/repeat-2/arms/native_resume/campaign.json",
+      "sha256": "2209d9bb17c60018a4e28a70fa4ff1f2f5d00a6335e6ffd575a3efa1fe63cf87"
+    },
+    {
+      "bytes": 65565,
+      "path": "runs/stage2-formal-02/blocks/phase_counter/repeat-2/arms/symbolic_augment/campaign.json",
+      "sha256": "f8e40b0f1b22ba9e4c4a6090eeb8e873d0cd7fe2b9b81b2c380bd35c0e2bad44"
+    },
+    {
+      "bytes": 111810,
+      "path": "runs/stage2-formal-02/blocks/phase_counter/repeat-3/arms/concrete_augment/campaign.json",
+      "sha256": "e2148f5ed876ce319a458014b2f25f2d6d5bdaaafd0f9e8fe377dc6d6c628e2b"
+    },
+    {
+      "bytes": 132375,
+      "path": "runs/stage2-formal-02/blocks/phase_counter/repeat-3/arms/native_resume/campaign.json",
+      "sha256": "8606ecf5bc9dc71a80a20edb8effeb69f7c10177f4aab8c8833cf4cd19d64e37"
+    },
+    {
+      "bytes": 68124,
+      "path": "runs/stage2-formal-02/blocks/phase_counter/repeat-3/arms/symbolic_augment/campaign.json",
+      "sha256": "b25f0f6952114b0def801d821c81430257b9447f3edfcbc326efc64736a2ae5a"
+    },
+    {
+      "bytes": 111331,
+      "path": "runs/stage2-formal-02/blocks/phase_counter/repeat-4/arms/concrete_augment/campaign.json",
+      "sha256": "be95664109422d3d747ad377506379aade9e49bb0d5210625fabdaab82a3816b"
+    },
+    {
+      "bytes": 133968,
+      "path": "runs/stage2-formal-02/blocks/phase_counter/repeat-4/arms/native_resume/campaign.json",
+      "sha256": "4793e28d3cc32a6565e328861445f08c928f1fcf589b4494d738c07f272a0a81"
+    },
+    {
+      "bytes": 65721,
+      "path": "runs/stage2-formal-02/blocks/phase_counter/repeat-4/arms/symbolic_augment/campaign.json",
+      "sha256": "1e2a368bc9c0f711cda51ace7aab35cdc13a180334888ee8ce1c3f89f24b24c0"
+    },
+    {
+      "bytes": 104283,
+      "path": "runs/stage2-formal-02/blocks/phase_counter/repeat-5/arms/concrete_augment/campaign.json",
+      "sha256": "87aef865acf4c6c0f674befc96a3e8765d81352caa639e2617854e901dafc572"
+    },
+    {
+      "bytes": 124049,
+      "path": "runs/stage2-formal-02/blocks/phase_counter/repeat-5/arms/native_resume/campaign.json",
+      "sha256": "c4515c28ced623df1c540bb4c91048e284b27868097ab6c197cdaac264eb2044"
+    },
+    {
+      "bytes": 63807,
+      "path": "runs/stage2-formal-02/blocks/phase_counter/repeat-5/arms/symbolic_augment/campaign.json",
+      "sha256": "5d35d44e78be7f9656fcb08512fb4ca7453915bec7c916d10a5fb57d98af2379"
+    },
+    {
+      "bytes": 92993,
+      "path": "runs/stage2-formal-02/blocks/range_gate/repeat-1/arms/concrete_augment/campaign.json",
+      "sha256": "8afe580fa8cc43a4eed157172139c0afe6b3fcf61b9eff1d1086f0f4ddcd99ad"
+    },
+    {
+      "bytes": 111715,
+      "path": "runs/stage2-formal-02/blocks/range_gate/repeat-1/arms/native_resume/campaign.json",
+      "sha256": "3a4da302d124c1a9771ba0de67c43139e6a3dec636649193262a6bd2809dbd3e"
+    },
+    {
+      "bytes": 74277,
+      "path": "runs/stage2-formal-02/blocks/range_gate/repeat-1/arms/symbolic_augment/campaign.json",
+      "sha256": "a6e9d96e6c3a11859eaabe4d685370fd38f123466594146bfc2ef882e4d5436e"
+    },
+    {
+      "bytes": 92040,
+      "path": "runs/stage2-formal-02/blocks/range_gate/repeat-2/arms/concrete_augment/campaign.json",
+      "sha256": "3d05ac6f1c0229ece0cb67c78b1e5033505cfda4ca81eb69244c5cc644adf517"
+    },
+    {
+      "bytes": 114276,
+      "path": "runs/stage2-formal-02/blocks/range_gate/repeat-2/arms/native_resume/campaign.json",
+      "sha256": "0c79ee74ea8217d6ba1771a9e762d4553c8eb07e9174ee0882c44d569868cd94"
+    },
+    {
+      "bytes": 60042,
+      "path": "runs/stage2-formal-02/blocks/range_gate/repeat-2/arms/symbolic_augment/campaign.json",
+      "sha256": "b718428beec3bc83b940874472342e5cfc30b180d8d57e4ae8ca31526b667873"
+    },
+    {
+      "bytes": 85635,
+      "path": "runs/stage2-formal-02/blocks/range_gate/repeat-3/arms/concrete_augment/campaign.json",
+      "sha256": "b5d6e0cd75270a320eb28e5860b121c4da41a1415d166d8de12b43e0a82aa40e"
+    },
+    {
+      "bytes": 110750,
+      "path": "runs/stage2-formal-02/blocks/range_gate/repeat-3/arms/native_resume/campaign.json",
+      "sha256": "03045d375cebc1571c1a8a4bd2eec881c01a6e302c5c417d6cbc83f14fff4a3e"
+    },
+    {
+      "bytes": 56209,
+      "path": "runs/stage2-formal-02/blocks/range_gate/repeat-3/arms/symbolic_augment/campaign.json",
+      "sha256": "34ad0195c8ca669c5f885ea1fe67e1692504607d94e7904f6be4f28864d0d092"
+    },
+    {
+      "bytes": 94447,
+      "path": "runs/stage2-formal-02/blocks/range_gate/repeat-4/arms/concrete_augment/campaign.json",
+      "sha256": "cccfe21789b5274a379ac5cdc1fa1f3b94f1eb8fff1ab7e7a984f5b2e9ad8c2e"
+    },
+    {
+      "bytes": 101479,
+      "path": "runs/stage2-formal-02/blocks/range_gate/repeat-4/arms/native_resume/campaign.json",
+      "sha256": "bdd4a26d92edf1924492ea9161bd056308bd6722548c9ff66f8733c5ccab5681"
+    },
+    {
+      "bytes": 75409,
+      "path": "runs/stage2-formal-02/blocks/range_gate/repeat-4/arms/symbolic_augment/campaign.json",
+      "sha256": "586043a52ef3309b2aa4773dfbc1490793ddab4e778d5d7337960449d7ba4a89"
+    },
+    {
+      "bytes": 83239,
+      "path": "runs/stage2-formal-02/blocks/range_gate/repeat-5/arms/concrete_augment/campaign.json",
+      "sha256": "abe8018203f32c56e9a5ff1bf03f52e8c0cff2c14c20f0bf967a4cbdcb953595"
+    },
+    {
+      "bytes": 102920,
+      "path": "runs/stage2-formal-02/blocks/range_gate/repeat-5/arms/native_resume/campaign.json",
+      "sha256": "ff3155528d275890f8c5a93c131987de7e6dfe88fbd001d3fdeb38fdfebb1527"
+    },
+    {
+      "bytes": 55893,
+      "path": "runs/stage2-formal-02/blocks/range_gate/repeat-5/arms/symbolic_augment/campaign.json",
+      "sha256": "f3a72b662cfc7d4968849bd3f02b19adbbf11124656da5ff194963e40ca5f7db"
+    },
+    {
+      "bytes": 66498,
+      "path": "runs/stage2-formal-02/blocks/workflow_gate/repeat-1/arms/concrete_augment/campaign.json",
+      "sha256": "c7e93a749ed247676c231e96f4b37e7bb3334bb26a9160d03b1d0576d57f5104"
+    },
+    {
+      "bytes": 64642,
+      "path": "runs/stage2-formal-02/blocks/workflow_gate/repeat-1/arms/native_resume/campaign.json",
+      "sha256": "edb121fa9bfa4574b2316341d0b844eb007a2972f4d173f163a8ca9583a42221"
+    },
+    {
+      "bytes": 66138,
+      "path": "runs/stage2-formal-02/blocks/workflow_gate/repeat-1/arms/symbolic_augment/campaign.json",
+      "sha256": "5648f5da652f20b561335b72051988537265ff266c885052d7e64b888e54d6b7"
+    },
+    {
+      "bytes": 41642,
+      "path": "runs/stage2-formal-02/blocks/workflow_gate/repeat-2/arms/concrete_augment/campaign.json",
+      "sha256": "64aba54c5dcfc92d6912bfbaf30ed4b1faf7076397bf1735e5ee2aa27d8ddb9c"
+    },
+    {
+      "bytes": 64683,
+      "path": "runs/stage2-formal-02/blocks/workflow_gate/repeat-2/arms/native_resume/campaign.json",
+      "sha256": "6607d69c69a8e46b03462696f40421ee9bf376dc0d512e0ec088fb79b0fceb05"
+    },
+    {
+      "bytes": 40060,
+      "path": "runs/stage2-formal-02/blocks/workflow_gate/repeat-2/arms/symbolic_augment/campaign.json",
+      "sha256": "81b6ce23dcb65eb38f279587a1ea19442d913ddc0fe6d139df97514dc9873b46"
+    },
+    {
+      "bytes": 65131,
+      "path": "runs/stage2-formal-02/blocks/workflow_gate/repeat-3/arms/concrete_augment/campaign.json",
+      "sha256": "ed044c540c292d3c752e5c9577c20749a580097e5e83e8fff6dc3e4fcc35880c"
+    },
+    {
+      "bytes": 66534,
+      "path": "runs/stage2-formal-02/blocks/workflow_gate/repeat-3/arms/native_resume/campaign.json",
+      "sha256": "ae8c00a1d678d785e14ea8d06dfef271dac51fe7f363846e9307ece9090d8daf"
+    },
+    {
+      "bytes": 68235,
+      "path": "runs/stage2-formal-02/blocks/workflow_gate/repeat-3/arms/symbolic_augment/campaign.json",
+      "sha256": "91ca4bb4dfa80d0fd159787507199ba9a47e3697d339ac43d9ca378389ccfd1e"
+    },
+    {
+      "bytes": 39168,
+      "path": "runs/stage2-formal-02/blocks/workflow_gate/repeat-4/arms/concrete_augment/campaign.json",
+      "sha256": "9f0ce67c5e2fefbec08a4df211dc759d524179fdd0f72ed97c061fb387edd105"
+    },
+    {
+      "bytes": 59775,
+      "path": "runs/stage2-formal-02/blocks/workflow_gate/repeat-4/arms/native_resume/campaign.json",
+      "sha256": "98dec162c5372ba348b468da4ba60253f72851df6888a6884066a2c187981714"
+    },
+    {
+      "bytes": 38891,
+      "path": "runs/stage2-formal-02/blocks/workflow_gate/repeat-4/arms/symbolic_augment/campaign.json",
+      "sha256": "a4b6dffcf12841ea8866b833d02d04c8141315223e6615cd673246453ba0370d"
+    },
+    {
+      "bytes": 46754,
+      "path": "runs/stage2-formal-02/blocks/workflow_gate/repeat-5/arms/concrete_augment/campaign.json",
+      "sha256": "063b69f183352fd34c8753c0b595ba7ee0bbc165843579d8415a053cfae8dd87"
+    },
+    {
+      "bytes": 59687,
+      "path": "runs/stage2-formal-02/blocks/workflow_gate/repeat-5/arms/native_resume/campaign.json",
+      "sha256": "b041dc08182886c1a65e600601f348e0ae5f5260622f7226bc3f4f20b07ec1d0"
+    },
+    {
+      "bytes": 37018,
+      "path": "runs/stage2-formal-02/blocks/workflow_gate/repeat-5/arms/symbolic_augment/campaign.json",
+      "sha256": "88575f448257545424a74defe5d5854a1deb9ba90e56f0811bbc6ba68e5a369a"
+    },
+    {
+      "bytes": 5162523,
+      "path": "runs/stage2-p1-mechanism/campaign-01.json",
+      "sha256": "6328cecf011a733ad2d45fe773f6500e1e7ed142fa83168bf16f2f63cffd1ebf"
+    }
+  ],
+  "stage3_start_commit": "abad61ad9039890eeddd3c11bdb1575faf602ad6",
+  "unrelated_stage2_duplicates": [
+    {
+      "bytes": 1634,
+      "identical_to_official": true,
+      "official_path": "evidence/stage2/INDEX.md",
+      "path": "evidence/stage2/INDEX 2.md",
+      "sha256": "bda7018012da00c0ef8e3bbe8805eef8e2886f9d7fd4b5072fa82331f02a3f6f"
+    },
+    {
+      "bytes": 1634,
+      "identical_to_official": true,
+      "official_path": "evidence/stage2/INDEX.md",
+      "path": "evidence/stage2/INDEX 3.md",
+      "sha256": "bda7018012da00c0ef8e3bbe8805eef8e2886f9d7fd4b5072fa82331f02a3f6f"
+    },
+    {
+      "bytes": 315,
+      "identical_to_official": true,
+      "official_path": "evidence/stage2/audit.json",
+      "path": "evidence/stage2/audit 2.json",
+      "sha256": "14b374970bf663cad7556c678b55ce2660d74158346b7466fa0a3f66ab84b92d"
+    },
+    {
+      "bytes": 315,
+      "identical_to_official": true,
+      "official_path": "evidence/stage2/audit.json",
+      "path": "evidence/stage2/audit 3.json",
+      "sha256": "14b374970bf663cad7556c678b55ce2660d74158346b7466fa0a3f66ab84b92d"
+    },
+    {
+      "bytes": 2000,
+      "identical_to_official": true,
+      "official_path": "evidence/stage2/benchmark-config.json",
+      "path": "evidence/stage2/benchmark-config 2.json",
+      "sha256": "d4764e88dc3621e3a32a8ccbefb9bc0894eda741ea31963f3ff5ee896fdf3cd1"
+    },
+    {
+      "bytes": 2000,
+      "identical_to_official": true,
+      "official_path": "evidence/stage2/benchmark-config.json",
+      "path": "evidence/stage2/benchmark-config 3.json",
+      "sha256": "d4764e88dc3621e3a32a8ccbefb9bc0894eda741ea31963f3ff5ee896fdf3cd1"
+    },
+    {
+      "bytes": 1364,
+      "identical_to_official": false,
+      "official_path": "evidence/stage2/checksums.sha256",
+      "path": "evidence/stage2/checksums 2.sha256",
+      "sha256": "93e02e85be29b94fa1a6c208811dde7d4d35157a5453d71d696224f8bd6685bf"
+    },
+    {
+      "bytes": 1364,
+      "identical_to_official": false,
+      "official_path": "evidence/stage2/checksums.sha256",
+      "path": "evidence/stage2/checksums 3.sha256",
+      "sha256": "b44ccc7f35b6a919cbe48ffd0072ee942ab750b45d6929c8662380543a70bd06"
+    },
+    {
+      "bytes": 15109,
+      "identical_to_official": false,
+      "official_path": "evidence/stage2/formal-symbolic-sample.json",
+      "path": "evidence/stage2/formal-symbolic-sample 2.json",
+      "sha256": "5c6a97cb305155aadec516f934320463b9e928e14b7441d9014926185699e5fb"
+    },
+    {
+      "bytes": 15124,
+      "identical_to_official": true,
+      "official_path": "evidence/stage2/formal-symbolic-sample.json",
+      "path": "evidence/stage2/formal-symbolic-sample 3.json",
+      "sha256": "89fc1168d8ecac080c2d66541a39fe62888809353a9d8c0d370a1656783da377"
+    },
+    {
+      "bytes": 3252,
+      "identical_to_official": true,
+      "official_path": "evidence/stage2/goal-hits.svg",
+      "path": "evidence/stage2/goal-hits 2.svg",
+      "sha256": "bfa275c6ef77e758b4bd40485f0d2ddddc594465e0d54faf9b2ea9a59352eb12"
+    },
+    {
+      "bytes": 3252,
+      "identical_to_official": true,
+      "official_path": "evidence/stage2/goal-hits.svg",
+      "path": "evidence/stage2/goal-hits 3.svg",
+      "sha256": "bfa275c6ef77e758b4bd40485f0d2ddddc594465e0d54faf9b2ea9a59352eb12"
+    },
+    {
+      "bytes": 7004,
+      "identical_to_official": true,
+      "official_path": "evidence/stage2/manifest.json",
+      "path": "evidence/stage2/manifest 2.json",
+      "sha256": "a855772602eb336c2ddd34851259ed8f6cf2fc0fa85967adceebf037054bd0d2"
+    },
+    {
+      "bytes": 7004,
+      "identical_to_official": true,
+      "official_path": "evidence/stage2/manifest.json",
+      "path": "evidence/stage2/manifest 3.json",
+      "sha256": "a855772602eb336c2ddd34851259ed8f6cf2fc0fa85967adceebf037054bd0d2"
+    },
+    {
+      "bytes": 7152,
+      "identical_to_official": false,
+      "official_path": "evidence/stage2/mechanism.json",
+      "path": "evidence/stage2/mechanism 2.json",
+      "sha256": "80150906a819457d548adbe2e873a80d8fefe75905e10ea253d55c74aecc3206"
+    },
+    {
+      "bytes": 7152,
+      "identical_to_official": false,
+      "official_path": "evidence/stage2/mechanism.json",
+      "path": "evidence/stage2/mechanism 3.json",
+      "sha256": "80150906a819457d548adbe2e873a80d8fefe75905e10ea253d55c74aecc3206"
+    },
+    {
+      "bytes": 2534,
+      "identical_to_official": true,
+      "official_path": "evidence/stage2/mechanism-child-sequence.json",
+      "path": "evidence/stage2/mechanism-child-sequence 2.json",
+      "sha256": "2257024e59170fbc5a11156c065069289eba90ea8f7eb02f30c3e2092153d505"
+    },
+    {
+      "bytes": 2534,
+      "identical_to_official": true,
+      "official_path": "evidence/stage2/mechanism-child-sequence.json",
+      "path": "evidence/stage2/mechanism-child-sequence 3.json",
+      "sha256": "2257024e59170fbc5a11156c065069289eba90ea8f7eb02f30c3e2092153d505"
+    },
+    {
+      "bytes": 1969,
+      "identical_to_official": true,
+      "official_path": "evidence/stage2/mechanism-parent-seed.json",
+      "path": "evidence/stage2/mechanism-parent-seed 2.json",
+      "sha256": "c53b14116b0fd7f4f377a2b6e342dec4d73e818aaa87be2d9d1b6e8cbc9b092d"
+    },
+    {
+      "bytes": 1969,
+      "identical_to_official": true,
+      "official_path": "evidence/stage2/mechanism-parent-seed.json",
+      "path": "evidence/stage2/mechanism-parent-seed 3.json",
+      "sha256": "c53b14116b0fd7f4f377a2b6e342dec4d73e818aaa87be2d9d1b6e8cbc9b092d"
+    },
+    {
+      "bytes": 436,
+      "identical_to_official": true,
+      "official_path": "evidence/stage2/new-fixture-stage1-validation.json",
+      "path": "evidence/stage2/new-fixture-stage1-validation 2.json",
+      "sha256": "7ca97e9c0d9c4b0b178ee963fa15bffe5f93fb7fb68729fa639f5183db59df08"
+    },
+    {
+      "bytes": 436,
+      "identical_to_official": true,
+      "official_path": "evidence/stage2/new-fixture-stage1-validation.json",
+      "path": "evidence/stage2/new-fixture-stage1-validation 3.json",
+      "sha256": "7ca97e9c0d9c4b0b178ee963fa15bffe5f93fb7fb68729fa639f5183db59df08"
+    },
+    {
+      "bytes": 4587,
+      "identical_to_official": true,
+      "official_path": "evidence/stage2/recording-neutrality.json",
+      "path": "evidence/stage2/recording-neutrality 2.json",
+      "sha256": "fc108722f1d3386ae6e9a8525295ff5c3d87fd91f355314c8aa6845b1b4b94a5"
+    },
+    {
+      "bytes": 4587,
+      "identical_to_official": true,
+      "official_path": "evidence/stage2/recording-neutrality.json",
+      "path": "evidence/stage2/recording-neutrality 3.json",
+      "sha256": "fc108722f1d3386ae6e9a8525295ff5c3d87fd91f355314c8aa6845b1b4b94a5"
+    },
+    {
+      "bytes": 25734,
+      "identical_to_official": false,
+      "official_path": "evidence/stage2/summary.csv",
+      "path": "evidence/stage2/summary 2.csv",
+      "sha256": "bdd1da15b00ff05ef979c1f7de322ac110daa87c75079b9c85da6c96c22a426d"
+    },
+    {
+      "bytes": 118455,
+      "identical_to_official": false,
+      "official_path": "evidence/stage2/summary.json",
+      "path": "evidence/stage2/summary 2.json",
+      "sha256": "ff9e734324c810e46f2aa47645d3717888b1cc11025c3cf9f16946e5d02d1c6e"
+    },
+    {
+      "bytes": 1969,
+      "identical_to_official": true,
+      "official_path": "evidence/stage2/summary.md",
+      "path": "evidence/stage2/summary 2.md",
+      "sha256": "2da77637aef59260171ca9a23d1a2f2c1ed45269aa9647931fc37a51148f0049"
+    },
+    {
+      "bytes": 27459,
+      "identical_to_official": true,
+      "official_path": "evidence/stage2/summary.csv",
+      "path": "evidence/stage2/summary 3.csv",
+      "sha256": "2f891019a15e8437fe52007f5cd666556b8afb76fd95fb001b0f4d8e46b12054"
+    },
+    {
+      "bytes": 123877,
+      "identical_to_official": true,
+      "official_path": "evidence/stage2/summary.json",
+      "path": "evidence/stage2/summary 3.json",
+      "sha256": "d935434533174e5c52d937a31ec4eadab50899d69eded516170bff430399938c"
+    },
+    {
+      "bytes": 1969,
+      "identical_to_official": true,
+      "official_path": "evidence/stage2/summary.md",
+      "path": "evidence/stage2/summary 3.md",
+      "sha256": "2da77637aef59260171ca9a23d1a2f2c1ed45269aa9647931fc37a51148f0049"
+    },
+    {
+      "bytes": 396,
+      "identical_to_official": true,
+      "official_path": "evidence/stage2/superseded-run.json",
+      "path": "evidence/stage2/superseded-run 2.json",
+      "sha256": "d8701040531823522cb6ac0e12fb21a68203fe6a360921ebbc4c3126c3d2ad52"
+    },
+    {
+      "bytes": 396,
+      "identical_to_official": true,
+      "official_path": "evidence/stage2/superseded-run.json",
+      "path": "evidence/stage2/superseded-run 3.json",
+      "sha256": "d8701040531823522cb6ac0e12fb21a68203fe6a360921ebbc4c3126c3d2ad52"
+    },
+    {
+      "bytes": 940,
+      "identical_to_official": true,
+      "official_path": "evidence/stage2/three-arm-smoke.json",
+      "path": "evidence/stage2/three-arm-smoke 2.json",
+      "sha256": "164b016af4bc5fa07e1af948749167808e380b8e831bb0d1803908e670ccc62e"
+    },
+    {
+      "bytes": 940,
+      "identical_to_official": true,
+      "official_path": "evidence/stage2/three-arm-smoke.json",
+      "path": "evidence/stage2/three-arm-smoke 3.json",
+      "sha256": "164b016af4bc5fa07e1af948749167808e380b8e831bb0d1803908e670ccc62e"
+    }
+  ]
+}

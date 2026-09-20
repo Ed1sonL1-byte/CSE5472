@@ -79,6 +79,19 @@ def test_common_work_is_logically_precharged_to_each_arm():
     assert summary["unattributed_wall_seconds"] == 2
 
 
+def test_ledger_can_freeze_online_charge_before_offline_work():
+    clock = FakeClock()
+    ledger = BudgetLedger(10, clock=clock)
+    with ledger.stage("online", kind="native"):
+        clock.advance(3)
+    charged_end = ledger.elapsed_seconds
+    clock.advance(4)
+    summary = ledger.summary(charged_end_seconds=charged_end)
+    assert summary["charged_wall_seconds"] == pytest.approx(3)
+    assert summary["remaining_seconds"] == pytest.approx(7)
+    assert summary["deadline_reached"] is False
+
+
 def test_result_finishing_after_deadline_is_saved_but_not_completed_on_budget():
     clock = FakeClock()
     ledger = BudgetLedger(3, cleanup_tolerance_seconds=1, clock=clock)
