@@ -1,6 +1,6 @@
 # Stage 2 Validation Record
 
-本记录与 [Stage 2 技术计划](STAGE2_TECH_PLAN.md) 同步维护。只记录已经执行并有证据的结果；未验证项目保持未完成。
+本记录保存 Stage 2 已经执行并有证据支持的验收结果；未验证项目保持未完成。
 
 ## P0：campaign 数据与预算协议
 

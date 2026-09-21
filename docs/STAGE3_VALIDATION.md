@@ -1,6 +1,6 @@
 # Stage 3 Validation Record
 
-本记录与 [Stage 3 技术计划](STAGE3_TECH_PLAN.md) 同步维护。只有已有实现和实际证据支持的项目才标记完成。Stage 3 的 320 个正式槽位、独立审计和离线档案均已通过。
+本记录保存 Stage 3 已经执行并有证据支持的验收结果。Stage 3 的 320 个正式槽位、独立审计和离线档案均已通过。
 
 ## P0：封存历史基线与补齐遗留导出
 
@@ -86,10 +86,10 @@ Stage 2 official evidence checksums = passed
 
 **状态：完成。**
 
-- [Stage 3 结果](STAGE3_RESULTS.md) 逐项回答 RQ1–RQ3，报告逐 fixture/profile 的 10 次结果、配对预算差值、调用限额比较、成本分解和负结果原因。
+- `evidence/stage3/summary.{json,md}` 与 `observations.csv` 保存 RQ1–RQ3 所需的逐 fixture/profile 结果、配对预算差值、调用限额比较、成本分解和负结果原因；README 提供英文概览。
 - WorkflowGate 的解释保留 `no_eligible_prefix`、`no_candidate`、`augmentation_timeout` 和 native continuation miss，不把所有负结果归因于求解开销，并明确披露独立随机轨迹。
-- [英文项目报告](PROJECT_REPORT.md) 覆盖问题、相关工具定位、设计、协议、真实结果、失败历史、局限和复现；不声称新漏洞、一般性优越或第三方合约适用性。
-- README 记录 Stage 1/2/3 的边界、Stage 3 CLI、证据入口和归档复核方式。技术计划的工作包、验收和产出已同步为实际完成状态，没有开发工时估算。
+- README 覆盖问题、相关工具定位、设计、协议、真实结果、失败历史、局限和复现；不声称新漏洞、一般性优越或第三方合约适用性。
+- README 记录 Stage 1/2/3 的边界、Stage 3 CLI、证据入口和归档复核方式。
 - 最终回归结果和公开仓库提交信息在本节下方的“最终核查”中记录。
 
 ## 最终核查

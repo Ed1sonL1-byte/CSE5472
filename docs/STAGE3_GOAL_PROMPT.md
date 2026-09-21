@@ -1,11 +1,11 @@
 # Stage 3 Goal Prompt
 
-下面保留本阶段实际使用的 goal prompt；完整要求和完成状态见 [Stage 3 Tech Plan](STAGE3_TECH_PLAN.md)，实际结果与验收见 [Stage 3 Results](STAGE3_RESULTS.md) 和 [Stage 3 Validation](STAGE3_VALIDATION.md)。
+下面保留本阶段实际使用的 goal prompt；完成状态和验收见 [Stage 3 Validation](STAGE3_VALIDATION.md)，结构化结果见 `evidence/stage3/`。
 
 ```text
 请在 /Users/edisonli/Desktop/CSE5472 创建并持续推进一个 goal，完成 SeedBridge Stage 3：预算敏感性与可复核评估。负责人是 Edison Li。
 
-先阅读 README.md、docs/STAGE2_VALIDATION.md、docs/STAGE2_BENCHMARKS.md 和 docs/STAGE3_TECH_PLAN.md。以 Stage 3 技术计划的范围、协议和验收清单为依据，沿用现有实现。核对当前版本与工作区，保护已有修改和未跟踪文件；不要重建项目或改写 Stage 2 原始 campaign。
+先阅读 README.md、docs/STAGE2_VALIDATION.md 和 docs/STAGE2_BENCHMARKS.md。以冻结的 Stage 3 范围、协议和验收清单为依据，沿用现有实现。核对当前版本与工作区，保护已有修改和未跟踪文件；不要重建项目或改写 Stage 2 原始 campaign。
 
 目标不是让 symbolic 跑赢，而是准确回答：
 1. 只把总预算从 8 秒增加到 32 秒，三组结果如何变化？
@@ -20,7 +20,7 @@
 - 实现能独立重算的紧凑原始事件格式，保留真实调用、上下文、状态、coverage、lineage、时点及来源。先完成旧数据重算一致性和存储预检，再扩大实验。
 - 主实验为四个现有教学 fixture × 三个 arm × 两档总预算 × 十次重复，共 240 条。补充实验固定 32 秒，仅 symbolic 的 goal invocation 比较 0.50/0.75/1.50 秒；0.75 秒复用主实验，新增 80 条。合计 320 个不同槽位、40 份公共 warmup。
 - 所有配置保持单 worker、零金额、固定 actor、一个 uint256 符号参数、短序列、一次增强批次。仅使用现有仓库自建的无害场景，不扩展目标或 mutation 算法。
-- 完成独立原始记录审计、逐次结果和图表、可在新目录离线重算的完整证据档案，以及 README、STAGE3_RESULTS、STAGE3_VALIDATION 和英文 PROJECT_REPORT 草稿。
+- 完成独立原始记录审计、逐次结果和图表、可在新目录离线重算的完整证据档案，以及 README、STAGE3_VALIDATION 和结构化 evidence bundle。
 
 正式配置在 smoke 后冻结；smoke 只检查可运行性，不按效果挑预算或场景。四个 fixture 的所有正常未命中、无前缀、超时、零收益和负收益均保留。工具或证据错误不得算有效。同版本的中断或故障按完整公共块重试；改变执行代码、计时协议或原始观察语义时，重新冻结并重跑整套矩阵。纯离线报告或打包修复统一重建派生资料即可，保留被替代记录及版本。不得混用新旧协议或用其他配置的模型作免费输入。
 

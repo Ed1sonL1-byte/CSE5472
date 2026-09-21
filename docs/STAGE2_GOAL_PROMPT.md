@@ -1,11 +1,11 @@
 # Stage 2 Goal Prompt
 
-将下面的内容作为新 goal 的 prompt。完整工作与验收约定见 [STAGE2_TECH_PLAN.md](STAGE2_TECH_PLAN.md)。
+下面保留 Stage 2 使用过的 goal prompt。最终结果和验收证据见 [STAGE2_VALIDATION.md](STAGE2_VALIDATION.md) 与 [STAGE2_BENCHMARKS.md](STAGE2_BENCHMARKS.md)。
 
 ```text
 在 /Users/edisonli/Desktop/CSE5472 中完成 SeedBridge Stage 2。负责人是 Edison Li。
 
-先阅读 README.md、docs/STAGE1_VALIDATION.md 和 docs/STAGE2_TECH_PLAN.md，核对当前工作区及版本，以现有 Stage 1 为基础实施 Stage 2 技术计划。不要重建项目，不覆盖用户已有修改。创建并持续推进一个 goal，直到计划的必需工作与验收完成；不要添加开发日程或工时估算。
+先阅读 README.md、docs/STAGE1_VALIDATION.md 和 Stage 2 的冻结要求，核对当前工作区及版本，以现有 Stage 1 为基础实施 Stage 2。不要重建项目，不覆盖用户已有修改。创建并持续推进一个 goal，直到必需工作与验收完成；不要添加开发日程或工时估算。
 
 目标：让验证过的符号种子真正参与 Medusa 后续 mutation，并在同一总运行预算内，完成四个仓库自建教学状态机上三种策略、各五次重复的公平比较。收益为零或负值可以是有效结论，不以必须跑赢基线作为验收条件。
 
@@ -19,7 +19,7 @@
 7. 先跑机制与三组 smoke 检查，再冻结实验配置并完成 4×5×3=60 个 evaluation_valid=true 的正式结果。合法未命中和求解超时可以有效；保存无合格前缀及重试历史，工具错误和完整性错误单独处理。修复后重跑受影响的完整比较块；截止后事件保存但不进入主指标。A 准确标记为共同语料重启的默认策略对照，不能冒称不中断的 unmodified Medusa。明确未控制随机源，不能承诺整个 fuzzing 轨迹确定。
 8. 交付可用 CLI、适配器及补丁来源、四个 fixture、配置、测试、原始实验记录、CSV/JSON/Markdown 汇总与图表、可离线重建的报告、README、docs/STAGE2_BENCHMARKS.md、docs/STAGE2_VALIDATION.md 和 evidence/stage2/ 小型证据包。
 
-验收以 docs/STAGE2_TECH_PLAN.md 的清单为准。运行必要的 Python、Go 和原生集成检查，验证关键计时、去重、coverage 差集、父子证据及报告重建；记录实际结果，不预设测试数量。测试通过之后不要无理由反复跑同一检查。
+验收以冻结要求和实际验收记录为准。运行必要的 Python、Go 和原生集成检查，验证关键计时、去重、coverage 差集、父子证据及报告重建；记录实际结果，不预设测试数量。测试通过之后不要无理由反复跑同一检查。
 
 每完成一个工作包就更新实现状态与证据位置，并继续下一项。真实接口阻塞必须明确报告，未取得证据的能力标为 unverified，不虚构结果或用替代指标冒充完成。不扩展到第三方目标、真实资产、多步符号执行或复杂调度。
 
