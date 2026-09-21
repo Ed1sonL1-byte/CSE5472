@@ -29,4 +29,4 @@ FOUNDRY_SOLC=/absolute/path/to/solc-0.8.36 halmos \
   --json-output halmos-smoke.json
 ```
 
-Passing a fixture test establishes only the behavior encoded in that local contract. Cross-engine replay, native corpus handling, lineage, and benchmark evidence are validated separately in `docs/STAGE1_VALIDATION.md` and `docs/STAGE2_VALIDATION.md`.
+Passing a fixture test establishes only the behavior encoded in that local contract. Cross-engine replay, native corpus handling, lineage, and benchmark evidence are recorded separately in `evidence/stage2/` and `evidence/stage3/`.
