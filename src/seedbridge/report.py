@@ -5,10 +5,15 @@ from .io import read_json, write_json
 
 def save_report(directory: Path, report: dict) -> Path:
     write_json(directory / "report.json", report)
-    lines = ["# Stage 1 run report", "", f"Fixture: `{report['fixture_id']}`",
-             f"Status: **{report['status']}**", "",
-             "This is a reachability integration result for a local teaching fixture.",
-             "It is not a vulnerability finding or a performance comparison.", ""]
+    safety = report.get("fixture_id") in {"accounting_flawed", "accounting_repaired"}
+    lines = ["# Stage 4 safety acceptance" if safety else "# Stage 1 run report", "",
+             f"Fixture: `{report['fixture_id']}`", f"Status: **{report['status']}**", ""]
+    if safety:
+        lines.extend(["The property is independently calculated as `allocated == spent + remaining`.",
+                      "This is a known local teaching defect, not a real-world vulnerability finding.", ""])
+    else:
+        lines.extend(["This is a reachability integration result for a local teaching fixture.",
+                      "It is not a vulnerability finding or a performance comparison.", ""])
     if report.get("error"):
         lines.extend([f"Failure: {report['error']}", ""])
     lines.extend(["| Check | Result |", "| --- | --- |",

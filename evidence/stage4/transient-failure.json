@@ -1,0 +1,20 @@
+{
+  "adapter_log": {
+    "bytes": 1342,
+    "path": "runs/stage4-formal-v2/failed-block-attempts/accounting_repaired/repeat-08/attempt-e86ca3bf88fc/profiles/safety-symbolic/native/adapter.log",
+    "sha256": "e76b134f4bd08b3a1e85778baca9efda2f46512e53ab352ee1c39752282ab983"
+  },
+  "cause": "Medusa v1.5.1 coverage-metrics goroutine crashed while iterating a concurrent map",
+  "classification": "tool_error",
+  "completed_slot_count_excludes_failed_attempt": true,
+  "failed_arm": "symbolic_augment",
+  "failed_block": "accounting_repaired/repeat-08",
+  "failed_campaign": {
+    "bytes": 6319,
+    "path": "runs/stage4-formal-v2/failed-block-attempts/accounting_repaired/repeat-08/attempt-e86ca3bf88fc/profiles/safety-symbolic/campaign.json",
+    "sha256": "1e6e7abcdaa461e43150b9680936e803710670ddeed89150f9fc88362b665e31"
+  },
+  "recovery": "the complete paired block was rerun with unchanged frozen inputs; the failed attempt remains in the raw archive",
+  "schema_version": 1,
+  "status": "preserved_evaluation_invalid"
+}

@@ -17,6 +17,7 @@ from .process import EvidenceMismatchError, ToolExecutionError
 from .replay import concrete_replay, match_native_execution
 from .report import save_report
 from .trace import select_prefixes
+from .safety import checked_state
 
 
 def _finish_stage(report: dict, name: str, started: float) -> float:
@@ -199,7 +200,9 @@ def _execute(config: RunConfig, directory: Path, report: dict) -> None:
                 concrete = generate_harness(fixture, prefix, case_dir / "concrete", int(argument))
                 replay = concrete_replay(Path(concrete["project_path"]), case_dir / "concrete-check", timeout)
                 attempt["replay"] = replay
-                if replay["status"] != "reachable_confirmed":
+                expected_replay = ("violation_confirmed" if scenario.mode == "safety"
+                                   else "reachable_confirmed")
+                if replay["status"] != expected_replay:
                     continue
                 concrete_build = build_manifest(Path(concrete["project_path"]), scenario.contract,
                                                 case_dir / "concrete-build", timeout)
@@ -250,13 +253,78 @@ def _execute(config: RunConfig, directory: Path, report: dict) -> None:
                                         "goal_after_suffix": accepted["steps"][-1]["observe"][-1],
                                         "evidence": accepted["admission_evidence"],
                                         "final_state": accepted["steps"][-1]["observe"]}
+                if scenario.mode == "safety":
+                    before = checked_state(fixture, prefix["steps"][-1]["observe"])
+                    violations = []
+                    for position, step in enumerate(accepted["steps"]):
+                        state = checked_state(fixture, step["observe"])
+                        if step.get("property_holds") is not state["property_holds"]:
+                            raise EvidenceMismatchError(
+                                "native property read differs from computed state", status="state_mismatch")
+                        if state["violation"]:
+                            violations.append({"call_index": position, "before": (
+                                checked_state(fixture, accepted["steps"][position-1]["observe"])
+                                if position else {"allocated": 0, "spent": 0, "remaining": 0,
+                                                  "property_holds": True, "violation": False}),
+                                "after": state})
+                    if not violations or violations[-1]["call_index"] != len(accepted["steps"]) - 1:
+                        raise EvidenceMismatchError(
+                            "native replay did not first violate the property at the suffix",
+                            status="state_mismatch")
+                    attempt["property_evidence"] = {
+                        "property_id": scenario.property_id,
+                        "first_violation": violations[0],
+                        "before_suffix": before,
+                        "after_suffix": violations[-1]["after"],
+                        "native_observation": restarted["output_path"],
+                        "foundry_replay": replay["command_result"]["log_path"],
+                    }
+                    repaired_fixture = "accounting_repaired"
+                    repaired_case = case_dir / "repaired-check"
+                    repaired_harness = generate_harness(
+                        repaired_fixture, prefix, repaired_case / "foundry", int(argument),
+                        expect_violation=False)
+                    repaired_replay = concrete_replay(
+                        Path(repaired_harness["project_path"]), repaired_case / "forge", timeout)
+                    attempt["repaired_replay"] = repaired_replay
+                    if repaired_replay["status"] != "property_preserved":
+                        raise EvidenceMismatchError(
+                            "same sequence was not safe on the repaired fixture",
+                            status="replay_mismatch")
+                    repaired_corpus = repaired_case / "native/corpus"
+                    repaired_native = repaired_corpus / "call_sequences/candidate.json"
+                    codec(repaired_fixture, "encode-candidate", Path(prefix["native_path"]),
+                          repaired_native, timeout, argument)
+                    repaired_observed = observe(
+                        repaired_fixture, repaired_case / "native", seed=config.seed, tests=1,
+                        timeout=timeout, corpus=repaired_corpus)
+                    repaired_expected = [dict(step) for step in expected]
+                    repaired_sequence = match_native_execution(
+                        repaired_observed, repaired_expected, prefix["steps"],
+                        require_goal=False)
+                    if repaired_sequence is None:
+                        raise EvidenceMismatchError(
+                            "repaired native execution differs from expected sequence",
+                            status="replay_mismatch")
+                    repaired_state = checked_state(
+                        repaired_fixture, repaired_sequence["steps"][-1]["observe"])
+                    if not repaired_state["property_holds"]:
+                        raise EvidenceMismatchError(
+                            "repaired native state violates the property", status="state_mismatch")
+                    attempt["repaired_evidence"] = {
+                        "native_path": str(repaired_native),
+                        "native_observation": repaired_observed["output_path"],
+                        "after_suffix": repaired_state,
+                        "same_argument": argument,
+                    }
         finally:
             attempt["stage_elapsed_seconds"]["s5_replay_reinsert"] = (
                 report["stage_elapsed_seconds"]["s5_replay_reinsert"] - stage_before)
         if attempt.get("admission", {}).get("status") != "admitted_for_mutation":
             continue
         report["confirmed_count"] += 1
-        report["status"] = "stage1_confirmed"
+        report["status"] = ("safety_confirmed" if scenario.mode == "safety"
+                            else "stage1_confirmed")
         return
     report["status"] = summarize_unsuccessful(report["attempts"])
 

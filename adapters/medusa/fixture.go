@@ -22,6 +22,7 @@ type fixture struct {
 	ID           string
 	Contract     string
 	Suffix       string
+	Safety       bool
 	Root         string
 	Project      string
 	ArtifactPath string
@@ -43,8 +44,12 @@ func repositoryRoot() (string, error) {
 	}
 	for _, start := range starts {
 		for dir := start; ; dir = filepath.Dir(dir) {
-			if _, err := os.Stat(filepath.Join(dir, "output", "pdf", "symbolic-seed-proposal.md")); err == nil {
-				return filepath.EvalSymlinks(dir)
+			// The proposal and legacy docs were removed. Anchor discovery to
+			// files required by this adapter instead of an unrelated document.
+			if _, err := os.Stat(filepath.Join(dir, "pyproject.toml")); err == nil {
+				if _, err := os.Stat(filepath.Join(dir, "fixtures", "phase_counter", "src", "PhaseCounter.sol")); err == nil {
+					return filepath.EvalSymlinks(dir)
+				}
 			}
 			if filepath.Dir(dir) == dir {
 				break
@@ -73,8 +78,14 @@ func loadFixtureProject(id string, project string) (*fixture, error) {
 	case "workflow_gate":
 		f.Contract, f.Suffix = "WorkflowGate", "unlock"
 		f.Allowed["start()"], f.Allowed["choose(uint256)"], f.Allowed["unlock(uint256)"], f.Allowed["continueWork(uint256)"] = true, true, true, true
+	case "accounting_flawed":
+		f.Contract, f.Suffix, f.Safety = "AccountingFlawed", "spend", true
+		f.Allowed["open()"], f.Allowed["spend(uint256)"] = true, true
+	case "accounting_repaired":
+		f.Contract, f.Suffix, f.Safety = "AccountingRepaired", "spend", true
+		f.Allowed["open()"], f.Allowed["spend(uint256)"] = true, true
 	default:
-		return nil, fmt.Errorf("unsupported fixture %q; choose phase_counter, bounded_ledger, range_gate, or workflow_gate", id)
+		return nil, fmt.Errorf("unsupported fixture %q", id)
 	}
 	root, err := repositoryRoot()
 	if err != nil {

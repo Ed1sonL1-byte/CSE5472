@@ -38,7 +38,8 @@ def _source_paths() -> list[Path]:
     for pattern in (
         "src/seedbridge/*.py", "adapters/medusa/*.go", "adapters/medusa/go.mod",
         "adapters/medusa/go.sum", "adapters/medusa/patches/*.patch", "fixtures/*/src/*.sol",
-        "fixtures/*/foundry.toml", "configs/stage3-*.json", "pyproject.toml", "uv.lock",
+        "fixtures/*/foundry.toml", "configs/stage3-*.json", "configs/stage4-*.json",
+        "pyproject.toml", "uv.lock",
         ".python-version",
     ):
         paths.update(path for path in ROOT.glob(pattern) if path.is_file())
@@ -204,6 +205,7 @@ def _slot_spec(spec: StudySpec, slot: StudySlot, profile: StudyProfile) -> dict:
         "worker_count": 1,
         "call_value": "0",
         "augmentation_rounds": 1,
+        "native_evidence_reserve_seconds": spec.native_evidence_reserve_seconds,
     }
 
 
@@ -274,6 +276,8 @@ def run_study_slot(spec: StudySpec, slot: StudySlot, common: dict,
     record = {
         "schema_version": 1,
         "spec": _slot_spec(spec, slot, profile),
+        "target_kind": ("safety_property" if get_scenario(slot.fixture_id).mode == "safety"
+                        else "reachability"),
         "execution_status": "pending",
         "augmentation_status": "not_applicable" if slot.arm == "native_resume" else "pending",
         "lineage_status": "pending",
@@ -379,6 +383,8 @@ def run_study_slot(spec: StudySpec, slot: StudySlot, common: dict,
         with ledger.stage("native_startup_and_continuation", kind="native") as native_stage:
             remaining = ledger.remaining_seconds
             setup_margin = profile.startup_reserve_seconds + profile.cleanup_tolerance_seconds + 0.25
+            if spec.native_evidence_reserve_seconds is not None:
+                setup_margin = max(setup_margin, spec.native_evidence_reserve_seconds)
             fuzz_timeout = remaining - setup_margin
             if fuzz_timeout <= 0:
                 raise CampaignDeadlineError("no budget remains for native continuation")
@@ -416,6 +422,14 @@ def run_study_slot(spec: StudySpec, slot: StudySlot, common: dict,
         metrics = segmented_metrics(slot.fixture_id, common["warmup"], metric_native)
         save_segmented_metrics(directory, metrics)
         record["goal_reached"] = any(metrics["goal_reached"].values())
+        if record["target_kind"] == "safety_property":
+            record["property_id"] = get_scenario(slot.fixture_id).property_id
+            record["property_violation_confirmed"] = record["goal_reached"]
+            record["property_violation_by_stage"] = {
+                "warmup": metrics["goal_reached"]["warmup"],
+                "native_import": metrics["goal_reached"]["import"],
+                "native_continuation": metrics["goal_reached"]["continuation"],
+            }
         record["execution_status"] = "completed"
         record["evidence_status"] = "verified"
         record["outcomes"] = {

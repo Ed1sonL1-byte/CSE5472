@@ -55,6 +55,7 @@ type stepRecord struct {
 	Observe                    []any             `json:"observe"`
 	Goal                       *bool             `json:"goal"`
 	InvariantHolds             *bool             `json:"invariant_holds"`
+	PropertyHolds              *bool             `json:"property_holds,omitempty"`
 	StateDigest                string            `json:"state_digest_sha256,omitempty"`
 	StateRootBeforeObserver    string            `json:"state_root_before_observer"`
 	StateRootAfterObserver     string            `json:"state_root_after_observer"`
@@ -798,6 +799,31 @@ func observeStep(fx *fixture, testChain *chain.TestChain, element *calls.CallSeq
 			return step, fmt.Errorf("invariantHolds must return bool")
 		}
 		step.InvariantHolds = &holds
+		if fx.Safety {
+			property, _, err := readView(testChain, fx, "propertyHolds")
+			if err != nil {
+				return step, err
+			}
+			if len(property) != 1 {
+				return step, fmt.Errorf("propertyHolds must return one bool")
+			}
+			propertyHolds, ok := property[0].(bool)
+			if !ok {
+				return step, fmt.Errorf("propertyHolds must return bool")
+			}
+			allocated, okA := new(big.Int).SetString(fmt.Sprint(observation[0]), 10)
+			spent, okS := new(big.Int).SetString(fmt.Sprint(observation[1]), 10)
+			remaining, okR := new(big.Int).SetString(fmt.Sprint(observation[2]), 10)
+			if !okA || !okS || !okR || allocated.Sign() < 0 || spent.Sign() < 0 || remaining.Sign() < 0 ||
+				allocated.Cmp(big.NewInt(100)) > 0 || spent.Cmp(big.NewInt(100)) > 0 || remaining.Cmp(big.NewInt(100)) > 0 {
+				return step, fmt.Errorf("accounting state exceeds declared bounds")
+			}
+			computedHolds := allocated.Cmp(new(big.Int).Add(spent, remaining)) == 0
+			if propertyHolds != computedHolds || goal == computedHolds {
+				return step, fmt.Errorf("accounting observer disagrees with independently computed property")
+			}
+			step.PropertyHolds = &propertyHolds
+		}
 	}
 	step.StateRootAfterObserver = testChain.State().IntermediateRoot(false).Hex()
 	step.ObserverStateUnchanged = step.StateRootBeforeObserver == step.StateRootAfterObserver

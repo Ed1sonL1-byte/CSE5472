@@ -1,0 +1,9 @@
+{
+  "archive_name": "stage4-formal-v2.tar.gz",
+  "archived_file_count": 31850,
+  "archived_source_bytes": 1731781109,
+  "availability": "complete raw archive saved locally under artifacts/; binary ignored by Git",
+  "bytes": 647530218,
+  "schema_version": 1,
+  "sha256": "f908c1d03f4b60f85a4525a7c7c4a6f354d1b39edd41fdd299142bdb13727377"
+}

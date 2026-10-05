@@ -1,0 +1,196 @@
+{
+  "flawed_replay": {
+    "admission_evidence": {
+      "cancellation_before_event": false,
+      "event": "FuzzerWorker.CallSequenceTested",
+      "full_sequence_executed": true,
+      "kind": "medusa_v1.5.1_post_sequence_event",
+      "limitation": "source-bound control-flow evidence; no private chooser introspection",
+      "native_input_hash_matched": true,
+      "shrink_requests": 0,
+      "source": "https://github.com/crytic/medusa/blob/v1.5.1/fuzzing/fuzzer_worker.go"
+    },
+    "after_suffix": {
+      "allocated": 100,
+      "property_holds": false,
+      "remaining": 0,
+      "spent": 0,
+      "violation": true
+    },
+    "before_suffix": {
+      "allocated": 100,
+      "property_holds": true,
+      "remaining": 100,
+      "spent": 0,
+      "violation": false
+    },
+    "first_violation_call_index": 1,
+    "fresh_foundry_record": {
+      "bytes": 334,
+      "path": "runs/stage4-demo-fresh-01/attempt-0/concrete-check/forge-replay.json",
+      "sha256": "819c18b2ef7d06a85e550b338561d498fa65855c8e4cae58f1a319cdaf92e4df"
+    },
+    "fresh_foundry_status": "violation_confirmed",
+    "full_sequence": [
+      {
+        "block_number": 2,
+        "block_timestamp": 2,
+        "calldata": "0xfcfff16f",
+        "from": "0x0000000000000000000000000000000000010000",
+        "invariant_holds": true,
+        "observe": [
+          "100",
+          "0",
+          "100",
+          false
+        ],
+        "property_holds": true,
+        "status": "success",
+        "to": "0xA647ff3c36cFab592509E13860ab8c4F28781a66",
+        "value": "0"
+      },
+      {
+        "block_number": 2,
+        "block_timestamp": 2,
+        "calldata": "0x1dbf3bc70000000000000000000000000000000000000000000000000000000000000064",
+        "from": "0x0000000000000000000000000000000000010000",
+        "invariant_holds": true,
+        "observe": [
+          "100",
+          "0",
+          "0",
+          true
+        ],
+        "property_holds": false,
+        "status": "success",
+        "to": "0xA647ff3c36cFab592509E13860ab8c4F28781a66",
+        "value": "0"
+      }
+    ],
+    "medusa_hash": "0x761b83bf280802d1dc24c9a7091b6be57b2c27a9b391c18415c233f9412aec8c",
+    "native_record": {
+      "bytes": 34604,
+      "path": "runs/stage4-demo-fresh-01/attempt-0/reinsert/observation.json",
+      "sha256": "5991de2730dceee33902d1c3257c5cd9b165f057ef505b7baa96ef80ddb47d84"
+    },
+    "native_sequence_file": {
+      "bytes": 1228,
+      "path": "runs/stage4-demo-fresh-01/attempt-0/reinsert/corpus/call_sequences/candidate.json",
+      "sha256": "f0109288e6172c606c021fff84747d43bd8ad437854afb32ca1fd2f22970592b"
+    }
+  },
+  "halmos": {
+    "argument": "100",
+    "model": {
+      "bytes": 1208,
+      "path": "runs/stage4-demo-fresh-01/attempt-0/solve/halmos-jt8_fkgo/result.json",
+      "sha256": "40eed670e8aa9a3c857254db674d193a0fb5ed2b6615b599b8876c60ad267e75"
+    },
+    "prefix_status": "prefix_confirmed",
+    "solve_status": "candidate"
+  },
+  "observer_neutrality": "passed",
+  "property": "allocated == spent + remaining",
+  "repaired_replay": {
+    "after_suffix": {
+      "allocated": 100,
+      "property_holds": true,
+      "remaining": 0,
+      "spent": 100,
+      "violation": false
+    },
+    "fresh_foundry_record": {
+      "bytes": 334,
+      "path": "runs/stage4-demo-fresh-01/attempt-0/repaired-check/forge/forge-replay.json",
+      "sha256": "1461af30598b41a41e07536854226a1dcb5b49811590fa221b3339a0d0e69b68"
+    },
+    "fresh_foundry_status": "property_preserved",
+    "full_sequence": [
+      {
+        "block_number": 2,
+        "block_timestamp": 2,
+        "calldata": "0xfcfff16f",
+        "from": "0x0000000000000000000000000000000000010000",
+        "invariant_holds": true,
+        "observe": [
+          "100",
+          "0",
+          "100",
+          false
+        ],
+        "property_holds": true,
+        "status": "success",
+        "to": "0xA647ff3c36cFab592509E13860ab8c4F28781a66",
+        "value": "0"
+      },
+      {
+        "block_number": 2,
+        "block_timestamp": 2,
+        "calldata": "0x1dbf3bc70000000000000000000000000000000000000000000000000000000000000064",
+        "from": "0x0000000000000000000000000000000000010000",
+        "invariant_holds": true,
+        "observe": [
+          "100",
+          "100",
+          "0",
+          false
+        ],
+        "property_holds": true,
+        "status": "success",
+        "to": "0xA647ff3c36cFab592509E13860ab8c4F28781a66",
+        "value": "0"
+      }
+    ],
+    "native_record": {
+      "bytes": 41743,
+      "path": "runs/stage4-demo-fresh-01/attempt-0/repaired-check/native/observation.json",
+      "sha256": "1aee050838fdcb6ac15805239dff332605721fb59cdd0e3952f774c7e81271ee"
+    },
+    "native_sequence_file": {
+      "bytes": 1228,
+      "path": "runs/stage4-demo-fresh-01/attempt-0/repaired-check/native/corpus/call_sequences/candidate.json",
+      "sha256": "f0109288e6172c606c021fff84747d43bd8ad437854afb32ca1fd2f22970592b"
+    }
+  },
+  "report_file": {
+    "bytes": 134512,
+    "path": "runs/stage4-demo-fresh-01/report.json",
+    "sha256": "6cecbab9340753d8b2134cdab68f51ebc0d80e56bf3aa143aea1cb1c010dc068"
+  },
+  "roundtrip": "passed",
+  "schema_version": 1,
+  "scope": "one known inert local accounting defect and its repaired variant",
+  "selected_prefix": {
+    "case_id": "3f90a11dbe691b8418a3c119630b858038c499aacf7a3cf819f3043f271a263f",
+    "native_file": {
+      "bytes": 567,
+      "path": "runs/stage4-demo-fresh-01/warmup/observation.native/sequence-00003-prefix-1.json",
+      "sha256": "ef203aa3c47912a8937364dbb6fbcf14550e0da3e4558805a019097881ffe507"
+    },
+    "steps": [
+      {
+        "actual_block": "2",
+        "actual_timestamp": "2",
+        "calldata": "0xfcfff16f",
+        "from": "0x0000000000000000000000000000000000010000",
+        "invariant_holds": true,
+        "observe": [
+          "100",
+          "0",
+          "100",
+          false
+        ],
+        "property_holds": true,
+        "status": "success",
+        "to": "0xA647ff3c36cFab592509E13860ab8c4F28781a66",
+        "value": "0"
+      }
+    ],
+    "warmup_record": {
+      "bytes": 6712642,
+      "path": "runs/stage4-demo-fresh-01/warmup/observation.json",
+      "sha256": "8d77eb7b9cd85ded1614d08be6ebe520e6ef0a1eaaca564969a60c365cb98c8d"
+    }
+  },
+  "status": "safety_confirmed"
+}

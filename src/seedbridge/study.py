@@ -7,7 +7,9 @@ from pathlib import Path
 import re
 
 from .campaign import ARMS
-from .config import SCENARIOS, get_scenario
+from .config import REACHABILITY_SCENARIOS, get_scenario
+
+SAFETY_SCENARIOS = ("accounting_flawed", "accounting_repaired")
 from .io import read_json, write_json
 
 
@@ -131,6 +133,7 @@ class StudySpec:
     common_limit_seconds: float
     storage_min_free_bytes: int
     storage_max_study_bytes: int
+    native_evidence_reserve_seconds: float | None = None
     schema_version: int = 1
 
     @classmethod
@@ -154,6 +157,9 @@ class StudySpec:
             common_limit_seconds=float(document["common_limit_seconds"]),
             storage_min_free_bytes=int(document["storage_min_free_bytes"]),
             storage_max_study_bytes=int(document["storage_max_study_bytes"]),
+            native_evidence_reserve_seconds=(
+                None if document.get("native_evidence_reserve_seconds") is None
+                else float(document["native_evidence_reserve_seconds"])),
         )
         spec.validate()
         return spec
@@ -161,11 +167,13 @@ class StudySpec:
     def validate(self) -> None:
         if not PROFILE_ID.fullmatch(self.study_id):
             raise ValueError("study_id must be a lowercase stable identifier")
-        if self.mode not in {"formal", "smoke"}:
-            raise ValueError("study mode must be formal or smoke")
+        if self.mode not in {"formal", "smoke", "safety_formal"}:
+            raise ValueError("study mode must be formal, smoke, or safety_formal")
         if not self.fixtures or len(set(self.fixtures)) != len(self.fixtures):
             raise ValueError("study fixtures must be unique and nonempty")
-        if any(fixture not in SCENARIOS for fixture in self.fixtures):
+        allowed_fixtures = (SAFETY_SCENARIOS if self.mode == "safety_formal"
+                            else REACHABILITY_SCENARIOS)
+        if any(fixture not in allowed_fixtures for fixture in self.fixtures):
             raise ValueError("study contains an unknown fixture")
         if not self.repeats or len(set(self.repeats)) != len(self.repeats):
             raise ValueError("study repeats must be unique and nonempty")
@@ -183,6 +191,9 @@ class StudySpec:
             raise ValueError("common-work limit must be positive")
         if self.storage_min_free_bytes <= 0 or self.storage_max_study_bytes <= 0:
             raise ValueError("storage safeguards must be positive")
+        if (self.native_evidence_reserve_seconds is not None
+                and self.native_evidence_reserve_seconds <= 0):
+            raise ValueError("native evidence reserve must be positive")
         if not self.boundary_values or len(set(self.boundary_values)) != len(self.boundary_values):
             raise ValueError("boundary dictionary must be nonempty and unique")
 
@@ -209,13 +220,15 @@ class StudySpec:
 
         if self.mode == "formal":
             self._validate_formal_protocol()
+        elif self.mode == "safety_formal":
+            self._validate_safety_protocol()
 
         slots = self.slots()
         if len({slot.slot_id for slot in slots}) != len(slots):
             raise ValueError("study slot ids are not unique")
 
     def _validate_formal_protocol(self) -> None:
-        if set(self.fixtures) != set(SCENARIOS) or len(self.fixtures) != 4:
+        if set(self.fixtures) != set(REACHABILITY_SCENARIOS) or len(self.fixtures) != 4:
             raise ValueError("formal study requires exactly the four built-in fixtures")
         if self.repeats != tuple(range(1, 11)):
             raise ValueError("formal study repeats must be exactly 1..10")
@@ -251,6 +264,37 @@ class StudySpec:
                 or plan["goal_limit_new_slot_count"] != 80
                 or plan["goal_limit_comparison_slot_count"] != 120):
             raise ValueError("formal study matrix does not expand to the frozen 320-slot protocol")
+
+    def _validate_safety_protocol(self) -> None:
+        expected_reserve = (9.0 if self.study_id == "stage4-safety-formal-v2" else None)
+        if self.study_id not in {"stage4-safety-formal-v1", "stage4-safety-formal-v2"}:
+            raise ValueError("unknown frozen safety study version")
+        if self.native_evidence_reserve_seconds != expected_reserve:
+            raise ValueError("safety study evidence reserve differs from its frozen version")
+        if self.fixtures != SAFETY_SCENARIOS or self.repeats != tuple(range(1, 11)):
+            raise ValueError("safety study requires the paired fixtures and repeats 1..10")
+        if (self.warmup_sequences != 100 or self.common_limit_seconds != 4.0
+                or self.max_prefixes != 4 or self.max_candidates != 4
+                or self.concrete_attempts_per_prefix != 64
+                or self.continuation_sequence_safety_limit != 1000000):
+            raise ValueError("safety study common limits differ from the frozen protocol")
+        if 100 in self.boundary_values:
+            raise ValueError("known full-spend regression input cannot enter the candidate dictionary")
+        if len(self.profiles) != 3 or {profile.arm for profile in self.profiles} != set(ARMS):
+            raise ValueError("safety study requires exactly one profile for each arm")
+        for profile in self.profiles:
+            if (profile.total_budget_seconds != 32.0
+                    or profile.augmentation_limit_seconds != 2.5
+                    or profile.prefix_check_limit_seconds != 0.75
+                    or profile.goal_invocation_limit_seconds !=
+                    (0.75 if profile.arm == "symbolic_augment" else None)
+                    or profile.startup_reserve_seconds != 1.25
+                    or profile.continuation_reserve_seconds != 1.0
+                    or profile.cleanup_tolerance_seconds != 0.75
+                    or profile.families != ("total_budget",)):
+                raise ValueError("safety profile differs from the frozen 32-second protocol")
+        if self.plan()["distinct_slot_count"] != 60:
+            raise ValueError("safety matrix must contain exactly 60 slots")
 
     def seed(self, fixture: str, repeat: int) -> int:
         return self.seeds[f"{fixture}:{repeat}"]

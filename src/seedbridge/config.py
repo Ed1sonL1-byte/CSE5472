@@ -26,6 +26,8 @@ class Scenario:
     state_bounds: tuple[tuple[int, int], tuple[int, int], tuple[int, int]] = (
         (0, 3), (0, 19), (0, 0),
     )
+    mode: str = "reachability"
+    property_id: str | None = None
 
     def __post_init__(self) -> None:
         if not 1 <= self.prefix_minimum <= self.prefix_maximum <= 3:
@@ -37,6 +39,10 @@ class Scenario:
         if any(type(low) is not int or type(high) is not int or low < 0 or high < low
                for low, high in self.state_bounds):
             raise ValueError("scenario state projection bounds must be finite uint ranges")
+        if self.mode not in {"reachability", "safety"}:
+            raise ValueError("unsupported scenario mode")
+        if (self.mode == "safety") != (self.property_id is not None):
+            raise ValueError("safety mode requires exactly one property identifier")
 
     def ready(self, observation: list[object], prefix_length: int) -> bool:
         if not self.prefix_minimum <= prefix_length <= self.prefix_maximum:
@@ -77,6 +83,8 @@ class Scenario:
                 "maximum": str(UINT256_MAX),
             },
             "goal_id": self.goal_id,
+            "mode": self.mode,
+            "property_id": self.property_id,
             "observe_id": self.observe_id,
             "invariant_id": self.invariant_id,
             "ready_predicate": {
@@ -92,7 +100,8 @@ class Scenario:
                 ],
                 "goal_domain": [False, True],
             },
-            "goal_definition": "observe[3] == true",
+            "goal_definition": ("allocated != spent + remaining"
+                                if self.mode == "safety" else "observe[3] == true"),
             "execution": {
                 "prefix_steps": {"minimum": self.prefix_minimum, "maximum": self.prefix_maximum},
                 "worker_count": 1, "call_value": "0", "reinsertion_rounds": 1,
@@ -125,7 +134,28 @@ SCENARIOS = {
         state_fields=("phase", "lane", "progress", "goal"),
         state_bounds=((0, 5), (0, 3), (0, 4)),
     ),
+    "accounting_flawed": Scenario(
+        "accounting_flawed", "AccountingFlawed", "spend",
+        ("open()", "spend(uint256)"),
+        ready_values=(100,),
+        state_fields=("allocated", "spent", "remaining", "violation"),
+        state_bounds=((0, 100), (0, 100), (0, 100)),
+        mode="safety", property_id="allocation_conservation",
+        goal_id="allocation_conservation.violated",
+    ),
+    "accounting_repaired": Scenario(
+        "accounting_repaired", "AccountingRepaired", "spend",
+        ("open()", "spend(uint256)"),
+        ready_values=(100,),
+        state_fields=("allocated", "spent", "remaining", "violation"),
+        state_bounds=((0, 100), (0, 100), (0, 100)),
+        mode="safety", property_id="allocation_conservation",
+        goal_id="allocation_conservation.violated",
+    ),
 }
+REACHABILITY_SCENARIOS = tuple(
+    name for name, scenario in SCENARIOS.items() if scenario.mode == "reachability"
+)
 
 
 def get_scenario(fixture_id: str) -> Scenario:

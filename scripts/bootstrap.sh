@@ -10,7 +10,7 @@ fi
 mkdir -p .bin
 ./scripts/prepare-medusa-lineage.sh
 cd adapters/medusa
-GOTOOLCHAIN=local go build -mod=readonly -o ../../.bin/medusa-adapter .
+CGO_ENABLED=0 GOTOOLCHAIN=local go build -mod=readonly -o ../../.bin/medusa-adapter .
 cd "$seedbridge_root"
 ./seedbridge doctor --output configs/toolchain.local.json
 PYTHONPATH=src uv run --frozen python - <<'PY'

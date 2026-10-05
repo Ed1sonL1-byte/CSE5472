@@ -17,7 +17,7 @@ from .augmentation import concrete_augment, save_augmentation, symbolic_augment
 from .build import assert_medusa_build, build_manifest
 from .budget import BudgetLedger, CampaignDeadlineError
 from .campaign import ARMS, BudgetSpec, CampaignRecord, CampaignSpec
-from .config import ROOT, SCENARIOS, get_scenario
+from .config import ROOT, REACHABILITY_SCENARIOS, get_scenario
 from .doctor import inspect_toolchain
 from .io import file_hash, read_json, write_json
 from .medusa import build_fixture, campaign
@@ -70,7 +70,7 @@ class BenchmarkConfig:
         return config
 
     def validate(self) -> None:
-        if set(self.fixtures) != set(SCENARIOS) or len(self.fixtures) != 4:
+        if set(self.fixtures) != set(REACHABILITY_SCENARIOS) or len(self.fixtures) != 4:
             raise ValueError("formal benchmark must contain exactly the four built-in fixtures")
         if self.repeats != (1, 2, 3, 4, 5):
             raise ValueError("formal benchmark repeats must be 1..5")

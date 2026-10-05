@@ -51,9 +51,11 @@ def test_native_pipeline(fixture):
 
 
 def test_native_corpus_roundtrip_observer_and_determinism():
+    environment = tool_environment()
+    environment["CGO_ENABLED"] = "0"
     result = subprocess.run(["go", "test", "-mod=readonly", "-count=1", "-v",
                              "-run", "TestNativeRestartObserverAndDeterminism", "./..."],
-                            cwd=ROOT / "adapters/medusa", env=tool_environment(),
+                            cwd=ROOT / "adapters/medusa", env=environment,
                             capture_output=True, text=True, timeout=120)
     assert result.returncode == 0, result.stdout + result.stderr
     assert "--- PASS: TestNativeRestartObserverAndDeterminism" in result.stdout

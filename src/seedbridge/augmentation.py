@@ -16,6 +16,7 @@ from .medusa import codec, codec_batch, observe
 from .metrics import normalized_sequence_identity
 from .replay import concrete_replay
 from .process import EvidenceMismatchError, ToolExecutionError
+from .safety import checked_state
 
 
 DEFAULT_BOUNDARY_VALUES = (
@@ -101,7 +102,8 @@ def prune_incomplete_native_candidates(entries: list[dict], corpus: Path) -> lis
 
 def validate_native_batch(fixture_id: str, entries: list[dict], directory: Path, *,
                           seed: int, timeout: float, existing_ids: set[str],
-                          max_candidates: int, project: Path | None = None) -> dict:
+                          max_candidates: int, project: Path | None = None,
+                          prefixes: list[dict] | None = None) -> dict:
     if not entries:
         return {"status": "no_candidate", "attempts": [], "accepted": []}
     observation = observe(fixture_id, directory, seed=seed, tests=len(entries),
@@ -125,6 +127,45 @@ def validate_native_batch(fixture_id: str, entries: list[dict], directory: Path,
             "admitted": sequence.get("admitted") is True,
             "complete": sequence.get("is_complete_sequence") is True,
         }
+        if get_scenario(fixture_id).mode == "safety":
+            if prefixes is None or not 0 <= entry.get("prefix_index", -1) < len(prefixes):
+                raise EvidenceMismatchError("safety candidate lacks a traced prefix", status="evidence_error")
+            expected_prefix = prefixes[entry["prefix_index"]]["steps"]
+            steps = sequence["steps"]
+            if len(steps) != len(expected_prefix) + 1:
+                raise EvidenceMismatchError("native candidate sequence length changed", status="replay_mismatch")
+            for actual, expected in zip(steps, expected_prefix):
+                for key in ("from", "to", "calldata", "value", "actual_block",
+                            "actual_timestamp", "status", "observe", "invariant_holds",
+                            "property_holds"):
+                    if str(actual.get(key)).lower() != str(expected.get(key)).lower():
+                        raise EvidenceMismatchError(
+                            f"native candidate prefix differs at {key}", status="state_mismatch")
+            suffix = steps[-1]
+            if (suffix.get("from", "").lower() != get_scenario(fixture_id).actor.lower()
+                    or suffix.get("to", "").lower() != expected_prefix[-1]["to"].lower()
+                    or str(suffix.get("value")) != "0"
+                    or suffix.get("signature") != "spend(uint256)"
+                    or suffix.get("arguments") != [str(entry["argument"])]
+                    or suffix.get("actual_block") != expected_prefix[-1]["actual_block"]
+                    or suffix.get("actual_timestamp") != expected_prefix[-1]["actual_timestamp"]):
+                raise EvidenceMismatchError(
+                    "native safety suffix identity or context changed", status="replay_mismatch")
+            if any(step.get("observer_state_unchanged") is not True
+                   or step.get("state_root_before_observer") != step.get("state_root_after_observer")
+                   for step in steps):
+                raise EvidenceMismatchError("native observer altered execution", status="observer_mismatch")
+            for step in sequence["steps"]:
+                try:
+                    state = checked_state(fixture_id, step.get("observe"))
+                except ValueError as error:
+                    raise EvidenceMismatchError(
+                        f"native accounting observation is inconsistent: {error}",
+                        status="state_mismatch") from error
+                if step.get("property_holds") is not state["property_holds"]:
+                    raise EvidenceMismatchError(
+                        "native property observer differs from computed state",
+                        status="state_mismatch")
         if (not sequence["steps"][-1]["observe"][3]
                 or sequence["steps"][-1].get("invariant_holds") is not True):
             entry["validation_status"] = "goal_false"
@@ -199,6 +240,7 @@ def concrete_augment(fixture_id: str, prefixes: list[dict], warmup: dict, direct
     result = validate_native_batch(
         fixture_id, entries, directory, seed=seed, timeout=timeout,
         existing_ids=warmup_sequence_ids(warmup), max_candidates=max_candidates, project=project,
+        prefixes=prefixes,
     )
     result["elapsed_seconds"] = time.monotonic() - started
     result["attempt_limit_per_prefix"] = attempts_per_prefix
@@ -284,9 +326,11 @@ def symbolic_augment(fixture_id: str, prefixes: list[dict], warmup: dict, direct
             attempt["replay"] = replay
             replay_status = _checked_result_status(
                 replay, stage="concrete candidate replay",
-                allowed={"reachable_confirmed", "replay_mismatch", "timeout"},
+                allowed={"reachable_confirmed", "violation_confirmed", "replay_mismatch", "timeout"},
             )
-            if replay_status != "reachable_confirmed":
+            expected_status = ("violation_confirmed" if scenario.mode == "safety"
+                               else "reachable_confirmed")
+            if replay_status != expected_status:
                 unsuccessful_statuses.append(replay_status)
                 attempt["elapsed_seconds"] = time.monotonic() - attempt_started
                 continue
@@ -338,7 +382,7 @@ def symbolic_augment(fixture_id: str, prefixes: list[dict], warmup: dict, direct
         validation = validate_native_batch(
             fixture_id, entries, directory / "native-validation", seed=seed,
             timeout=remaining(process_timeout), existing_ids=warmup_sequence_ids(warmup),
-            max_candidates=max_candidates, project=fixture_project,
+            max_candidates=max_candidates, project=fixture_project, prefixes=prefixes,
         )
     except TimeoutError as error:
         unsuccessful_statuses.append("timeout")

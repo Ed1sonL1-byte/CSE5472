@@ -2,15 +2,16 @@
 
 SeedBridge is a local CSE 5472 project prototype that connects Medusa, Halmos, and Foundry. It takes a concrete call prefix that Medusa actually executed, asks Halmos to solve one argument for the next call, validates the candidate against a fresh deployment, converts the sequence back to Medusa's native format, and observes its execution and mutation lineage.
 
-The repository contains three completed stages:
+The repository contains three completed reachability stages and a Stage 4 safety-property regression:
 
 - Stage 1 validates the cross-tool workflow on `PhaseCounter` and `BoundedLedger`.
 - Stage 2 adds `RangeGate` and `WorkflowGate`, restores Medusa's default generation and mutation behavior, and compares native, concrete-augmentation, and symbolic-augmentation strategies under the same wall-clock budget. All 60 formal records passed the independent audit.
 - Stage 3 adds versioned study specifications, precise observation boundaries, isolated caches, compact raw event streams, independent offline auditing, and reproducible archives. All 320 formal records passed the independent audit.
+- Stage 4 evaluates one known accounting defect and its repair. It separates execution consistency from the arithmetic safety property, confirms candidate violations across Medusa, Halmos, and Foundry, and uses a paired 60-slot protocol.
 
-Public, path-sanitized results are available in the [Stage 2 evidence bundle](evidence/stage2/INDEX.md) and [Stage 3 evidence bundle](evidence/stage3/INDEX.md).
+Public, path-sanitized results are available in the [Stage 2 evidence bundle](evidence/stage2/INDEX.md), [Stage 3 evidence bundle](evidence/stage3/INDEX.md), and [Stage 4 evidence bundle](evidence/stage4/INDEX.md).
 
-Goal reachability is not a vulnerability finding. The four fixtures are repository-owned teaching state machines, and their results do not establish performance on third-party contracts.
+Goal reachability is not a vulnerability finding. The six fixtures are repository-owned teaching state machines, and their results do not establish performance on third-party contracts.
 
 ## Workflow
 
@@ -30,7 +31,8 @@ The engine does not hard-code target solutions. Fixture metadata defines the sup
 
 ## Supported scope
 
-- Four built-in fixtures: `phase_counter`, `bounded_ledger`, `range_gate`, and `workflow_gate`.
+- Four reachability fixtures: `phase_counter`, `bounded_ledger`, `range_gate`, and `workflow_gate`.
+- One accounting case in two versions: `accounting_flawed` and `accounting_repaired`.
 - One fixed deployer and actor per fixture.
 - Zero transaction value.
 - One symbolic `uint256` argument.
@@ -45,6 +47,7 @@ The engine does not hard-code target solutions. Fixture metadata defines the sup
 | `BoundedLedger` | An independent state machine and invariant used to verify the shared pipeline. |
 | `RangeGate` | A broad condition used to measure augmentation overhead when concrete exploration is already effective. |
 | `WorkflowGate` | A staged condition with post-goal behavior used to expose the tradeoff between augmentation and continuation time. |
+| `AccountingFlawed` and `AccountingRepaired` | A known full-spend bookkeeping omission and its correction; the property is `allocated == spent + remaining`. |
 
 The fixtures contain no real funds, external calls, or attack payloads. Arbitrary external contracts, complex ABI values, multiple actors, nonzero value, and multi-step symbolic suffixes are outside the implemented scope.
 
@@ -70,7 +73,7 @@ Bootstrap and inspect the toolchain:
 ./seedbridge doctor
 ```
 
-Bootstrap performs a frozen `uv` sync, installs solc 0.8.36 when necessary, verifies and applies the minimal pinned Medusa lineage patch, builds the Go adapter, writes the local toolchain record, and compiles all four fixtures. It does not install Go or Forge and does not switch the global solc selection.
+Bootstrap performs a frozen `uv` sync, installs solc 0.8.36 when necessary, verifies and applies the minimal pinned Medusa lineage patch, builds the Go adapter, writes the local toolchain record, and compiles all six fixtures. It does not install Go or Forge and does not switch the global solc selection.
 
 Set an explicit compiler path before bootstrap when solc is installed elsewhere:
 
@@ -196,6 +199,31 @@ files:   43482 archived study files
 
 The 3.1 GB archive is intentionally ignored by Git. Its checksum, archive metadata, two-rebuild verification, all 320 observations, independent audit, summary, and charts are published under `evidence/stage3/`.
 
+## Stage 4 safety-property regression
+
+The two accounting contracts have identical method signatures, initial state, and property definition. `open()` allocates 100 inert units. `spend(amount)` should move an allowed amount from `remaining` to `spent`. The flawed full-balance branch clears `remaining` but omits the spent update; the repaired implementation performs both updates. The fourth `observe()` field indicates a violation, but acceptance independently recomputes `allocated == spent + remaining` from the three integer fields and checks `propertyHolds()` separately. `invariantHolds()` remains a structural execution check.
+
+Run a fresh real-tool acceptance, then inspect its report:
+
+```sh
+./seedbridge safety-demo --seed 1 --warmup-tests 100 \
+  --output runs/stage4-demo-review
+./seedbridge report runs/stage4-demo-review
+```
+
+The [first-use demonstration](STAGE4_DEMO.md) gives the full setup, ground-truth, acceptance, and independent audit commands. The frozen formal protocol is `configs/stage4-safety-v2.json`: two versions, three arms, ten repeats per combination, one 32-second total budget, one worker, zero value, and one symbolic `uint256` final argument. Three arms within each version/repeat share a Medusa warmup corpus. The known ground-truth input is excluded from the formal corpus and concrete candidate dictionary. The superseded v1 attempt stopped after a charged evidence-decoding overrun and is retained separately.
+
+```sh
+./seedbridge study-plan --config configs/stage4-safety-v2.json
+./seedbridge safety-study --output runs/stage4-review
+./seedbridge safety-audit runs/stage4-review
+./seedbridge safety-report runs/stage4-review
+```
+
+The safety report counts only concrete executions whose recorded arithmetic state violates the property. It distinguishes warmup, imported candidate, and native continuation findings; misses are censored at the actual search observation end. Halmos timeouts and tool or evidence errors are separate from valid negative outcomes. A repaired-version miss is finite testing evidence, not a global safety proof.
+
+The frozen v2 comparison completed 60/60 evaluation-valid slots and passed an independent raw-record audit. Each flawed-version arm confirmed violations in 10/10 slots, but all first findings occurred during the shared warmup; the symbolic arm also produced nine later, concretely confirmed violating candidates. Each repaired-version arm confirmed 0/10 violations in this finite run. The 30 repaired misses were censored at actual observation ends of 23.343–24.721 seconds. The v2 run had one excluded Medusa tool crash; its entire paired block was rerun with unchanged frozen inputs. See the [acceptance record](STAGE4_ACCEPTANCE.md) and [Stage 4 results](evidence/stage4/RESULTS.md) for the exact evidence and limitations.
+
 ## Randomness and comparison boundaries
 
 Stage 1 uses Medusa's native new-sequence-only generator with one worker to reduce scheduling variability while validating the integration. This configuration is not equivalent to stock Medusa's default scheduling, so Stage 1 coverage and timing are not performance comparisons.
@@ -246,7 +274,7 @@ Audit the saved Stage 3 protocol evidence and verify public evidence checksums:
 (cd evidence/stage3 && shasum -a 256 -c checksums.sha256)
 ```
 
-The latest completed validation recorded 156 passing unit tests, 163 passing tests with integration enabled, a passing Go adapter suite, 320/320 valid formal Stage 3 records, and a successful two-pass offline archive rebuild.
+Stage 3 validation recorded 156 passing unit tests, 163 passing tests with integration enabled, a passing Go adapter suite, 320/320 valid formal records, and a successful two-pass offline archive rebuild. Stage 4 validation recorded 169 passing Python tests with integration enabled, six passing accounting Foundry tests, a passing Go adapter suite, a real fresh demo, 60/60 audited formal slots, and a verified 31,850-file raw archive. The measured results and limitations are recorded in `evidence/stage4/`.
 
 ## Repository layout
 
@@ -254,11 +282,12 @@ The latest completed validation recorded 156 passing unit tests, 163 passing tes
 | --- | --- |
 | `src/seedbridge/` | Python CLI, configuration, augmentation, budgets, compact records, studies, auditing, reporting, and archiving. |
 | `adapters/medusa/` | Fixed-version Go codec, execution observer, compact writer, continuation support, and lineage integration. |
-| `fixtures/` | Four local teaching contracts, Foundry configuration, and concrete tests. |
+| `fixtures/` | Six local teaching contracts, Foundry configuration, and concrete tests. |
 | `configs/stage2-benchmark.json` | Frozen Stage 2 matrix, budgets, order, and seeds. |
 | `configs/stage3-study.json` | Frozen 320-slot Stage 3 matrix, budgets, query limits, order, and seeds. |
 | `evidence/stage2/` | Path-sanitized Stage 2 summaries, mechanism evidence, audit, and checksums. |
 | `evidence/stage3/` | All 320 observations, independent audit, summary, charts, protocol audit, and archive verification metadata. |
+| `evidence/stage4/` | Safety-case acceptance, 60-slot observations, independent audit, summary, superseded-run record, and checksums. |
 | `artifacts/` | Local archive documentation and tracked archive checksum files. |
 | `scripts/` | Bootstrap, auditing, evidence conversion, snapshot, and evidence-bundle utilities. |
 | `tests/` | Python unit and native integration tests. |

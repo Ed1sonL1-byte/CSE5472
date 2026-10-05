@@ -34,6 +34,16 @@ FIXTURES = {
         "bounds": ((0, 5), (0, 3), (0, 4)),
         "calls": {"start()", "choose(uint256)", "unlock(uint256)", "continueWork(uint256)"},
     },
+    "accounting_flawed": {
+        "fields": ("allocated", "spent", "remaining", "violation"),
+        "bounds": ((0, 100), (0, 100), (0, 100)),
+        "calls": {"open()", "spend(uint256)"},
+    },
+    "accounting_repaired": {
+        "fields": ("allocated", "spent", "remaining", "violation"),
+        "bounds": ((0, 100), (0, 100), (0, 100)),
+        "calls": {"open()", "spend(uint256)"},
+    },
 }
 
 
@@ -90,6 +100,10 @@ def _state(fixture: str, observation: object) -> dict:
             raise StudyAuditError(f"{fixture}: projected state outside frozen bounds")
         values.append(number)
     values.append(observation[3])
+    if fixture.startswith("accounting_"):
+        computed_holds = values[0] == values[1] + values[2]
+        if observation[3] is computed_holds:
+            raise StudyAuditError(f"{fixture}: violation marker disagrees with arithmetic state")
     return dict(zip(definition["fields"], values))
 
 
@@ -105,7 +119,9 @@ def _validate_steps(fixture: str, steps: object) -> None:
                 or step.get("observer_state_unchanged") is not True
                 or step.get("state_root_before_observer") != step.get("state_root_after_observer")):
             raise StudyAuditError(f"{fixture}: observer or invariant marker is invalid")
-        _state(fixture, step.get("observe"))
+        state = _state(fixture, step.get("observe"))
+        if fixture.startswith("accounting_") and step.get("property_holds") is not (not state["violation"]):
+            raise StudyAuditError(f"{fixture}: property read disagrees with arithmetic state")
         markers = step.get("coverage_markers")
         hits = step.get("coverage_marker_hits")
         if (not isinstance(markers, list) or not isinstance(hits, dict)
@@ -129,7 +145,7 @@ def _snapshot(fixture: str, sequences: list[dict]) -> dict:
         for step in steps:
             state = _state(fixture, step["observe"])
             states[_digest(state)] = state
-            goal = goal or state["goal"]
+            goal = goal or state[FIXTURES[fixture]["fields"][-1]]
             markers.update(step["coverage_markers"])
             hits.update(step["coverage_marker_hits"])
     return {

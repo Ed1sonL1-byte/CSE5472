@@ -3,10 +3,15 @@
 from pathlib import Path
 
 from .doctor import tool_environment
+from .io import read_json
 from .process import run_command
+from .safety import checked_state
 
 
 def concrete_replay(project: Path, output_dir: Path, timeout: float) -> dict:
+    manifest = read_json(project / "manifest.json") if (project / "manifest.json").exists() else {}
+    safety_mode = manifest.get("mode") == "safety"
+    expected_violation = manifest.get("expected_violation", True)
     result = run_command(["forge", "test", "--match-contract", "^BridgeHarnessTest$",
                           "--match-test", r"^test_replay\(\)$", "--json"],
                          cwd=project, log_path=output_dir / "forge-replay.json",
@@ -29,6 +34,9 @@ def concrete_replay(project: Path, output_dir: Path, timeout: float) -> dict:
         return {"status": "result_mismatch", "reason": "expected exactly one concrete replay test", **metadata}
     test_status = tests[0].get("status")
     if test_status == "Success" and result.returncode == 0:
+        if safety_mode:
+            status = "violation_confirmed" if expected_violation else "property_preserved"
+            return {"status": status, "reason": "fresh deployment checked the independent accounting property", **metadata}
         return {"status": "reachable_confirmed", "reason": "fresh deployment reached the goal", **metadata}
     if test_status == "Failure" and result.returncode != 0:
         return {"status": "replay_mismatch", "reason": "concrete replay did not satisfy its assertions", **metadata}
@@ -36,7 +44,9 @@ def concrete_replay(project: Path, output_dir: Path, timeout: float) -> dict:
 
 
 def match_native_execution(observation: dict, expected: list[dict],
-                           prefix: list[dict], *, require_goal: bool) -> dict | None:
+                           prefix: list[dict], *, require_goal: bool,
+                           fixture_id: str | None = None) -> dict | None:
+    fixture_id = fixture_id or observation.get("fixture")
     for sequence in observation.get("sequences", []):
         steps = sequence.get("steps", [])
         if len(steps) != len(expected):
@@ -50,6 +60,14 @@ def match_native_execution(observation: dict, expected: list[dict],
                for actual, wanted in zip(steps, expected)):
             continue
         if any(step.get("status") != "success" or step.get("invariant_holds") is not True for step in steps):
+            continue
+        try:
+            property_states = ([checked_state(fixture_id, step.get("observe")) for step in steps]
+                               if fixture_id is not None else [None] * len(steps))
+        except (ValueError, TypeError):
+            continue
+        if any(state is not None and step.get("property_holds") is not state["property_holds"]
+               for step, state in zip(steps, property_states)):
             continue
         if any(any(actual.get(key) != wanted.get(key) for key in
                    ("observe", "actual_block", "actual_timestamp"))

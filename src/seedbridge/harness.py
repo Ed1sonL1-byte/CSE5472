@@ -8,6 +8,7 @@ from eth_hash.auto import keccak
 
 from .config import UINT256_MAX, get_scenario
 from .io import file_hash, write_json
+from .safety import checked_state
 
 
 ADDRESS = re.compile(r"0x[0-9a-fA-F]{40}\Z")
@@ -84,6 +85,9 @@ def _normalize_prefix(fixture_id: str, prefix: dict) -> dict:
         observation = [str(_uint(item, "observation")) for item in observation[:3]] + [observation[3]]
         if type(observation[3]) is not bool:
             raise ValueError("observation goal must be a boolean")
+        checked_state(fixture_id, observation)
+        if scenario.mode == "safety" and step.get("property_holds") is not True:
+            raise ValueError("safe prefix property observer must agree with state")
         if observation[3]:
             raise ValueError("the prefix must not already reach the goal")
         if step.get("invariant_holds") is not True:
@@ -91,7 +95,8 @@ def _normalize_prefix(fixture_id: str, prefix: dict) -> dict:
         normalized.append({"from": sender, "to": recipient, "calldata": calldata,
                            "value": "0", "actual_block": str(block),
                            "actual_timestamp": str(timestamp), "status": "success",
-                           "observe": observation, "invariant_holds": True})
+                           "observe": observation, "invariant_holds": True,
+                           **({"property_holds": True} if scenario.mode == "safety" else {})})
     result = {"fixture_id": scenario.fixture_id, "steps": normalized}
     if not scenario.ready(normalized[-1]["observe"], len(normalized)):
         raise ValueError("prefix does not satisfy the scenario ready predicate and length bounds")
@@ -102,7 +107,7 @@ def _normalize_prefix(fixture_id: str, prefix: dict) -> dict:
     return result
 
 
-def _prefix_lines(steps: list[dict], assertions: bool) -> str:
+def _prefix_lines(steps: list[dict], assertions: bool, safety: bool = False) -> str:
     lines = []
     for index, step in enumerate(steps):
         sender = _sol_address(step["from"])
@@ -115,19 +120,26 @@ def _prefix_lines(steps: list[dict], assertions: bool) -> str:
         if assertions:
             lines += ["            assert(ok);", f"            assert({expression});",
                       "            assert(target.invariantHolds());"]
+            if safety:
+                lines.append("            assert(_propertyConsistent());")
         else:
             lines += [f'            require(ok, "PREFIX_CALL_{index}");',
                       f'            require({expression}, "PREFIX_STATE_{index}");',
                       f'            require(target.invariantHolds(), "PREFIX_INVARIANT_{index}");']
+            if safety:
+                lines.append(f'            require(_propertyConsistent(), "PREFIX_PROPERTY_OBSERVER_{index}");')
         lines.append("        }")
     return "\n".join(lines)
 
 
 def generate_harness(fixture_id: str, prefix: dict, destination: Path,
-                     argument: int | None = None) -> dict:
+                     argument: int | None = None,
+                     expect_violation: bool = True) -> dict:
     scenario = get_scenario(fixture_id)
     normalized = _normalize_prefix(fixture_id, prefix)
     concrete_argument = None if argument is None else _uint(argument, "argument")
+    if scenario.mode != "safety" and not expect_violation:
+        raise ValueError("reachability replay must expect the target")
     destination = Path(destination).resolve()
     if destination.exists() and (not destination.is_dir() or any(destination.iterdir())):
         raise ValueError("harness destination must be new or empty")
@@ -144,7 +156,19 @@ def generate_harness(fixture_id: str, prefix: dict, destination: Path,
                      f'        vm.warp({suffix["actual_timestamp"]});\n'
                      f"        vm.prank({sender}, {sender});")
     concrete_test = ""
+    safety_helper = ""
+    if scenario.mode == "safety":
+        safety_helper = """
+    function _propertyConsistent() internal view returns (bool) {
+        (uint256 allocated, uint256 spent, uint256 remaining, bool violation) = target.observe();
+        bool computed = allocated == spent + remaining;
+        return target.propertyHolds() == computed && violation == !computed;
+    }
+"""
     if concrete_argument is not None:
+        concrete_goal_assertion = ("assert(afterGoal);" if expect_violation else "assert(!afterGoal);")
+        concrete_property_assertion = ("assert(!target.propertyHolds());" if expect_violation
+                                       else "assert(target.propertyHolds());")
         concrete_test = f"""
     function test_replay() external {{
         _prefixGuard();
@@ -153,8 +177,10 @@ def generate_harness(fixture_id: str, prefix: dict, destination: Path,
 {context_lines}
         target.{scenario.suffix}({concrete_argument});
         (, , , bool afterGoal) = target.observe();
-        assert(afterGoal);
+        {concrete_goal_assertion}
         assert(target.invariantHolds());
+        {"assert(_propertyConsistent());" if scenario.mode == "safety" else ""}
+        {concrete_property_assertion if scenario.mode == "safety" else ""}
     }}
 """
     source = f"""// SPDX-License-Identifier: MIT
@@ -180,13 +206,14 @@ contract BridgeHarnessTest {{
         (uint256 p, uint256 q, uint256 r, bool s) = target.observe();
         return p == a && q == b && r == c && s == d;
     }}
+{safety_helper}
 
     function check_prefix() external {{
-{_prefix_lines(normalized["steps"], True)}
+{_prefix_lines(normalized["steps"], True, scenario.mode == "safety")}
     }}
 
     function _prefixGuard() internal {{
-{_prefix_lines(normalized["steps"], False)}
+{_prefix_lines(normalized["steps"], False, scenario.mode == "safety")}
     }}
 
     function check_goal(uint256 arg0) external {{
@@ -196,6 +223,7 @@ contract BridgeHarnessTest {{
 {context_lines}
         target.{scenario.suffix}(arg0);
         require(target.invariantHolds(), "SUFFIX_INVARIANT");
+        {"require(_propertyConsistent(), \"SUFFIX_PROPERTY_OBSERVER\");" if scenario.mode == "safety" else ""}
         (, , , bool goal) = target.observe();
         assert(!goal);
     }}
@@ -215,6 +243,8 @@ contract BridgeHarnessTest {{
     manifest_path = destination / "manifest.json"
     manifest = {
         "schema_version": 1, "fixture_id": fixture_id,
+        "mode": scenario.mode,
+        "expected_violation": expect_violation if scenario.mode == "safety" else None,
         "project_path": str(destination), "manifest_path": str(manifest_path),
         "harness_path": str(harness_path), "fixture_source_path": str(fixture_copy),
         "prefix_path": str(prefix_path), "argument": None if argument is None else str(concrete_argument),

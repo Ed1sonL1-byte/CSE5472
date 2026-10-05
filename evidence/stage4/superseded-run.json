@@ -1,0 +1,17 @@
+{
+  "budget_seconds": 32.0,
+  "cause": "compact event decoding consumed charged time beyond the v1 evidence reserve",
+  "charged_wall_seconds": 35.16797533398494,
+  "classification": "campaign_deadline",
+  "disposition": "v1 is excluded; v2 reserves nine seconds for native setup and evidence processing within the same 32-second budget and reruns all 60 slots",
+  "failed_arm": "concrete_augment",
+  "failed_block": "accounting_repaired/repeat-06",
+  "native_adapter_total_seconds": 26.690963,
+  "native_search_stop_reason": "time_limit",
+  "native_stage_seconds_including_python_decode": 31.643541583092883,
+  "raw_directory": "runs/stage4-formal-v1",
+  "schema_version": 1,
+  "status": "superseded_incomplete",
+  "study_id": "stage4-safety-formal-v1",
+  "valid_slots_before_stop": 45
+}

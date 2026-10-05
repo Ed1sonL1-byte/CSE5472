@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Iterable
 
 from .config import get_scenario
+from .safety import checked_state
 from .io import write_json
 
 
@@ -32,6 +33,7 @@ def normalized_sequence_identity(steps: list[dict]) -> str:
 
 def projected_state(fixture_id: str, observation: list[object]) -> dict:
     scenario = get_scenario(fixture_id)
+    checked_state(fixture_id, observation)
     if not isinstance(observation, list) or len(observation) != 4 or type(observation[3]) is not bool:
         raise ValueError("state observation must contain three integers and a boolean")
     values: list[int | bool] = []
@@ -60,6 +62,7 @@ def _complete_sequences(report: dict) -> list[dict]:
 
 
 def snapshot(fixture_id: str, sequences: Iterable[dict]) -> dict:
+    scenario = get_scenario(fixture_id)
     sequence_ids: set[str] = set()
     state_rows: dict[str, dict] = {}
     coverage: set[str] = set()
@@ -72,8 +75,10 @@ def snapshot(fixture_id: str, sequences: Iterable[dict]) -> dict:
         sequence_ids.add(normalized_sequence_identity(steps))
         for step in steps:
             state = projected_state(fixture_id, step["observe"])
+            if scenario.mode == "safety" and step.get("property_holds") is not (not state["violation"]):
+                raise ValueError("native property read disagrees with independently computed state")
             state_rows[_digest(state)] = state
-            goal_reached = goal_reached or bool(state["goal"])
+            goal_reached = goal_reached or bool(state[scenario.state_fields[-1]])
             markers = step.get("coverage_markers")
             marker_hits = step.get("coverage_marker_hits")
             if not isinstance(markers, list) or not isinstance(marker_hits, dict):

@@ -7,6 +7,7 @@ import re
 
 from .config import UINT256_MAX, get_scenario
 from .io import file_hash
+from .safety import checked_state
 
 ADDRESS = re.compile(r"0x[0-9a-fA-F]{40}\Z")
 CALLDATA = re.compile(r"0x(?:[0-9a-fA-F]{2}){4,}\Z")
@@ -59,6 +60,9 @@ def validate_prefix(sequence: dict, *, fixture_id: str = "phase_counter",
             raise ValueError("Malformed state projection")
         for number in state[:3]:
             uint(number)
+        property_state = checked_state(fixture_id, state)
+        if property_state is not None and step.get("property_holds") is not property_state["property_holds"]:
+            raise ValueError("Native property observer disagrees with independent state")
         if step.get("invariant_holds") is not True:
             raise ValueError("Independent fixture invariant did not hold")
     if steps[-1]["observe"][-1]:

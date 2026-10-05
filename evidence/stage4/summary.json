@@ -1,0 +1,91 @@
+{
+  "common_block_count": 20,
+  "complete_sequence_count": 179244,
+  "groups": {
+    "accounting_flawed:concrete_augment": {
+      "augmentation_statuses": {
+        "no_candidate": 9,
+        "timeout": 1
+      },
+      "augmentation_violations": 0,
+      "concrete_executed_candidates": 2304,
+      "confirmed_candidates": 0,
+      "confirmed_violations": 10,
+      "continuation_violations": 10,
+      "generated_candidates": 2304,
+      "slots": 10,
+      "warmup_violations": 10
+    },
+    "accounting_flawed:native_resume": {
+      "augmentation_statuses": {
+        "not_applicable": 10
+      },
+      "augmentation_violations": 0,
+      "concrete_executed_candidates": 0,
+      "confirmed_candidates": 0,
+      "confirmed_violations": 10,
+      "continuation_violations": 10,
+      "generated_candidates": 0,
+      "slots": 10,
+      "warmup_violations": 10
+    },
+    "accounting_flawed:symbolic_augment": {
+      "augmentation_statuses": {
+        "completed": 9,
+        "timeout": 1
+      },
+      "augmentation_violations": 9,
+      "concrete_executed_candidates": 9,
+      "confirmed_candidates": 9,
+      "confirmed_violations": 10,
+      "continuation_violations": 10,
+      "generated_candidates": 9,
+      "slots": 10,
+      "warmup_violations": 10
+    },
+    "accounting_repaired:concrete_augment": {
+      "augmentation_statuses": {
+        "no_candidate": 10
+      },
+      "augmentation_violations": 0,
+      "concrete_executed_candidates": 2560,
+      "confirmed_candidates": 0,
+      "confirmed_violations": 0,
+      "continuation_violations": 0,
+      "generated_candidates": 2560,
+      "slots": 10,
+      "warmup_violations": 0
+    },
+    "accounting_repaired:native_resume": {
+      "augmentation_statuses": {
+        "not_applicable": 10
+      },
+      "augmentation_violations": 0,
+      "concrete_executed_candidates": 0,
+      "confirmed_candidates": 0,
+      "confirmed_violations": 0,
+      "continuation_violations": 0,
+      "generated_candidates": 0,
+      "slots": 10,
+      "warmup_violations": 0
+    },
+    "accounting_repaired:symbolic_augment": {
+      "augmentation_statuses": {
+        "timeout": 10
+      },
+      "augmentation_violations": 0,
+      "concrete_executed_candidates": 0,
+      "confirmed_candidates": 0,
+      "confirmed_violations": 0,
+      "continuation_violations": 0,
+      "generated_candidates": 0,
+      "slots": 10,
+      "warmup_violations": 0
+    }
+  },
+  "mutation_event_count": 125573,
+  "schema_version": 1,
+  "slot_count": 60,
+  "status": "passed",
+  "study_id": "stage4-safety-formal-v2"
+}

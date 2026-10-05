@@ -11,7 +11,8 @@ pytestmark = [pytest.mark.integration, pytest.mark.skipif(
     os.environ.get("SEEDBRIDGE_INTEGRATION") != "1", reason="set SEEDBRIDGE_INTEGRATION=1 to run native tools")]
 
 
-@pytest.mark.parametrize("fixture", ["phase_counter", "bounded_ledger", "range_gate", "workflow_gate"])
+@pytest.mark.parametrize("fixture", ["phase_counter", "bounded_ledger", "range_gate",
+                                    "workflow_gate", "accounting_flawed", "accounting_repaired"])
 def test_concrete_fixture_suite(fixture, tmp_path):
     scenario = get_scenario(fixture)
     result = run_command(["forge", "test", "--json", "--match-contract", scenario.contract + "Test"],
@@ -20,5 +21,5 @@ def test_concrete_fixture_suite(fixture, tmp_path):
     assert not result.timed_out and result.returncode == 0
     data = json.loads((tmp_path / "forge.json").read_text())
     tests = [test for contract in data.values() for test in contract.get("test_results", {}).values()]
-    assert len(tests) == 4
+    assert len(tests) == (3 if fixture.startswith("accounting_") else 4)
     assert all(test["status"] == "Success" for test in tests)
