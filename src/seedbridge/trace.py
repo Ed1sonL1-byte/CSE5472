@@ -4,6 +4,7 @@ import hashlib
 import json
 from pathlib import Path
 import re
+from eth_hash.auto import keccak
 
 from .config import UINT256_MAX, get_scenario
 from .io import file_hash
@@ -31,7 +32,7 @@ def sequence_identity(steps: list[dict]) -> str:
 
 
 def validate_prefix(sequence: dict, *, fixture_id: str = "phase_counter",
-                    verify_native: bool = True) -> dict:
+                    verify_native: bool = True, require_ready: bool = True) -> dict:
     scenario = get_scenario(fixture_id)
     steps = sequence.get("steps", [])
     if not 1 <= len(steps) <= 3:
@@ -67,7 +68,11 @@ def validate_prefix(sequence: dict, *, fixture_id: str = "phase_counter",
             raise ValueError("Independent fixture invariant did not hold")
     if steps[-1]["observe"][-1]:
         raise ValueError("Goal already holds before the symbolic call")
-    if not scenario.ready(steps[-1]["observe"], len(steps)):
+    if require_ready and scenario.ready_last_signature is not None:
+        selector = "0x" + keccak(scenario.ready_last_signature.encode())[:4].hex()
+        if steps[-1]["calldata"][:10].lower() != selector:
+            raise ValueError("Prefix does not end in the declared ready call")
+    if require_ready and not scenario.ready(steps[-1]["observe"], len(steps)):
         raise ValueError("Prefix did not reach the fixture's declared ready state")
     if verify_native:
         native_path = Path(sequence["native_path"])

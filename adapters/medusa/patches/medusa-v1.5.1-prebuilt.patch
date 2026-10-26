@@ -1,0 +1,54 @@
+--- a/compilation/supported_platforms.go
++++ b/compilation/supported_platforms.go
+@@ -19,6 +19,7 @@
+ 	generators := []func() platforms.PlatformConfig{
+ 		func() platforms.PlatformConfig { return platforms.NewSolcCompilationConfig("contract.sol") },
+ 		func() platforms.PlatformConfig { return platforms.NewCryticCompilationConfig(".") },
++		func() platforms.PlatformConfig { return platforms.NewPrebuiltCompilationConfig("", nil) },
+ 	}
+ 
+ 	// Initialize our platform config generator.
+--- /dev/null
++++ b/compilation/platforms/prebuilt.go
+@@ -0,0 +1,41 @@
++package platforms
++
++import "github.com/crytic/medusa/compilation/types"
++
++// prebuiltArtifacts survives JSON round trips inside NewFuzzer. The key is the
++// source path recorded as the compilation target.
++var prebuiltArtifacts = map[string][]types.Compilation{}
++
++// PrebuiltCompilationConfig returns artifacts compiled outside PATH solc.
++type PrebuiltCompilationConfig struct {
++	Target string `json:"target"`
++}
++
++func NewPrebuiltCompilationConfig(target string, compilations []types.Compilation) *PrebuiltCompilationConfig {
++	prebuiltArtifacts[target] = compilations
++	return &PrebuiltCompilationConfig{Target: target}
++}
++
++func (p *PrebuiltCompilationConfig) Compile() ([]types.Compilation, string, error) {
++	compiled, ok := prebuiltArtifacts[p.Target]
++	if !ok {
++		return nil, "", errMissingPrebuilt(p.Target)
++	}
++	return compiled, "", nil
++}
++
++func (p *PrebuiltCompilationConfig) Platform() string { return "prebuilt" }
++
++func (p *PrebuiltCompilationConfig) GetTarget() string { return p.Target }
++
++func (p *PrebuiltCompilationConfig) SetTarget(target string) { p.Target = target }
++
++func errMissingPrebuilt(target string) error {
++	return &prebuiltError{target}
++}
++
++type prebuiltError struct{ target string }
++
++func (e *prebuiltError) Error() string {
++	return "no prebuilt compilation registered for " + e.target
++}

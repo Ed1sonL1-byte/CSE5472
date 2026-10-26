@@ -21,6 +21,7 @@ import (
 	"github.com/crytic/medusa/chain"
 	chainTypes "github.com/crytic/medusa/chain/types"
 	"github.com/crytic/medusa/compilation/platforms"
+	compilationTypes "github.com/crytic/medusa/compilation/types"
 	"github.com/crytic/medusa/fuzzing"
 	"github.com/crytic/medusa/fuzzing/calls"
 	"github.com/crytic/medusa/fuzzing/config"
@@ -34,7 +35,7 @@ type runOptions struct {
 	Seed                                                            int64
 	Tests, MaxSteps                                                 int
 	Timeout, FlushDelay                                             time.Duration
-	Observe, Campaign, RecordLineage, Compact                       bool
+	Observe, Campaign, RecordLineage, Compact, External             bool
 }
 
 type stepRecord struct {
@@ -242,15 +243,34 @@ func runObserved(fx *fixture, opts runOptions) error {
 	if other, _ := filepath.Glob(filepath.Join(opts.CorpusDir, "test_results", "*.json")); len(other) != 0 {
 		return fmt.Errorf("Stage 1 adapter does not accept test_results corpus")
 	}
-	if len(imports) > 0 && !opts.Campaign && opts.Tests != len(imports) {
+	if len(imports) > 0 && !opts.Campaign && !opts.External && opts.Tests != len(imports) {
 		return fmt.Errorf("restart runs require --tests equal to imported sequence count (%d)", len(imports))
 	}
 	if opts.Campaign && opts.Tests <= len(imports) {
 		return fmt.Errorf("campaign requires --tests greater than imported sequence count (%d)", len(imports))
 	}
-	projectConfig, err := config.GetDefaultProjectConfig("crytic-compile")
+	platform := "crytic-compile"
+	if opts.External {
+		if !fx.External {
+			return fmt.Errorf("external fuzzing requires an external scenario")
+		}
+		platform = "solc"
+	}
+	projectConfig, err := config.GetDefaultProjectConfig(platform)
 	if err != nil {
 		return err
+	}
+	var prebuilt *platforms.PrebuiltCompilationConfig
+	if opts.External {
+		artifact, err := externalFuzzerCompilation(fx)
+		if err != nil {
+			return err
+		}
+		prebuilt = platforms.NewPrebuiltCompilationConfig(fx.SourcePath, []compilationTypes.Compilation{artifact})
+		if err := projectConfig.Compilation.SetPlatformConfig(prebuilt); err != nil {
+			return err
+		}
+		projectConfig.Fuzzing.TransactionGasLimit = 4_000_000
 	}
 	projectConfig.Fuzzing.Workers = 1
 	projectConfig.Fuzzing.WorkerResetLimit = opts.Tests + 1
@@ -275,11 +295,14 @@ func runObserved(fx *fixture, opts runOptions) error {
 	projectConfig.Slither.UseSlither = false
 	projectConfig.Logging.NoColor = true
 	projectConfig.Logging.Level = zerolog.WarnLevel
-	compileConfig := platforms.NewCryticCompilationConfig(fx.Project)
-	compileConfig.ExportDirectory = strings.TrimSuffix(opts.Output, filepath.Ext(opts.Output)) + ".crytic-export"
-	compileConfig.Args = []string{"--compile-force-framework", "foundry"}
-	if err := projectConfig.Compilation.SetPlatformConfig(compileConfig); err != nil {
-		return err
+	var compileConfig *platforms.CryticCompilationConfig
+	if !opts.External {
+		compileConfig = platforms.NewCryticCompilationConfig(fx.Project)
+		compileConfig.ExportDirectory = strings.TrimSuffix(opts.Output, filepath.Ext(opts.Output)) + ".crytic-export"
+		compileConfig.Args = []string{"--compile-force-framework", "foundry"}
+		if err := projectConfig.Compilation.SetPlatformConfig(compileConfig); err != nil {
+			return err
+		}
 	}
 	configPath := strings.TrimSuffix(opts.Output, filepath.Ext(opts.Output)) + ".medusa-config.json"
 	if err := writeJSON(configPath, projectConfig); err != nil {
@@ -289,9 +312,20 @@ func runObserved(fx *fixture, opts runOptions) error {
 	if err != nil {
 		return err
 	}
+	if opts.External && len(f.ContractDefinitions()) != 1 {
+		return fmt.Errorf("external prebuilt compilation registered %d contracts", len(f.ContractDefinitions()))
+	}
 	report := &runReport{SchemaVersion: 1, AdapterVersion: adapterVersion, MedusaVersion: medusaVersion, GoVersion: runtime.Version(), Fixture: fx.ID, Seed: opts.Seed, RNGStrategy: "single_worker_seeded_native_random_values_new_sequences_only_sorted_methods", ObserverEnabled: opts.Observe, WorkerCount: 1, MaxSteps: opts.MaxSteps, ImportedSequences: len(imports), CorpusDirectory: opts.CorpusDir, ConfigPath: configPath, Mode: "native_warmup", Status: "running", Sequences: []*sequenceRecord{}, Lineage: []lineageRecord{}}
 	if len(imports) > 0 {
 		report.Mode = "native_restart"
+	}
+	if opts.External {
+		report.Mode = "external_fuzzer"
+		if len(imports) > 0 && opts.Tests == len(imports) {
+			report.Mode = "external_native_replay"
+		} else if len(imports) > 0 {
+			report.Mode = "external_continuation"
+		}
 	}
 	if opts.Campaign {
 		report.SchemaVersion = 2
@@ -340,19 +374,35 @@ func runObserved(fx *fixture, opts runOptions) error {
 		if err != nil {
 			return err
 		}
-		artifactSHA, err := fileSHA(fx.ArtifactPath)
-		if err != nil {
-			return err
+		artifactSHA := ""
+		if !opts.External {
+			artifactSHA, err = fileSHA(fx.ArtifactPath)
+			if err != nil {
+				return err
+			}
 		}
-		foundrySHA, err := fileSHA(filepath.Join(fx.Project, "foundry.toml"))
-		if err != nil {
-			return err
+		foundrySHA := ""
+		if !opts.External {
+			foundrySHA, err = fileSHA(filepath.Join(fx.Project, "foundry.toml"))
+			if err != nil {
+				return err
+			}
 		}
 		var compact bytes.Buffer
 		if err := json.Compact(&compact, fx.ArtifactABI); err != nil {
 			return err
 		}
-		report.Build = map[string]any{"hash_algorithm": "sha256", "source_path": fx.SourcePath, "source_sha256": sourceSHA, "artifact_path": fx.ArtifactPath, "artifact_sha256": artifactSHA, "foundry_config_sha256": foundrySHA, "abi_sha256": sha256Hex(compact.Bytes()), "init_bytecode_sha256": sha256Hex(compiled.InitBytecode), "runtime_bytecode_sha256": sha256Hex(compiled.RuntimeBytecode), "medusa_build_matches_forge": true, "crytic_export_directory": compileConfig.ExportDirectory}
+		build := map[string]any{"hash_algorithm": "sha256", "source_path": fx.SourcePath, "source_sha256": sourceSHA, "artifact_path": fx.ArtifactPath, "artifact_sha256": artifactSHA, "foundry_config_sha256": foundrySHA, "abi_sha256": sha256Hex(compact.Bytes()), "init_bytecode_sha256": sha256Hex(compiled.InitBytecode), "runtime_bytecode_sha256": sha256Hex(compiled.RuntimeBytecode), "medusa_build_matches_forge": !opts.External, "compiler": "forge-crytic"}
+		if opts.External {
+			build["compiler"] = "solc 0.4.26+commit.4563c3fc standard-json"
+			build["optimizer"] = false
+			build["evm_version"] = "byzantium"
+			build["medusa_build_matches_pinned_bytecode"] = true
+			build["transaction_gas_limit"] = projectConfig.Fuzzing.TransactionGasLimit
+		} else {
+			build["crytic_export_directory"] = compileConfig.ExportDirectory
+		}
+		report.Build = build
 	}
 	if !found {
 		return fmt.Errorf("Medusa compilation missing fixture contract")
@@ -773,6 +823,12 @@ func observeStep(fx *fixture, testChain *chain.TestChain, element *calls.CallSeq
 		return step, fmt.Errorf("native transaction coverage was unavailable")
 	}
 	step.StateRootBeforeObserver = testChain.State().IntermediateRoot(false).Hex()
+	if enabled && fx.External {
+		if err := observeExternal(fx, testChain, &step); err != nil {
+			return step, err
+		}
+		return step, nil
+	}
 	if enabled {
 		observation, raw, err := readView(testChain, fx, "observe")
 		if err != nil {
@@ -799,7 +855,7 @@ func observeStep(fx *fixture, testChain *chain.TestChain, element *calls.CallSeq
 			return step, fmt.Errorf("invariantHolds must return bool")
 		}
 		step.InvariantHolds = &holds
-		if fx.Safety {
+		if fx.Safety && !fx.External {
 			property, _, err := readView(testChain, fx, "propertyHolds")
 			if err != nil {
 				return step, err
@@ -811,16 +867,12 @@ func observeStep(fx *fixture, testChain *chain.TestChain, element *calls.CallSeq
 			if !ok {
 				return step, fmt.Errorf("propertyHolds must return bool")
 			}
-			allocated, okA := new(big.Int).SetString(fmt.Sprint(observation[0]), 10)
-			spent, okS := new(big.Int).SetString(fmt.Sprint(observation[1]), 10)
-			remaining, okR := new(big.Int).SetString(fmt.Sprint(observation[2]), 10)
-			if !okA || !okS || !okR || allocated.Sign() < 0 || spent.Sign() < 0 || remaining.Sign() < 0 ||
-				allocated.Cmp(big.NewInt(100)) > 0 || spent.Cmp(big.NewInt(100)) > 0 || remaining.Cmp(big.NewInt(100)) > 0 {
-				return step, fmt.Errorf("accounting state exceeds declared bounds")
+			computedHolds, err := independentSafetyProperty(fx.PropertyID, observation)
+			if err != nil {
+				return step, err
 			}
-			computedHolds := allocated.Cmp(new(big.Int).Add(spent, remaining)) == 0
 			if propertyHolds != computedHolds || goal == computedHolds {
-				return step, fmt.Errorf("accounting observer disagrees with independently computed property")
+				return step, fmt.Errorf("safety observer disagrees with independently computed property")
 			}
 			step.PropertyHolds = &propertyHolds
 		}
@@ -831,6 +883,35 @@ func observeStep(fx *fixture, testChain *chain.TestChain, element *calls.CallSeq
 		return step, fmt.Errorf("observer changed persistent state")
 	}
 	return step, nil
+}
+
+func independentSafetyProperty(propertyID string, observation []any) (bool, error) {
+	if len(observation) != 4 {
+		return false, fmt.Errorf("safety observation requires four values")
+	}
+	values := make([]*big.Int, 3)
+	for i := 0; i < 3; i++ {
+		value, ok := new(big.Int).SetString(fmt.Sprint(observation[i]), 10)
+		if !ok || value.Sign() < 0 || value.Cmp(big.NewInt(100)) > 0 {
+			return false, fmt.Errorf("safety observation field %d exceeds its bound", i)
+		}
+		values[i] = value
+	}
+	switch propertyID {
+	case "allocation_conservation":
+		return values[0].Cmp(new(big.Int).Add(values[1], values[2])) == 0, nil
+	case "reservation_conservation":
+		sum := new(big.Int).Add(values[0], values[1])
+		sum.Add(sum, values[2])
+		return sum.Cmp(big.NewInt(100)) == 0, nil
+	case "approval_bound":
+		if values[0].Cmp(big.NewInt(3)) > 0 {
+			return false, fmt.Errorf("request phase exceeds declared bound")
+		}
+		return values[2].Cmp(values[1]) <= 0, nil
+	default:
+		return false, fmt.Errorf("unsupported independent safety property %q", propertyID)
+	}
 }
 
 func readView(testChain *chain.TestChain, fx *fixture, name string) ([]any, []byte, error) {

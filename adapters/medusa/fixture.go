@@ -19,19 +19,23 @@ var deployer = common.HexToAddress("0x30000")
 var targetAddress = crypto.CreateAddress(deployer, 0)
 
 type fixture struct {
-	ID           string
-	Contract     string
-	Suffix       string
-	Safety       bool
-	Root         string
-	Project      string
-	ArtifactPath string
-	SourcePath   string
-	ABI          abi.ABI
-	ArtifactABI  json.RawMessage
-	Init         []byte
-	Runtime      []byte
-	Allowed      map[string]bool
+	ID               string
+	Contract         string
+	Suffix           string
+	Safety           bool
+	PropertyID       string
+	Root             string
+	Project          string
+	ArtifactPath     string
+	SourcePath       string
+	ABI              abi.ABI
+	ArtifactABI      json.RawMessage
+	Init             []byte
+	Runtime          []byte
+	Allowed          map[string]bool
+	External         bool
+	Getter           string
+	RevertedExpected string
 }
 
 func repositoryRoot() (string, error) {
@@ -60,6 +64,9 @@ func repositoryRoot() (string, error) {
 }
 
 func loadFixture(id string) (*fixture, error) {
+	if _, external := externalTargets[id]; external {
+		return loadExternalFixture(id)
+	}
 	return loadFixtureProject(id, "")
 }
 
@@ -79,11 +86,23 @@ func loadFixtureProject(id string, project string) (*fixture, error) {
 		f.Contract, f.Suffix = "WorkflowGate", "unlock"
 		f.Allowed["start()"], f.Allowed["choose(uint256)"], f.Allowed["unlock(uint256)"], f.Allowed["continueWork(uint256)"] = true, true, true, true
 	case "accounting_flawed":
-		f.Contract, f.Suffix, f.Safety = "AccountingFlawed", "spend", true
+		f.Contract, f.Suffix, f.Safety, f.PropertyID = "AccountingFlawed", "spend", true, "allocation_conservation"
 		f.Allowed["open()"], f.Allowed["spend(uint256)"] = true, true
 	case "accounting_repaired":
-		f.Contract, f.Suffix, f.Safety = "AccountingRepaired", "spend", true
+		f.Contract, f.Suffix, f.Safety, f.PropertyID = "AccountingRepaired", "spend", true, "allocation_conservation"
 		f.Allowed["open()"], f.Allowed["spend(uint256)"] = true, true
+	case "reservation_flawed":
+		f.Contract, f.Suffix, f.Safety, f.PropertyID = "ReservationFlawed", "settle", true, "reservation_conservation"
+		f.Allowed["start()"], f.Allowed["reserve(uint256)"], f.Allowed["settle(uint256)"] = true, true, true
+	case "reservation_repaired":
+		f.Contract, f.Suffix, f.Safety, f.PropertyID = "ReservationRepaired", "settle", true, "reservation_conservation"
+		f.Allowed["start()"], f.Allowed["reserve(uint256)"], f.Allowed["settle(uint256)"] = true, true, true
+	case "request_flawed":
+		f.Contract, f.Suffix, f.Safety, f.PropertyID = "RequestFlawed", "confirm", true, "approval_bound"
+		f.Allowed["start()"], f.Allowed["request(uint256)"], f.Allowed["confirm(uint256)"] = true, true, true
+	case "request_repaired":
+		f.Contract, f.Suffix, f.Safety, f.PropertyID = "RequestRepaired", "confirm", true, "approval_bound"
+		f.Allowed["start()"], f.Allowed["request(uint256)"], f.Allowed["confirm(uint256)"] = true, true, true
 	default:
 		return nil, fmt.Errorf("unsupported fixture %q", id)
 	}

@@ -8,7 +8,7 @@ from eth_hash.auto import keccak
 
 from .config import UINT256_MAX, get_scenario
 from .io import file_hash, write_json
-from .safety import checked_state
+from .safety import SOLIDITY_EXPRESSIONS, checked_state
 
 
 ADDRESS = re.compile(r"0x[0-9a-fA-F]{40}\Z")
@@ -42,7 +42,7 @@ def _sol_address(value: str) -> str:
     return f'address(bytes20(hex"{value[2:]}"))'
 
 
-def _normalize_prefix(fixture_id: str, prefix: dict) -> dict:
+def _normalize_prefix(fixture_id: str, prefix: dict, *, require_ready: bool = True) -> dict:
     scenario = get_scenario(fixture_id)
     if not isinstance(prefix, dict):
         raise ValueError("prefix must be an object")
@@ -98,7 +98,11 @@ def _normalize_prefix(fixture_id: str, prefix: dict) -> dict:
                            "observe": observation, "invariant_holds": True,
                            **({"property_holds": True} if scenario.mode == "safety" else {})})
     result = {"fixture_id": scenario.fixture_id, "steps": normalized}
-    if not scenario.ready(normalized[-1]["observe"], len(normalized)):
+    if require_ready and scenario.ready_last_signature is not None:
+        selector = "0x" + keccak(scenario.ready_last_signature.encode())[:4].hex()
+        if normalized[-1]["calldata"][:10] != selector:
+            raise ValueError("prefix does not end in the declared ready call")
+    if require_ready and not scenario.ready(normalized[-1]["observe"], len(normalized)):
         raise ValueError("prefix does not satisfy the scenario ready predicate and length bounds")
     if "deployer" in prefix:
         result["deployer"] = _address(prefix["deployer"], "deployer")
@@ -158,12 +162,13 @@ def generate_harness(fixture_id: str, prefix: dict, destination: Path,
     concrete_test = ""
     safety_helper = ""
     if scenario.mode == "safety":
-        safety_helper = """
-    function _propertyConsistent() internal view returns (bool) {
-        (uint256 allocated, uint256 spent, uint256 remaining, bool violation) = target.observe();
-        bool computed = allocated == spent + remaining;
+        expression = SOLIDITY_EXPRESSIONS[scenario.property_id]
+        safety_helper = f"""
+    function _propertyConsistent() internal view returns (bool) {{
+        (uint256 p, uint256 q, uint256 r, bool violation) = target.observe();
+        bool computed = {expression};
         return target.propertyHolds() == computed && violation == !computed;
-    }
+    }}
 """
     if concrete_argument is not None:
         concrete_goal_assertion = ("assert(afterGoal);" if expect_violation else "assert(!afterGoal);")

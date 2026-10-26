@@ -14,6 +14,8 @@ from .process import run_command
 
 EXPECTED_TESTS = {"check_prefix()", "check_goal(uint256)"}
 SYMBOL = re.compile(r"p_arg0_uint256_[0-9a-f]+_[0-9]+\Z")
+SUFFIX_TEST = re.compile(r"check_suffix\(uint256(?:,uint256)?\)\Z")
+SUFFIX_SYMBOL = re.compile(r"p_arg([01])_uint256_[0-9a-f]+_[0-9]+\Z")
 
 
 def _result(status: str, reason: str, **extra: object) -> dict:
@@ -104,9 +106,91 @@ def parse_result(document: object, expected_test: str) -> dict:
                    candidates=candidates, invalid_models=invalid, **details)
 
 
+def parse_suffix_result(document: object, expected_test: str) -> dict:
+    """Decode all named uint256 inputs; JSON map order has no semantic role."""
+    if not SUFFIX_TEST.fullmatch(expected_test):
+        raise ValueError("expected one or two uint256 suffix parameters")
+    names = tuple(f"arg{index}" for index in range(expected_test.count("uint256")))
+    if not isinstance(document, dict) or type(document.get("exitcode")) is not int:
+        return _result("result_mismatch", "missing top-level integer exitcode")
+    contracts = document.get("test_results")
+    if not isinstance(contracts, dict) or len(contracts) != 1:
+        return _result("result_mismatch", "expected exactly one selected contract")
+    contract, tests = next(iter(contracts.items()))
+    if (not isinstance(contract, str) or not contract.endswith(":BridgeHarnessTest")
+            or not isinstance(tests, list) or len(tests) != 1
+            or not isinstance(tests[0], dict)):
+        return _result("result_mismatch", "unexpected generated harness test")
+    test = tests[0]
+    if test.get("name") != expected_test or type(test.get("exitcode")) is not int:
+        return _result("result_mismatch", "unexpected suffix signature or exitcode")
+    exitcode = test["exitcode"]
+    if exitcode not in range(6) or document["exitcode"] != (0 if exitcode == 0 else 1):
+        return _result("result_mismatch", "inconsistent top-level and per-test outcomes")
+    models, count = test.get("models"), test.get("num_models")
+    paths, bounds, timing = test.get("num_paths"), test.get("num_bounded_loops"), test.get("time")
+    if (not isinstance(models, list) or not _nonnegative_int(count) or count != len(models)
+            or not isinstance(paths, list) or len(paths) != 3
+            or not all(_nonnegative_int(item) for item in paths)
+            or paths[1] > paths[0] or paths[2] > paths[0]
+            or not _nonnegative_int(bounds)
+            or not isinstance(timing, list) or len(timing) != 3
+            or any(type(item) not in (int, float) or not math.isfinite(item) or item < 0
+                   for item in timing)):
+        return _result("result_mismatch", "missing or invalid full Halmos 0.3.3 fields")
+    details = {"halmos_exitcode": exitcode, "num_paths": paths,
+               "num_bounded_loops": bounds, "test": expected_test,
+               "expected_variables": list(names)}
+    if exitcode != 1 and models:
+        return _result("result_mismatch", "models require a counterexample outcome", **details)
+    if exitcode in (2, 3, 4, 5):
+        statuses = {2: "timeout", 3: "unsupported", 4: "all_paths_reverted", 5: "tool_error"}
+        return _result(statuses[exitcode], "Halmos did not produce a completed model", **details)
+    if exitcode == 0:
+        if bounds or paths[2]:
+            return _result("incomplete", "bounded paths prevent a complete no-model result", **details)
+        return _result("no_model_complete", "the bounded query completed without a model", **details)
+    if not models:
+        return _result("decode_error", "counterexample outcome contains no model", **details)
+    candidates = []
+    invalid = 0
+    for potential in models:
+        if not isinstance(potential, dict) or type(potential.get("is_valid")) is not bool:
+            return _result("decode_error", "malformed PotentialModel", **details)
+        if not potential["is_valid"]:
+            invalid += 1
+            continue
+        variables = potential.get("model")
+        if not isinstance(variables, dict) or len(variables) != len(names):
+            return _result("decode_error", "model does not have the declared variable count", **details)
+        mapped = {}
+        for key, variable in variables.items():
+            match = SUFFIX_SYMBOL.fullmatch(key) if isinstance(key, str) else None
+            name = variable.get("variable_name") if isinstance(variable, dict) else None
+            if (match is None or name != f"arg{match.group(1)}" or name not in names
+                    or name in mapped or variable.get("full_name") != key
+                    or variable.get("solidity_type") != "uint256"
+                    or variable.get("smt_type") != "BitVec 256"
+                    or type(variable.get("size_bits")) is not int or variable["size_bits"] != 256
+                    or type(variable.get("value")) is not int
+                    or not 0 <= variable["value"] <= UINT256_MAX):
+                return _result("decode_error", "model has an invalid typed variable mapping", **details)
+            mapped[name] = str(variable["value"])
+        if set(mapped) != set(names):
+            return _result("decode_error", "model is missing a declared suffix argument", **details)
+        ordered = {name: mapped[name] for name in names}
+        if ordered not in candidates:
+            candidates.append(ordered)
+    if not candidates:
+        return _result("invalid_model", "all potential models were marked invalid",
+                       invalid_models=invalid, **details)
+    return _result("candidate", "all typed assignments require fresh concrete replay",
+                   candidates=candidates, invalid_models=invalid, **details)
+
+
 def run_halmos(project: Path, expected_test: str, output_dir: Path, timeout: float,
                solver: str, executable: str = "halmos") -> dict:
-    if expected_test not in EXPECTED_TESTS:
+    if expected_test not in EXPECTED_TESTS and not SUFFIX_TEST.fullmatch(expected_test):
         raise ValueError("unsupported generated test signature")
     project = Path(project).resolve()
     output_dir = Path(output_dir).resolve()
@@ -132,7 +216,9 @@ def run_halmos(project: Path, expected_test: str, output_dir: Path, timeout: flo
         document = json.loads(output_file.read_text())
     except (OSError, ValueError) as error:
         return {**_result("tool_error", f"cannot read fresh Halmos JSON: {error}"), **metadata}
-    parsed = parse_result(document, expected_test)
+    parsed = (parse_suffix_result(document, expected_test)
+              if SUFFIX_TEST.fullmatch(expected_test)
+              else parse_result(document, expected_test))
     if isinstance(document, dict) and document.get("exitcode") != invocation.returncode:
         parsed = _result("result_mismatch", "process and JSON exitcodes disagree")
     log = log_path.read_text()
@@ -140,4 +226,6 @@ def run_halmos(project: Path, expected_test: str, output_dir: Path, timeout: flo
                   "paths have not been fully explored" in log)
     if incomplete and parsed["status"] == "prefix_confirmed":
         parsed = _result("prefix_incomplete", "Halmos logged an exploration bound")
+    if incomplete and parsed["status"] == "no_model_complete":
+        parsed = _result("incomplete", "Halmos logged an exploration bound")
     return {**parsed, **metadata, "incomplete_warning": incomplete}

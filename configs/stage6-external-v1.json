@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "study_id": "stage6-external-v1",
+  "frozen_before_scored_run": true,
+  "denominator_files": 15,
+  "eligible_fixtures": ["sb_multitx_onefunc", "sb_overflow_benign"],
+  "excluded_files": 12,
+  "arms": ["native_resume", "symbolic_one", "symbolic_two", "symbolic_adaptive"],
+  "arm_order": ["native_resume", "symbolic_one", "symbolic_two", "symbolic_adaptive"],
+  "repeats": [1, 2, 3],
+  "seeds": {"1": 11, "2": 22, "3": 33},
+  "warmup_sequences": 8,
+  "warmup_max_steps": 1,
+  "continuation_max_steps": 2,
+  "warmup_timeout_seconds": 20,
+  "total_budget_seconds": 25,
+  "query_cap": 1,
+  "solver_timeout_seconds": 8,
+  "native_continuation_sequences": 4,
+  "native_continuation_timeout_seconds": 15,
+  "gas_limit": 4000000,
+  "known_ground_truth_forbidden": ["2"],
+  "property_by_fixture": {
+    "sb_multitx_onefunc": "count_after_subtraction_at_most_initial",
+    "sb_overflow_benign": "local_arithmetic_preserves_count"
+  },
+  "warmup_boundary": "Warmup is one call. For these contracts that call only sets the initialized flag or performs local arithmetic, so it does not execute the state-changing subtraction. Continuation and symbolic suffixes start at the second call. This boundary was fixed before any scored repeat.",
+  "hit_definition": "A hit is the first successful run(uint256) whose public count violates the fixture property. Warmup hits are shared. Symbolic hits require a Halmos model, a fresh Foundry replay, and a native Medusa replay with the same count. Excluded files and failed attempts stay out of the denominator.",
+  "symbolic_two_rule": "One Halmos query solves the first suffix call. symbolic_two executes that same solved argument once more on the same instance. It does not solve a second argument and it does not insert the known value 2.",
+  "adaptive_rule": "The frozen query cap is one. A model confirms the one-call suffix. No model is censored. Adaptive promotion does not invent a second argument when the single query has no model.",
+  "analysis": "evidence/stage6/p4/analyze_p4.py"
+}

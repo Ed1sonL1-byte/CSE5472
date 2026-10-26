@@ -69,8 +69,75 @@ def main() -> int:
     safety_report = commands.add_parser("safety-report", help="Render an audited Stage 4 result")
     safety_report.add_argument("study", type=Path)
     safety_report.add_argument("--output", type=Path)
+    stage5_mechanism = commands.add_parser(
+        "stage5-mechanism", help="Run a real bounded-suffix safety mechanism check")
+    stage5_mechanism.add_argument("fixture", choices=[
+        "reservation_flawed", "request_flawed", "accounting_flawed"])
+    stage5_mechanism.add_argument("--suffix-length", type=int, choices=(1, 2), default=2)
+    stage5_mechanism.add_argument("--seed", type=int, default=1)
+    stage5_mechanism.add_argument("--warmup-tests", type=int, default=100)
+    stage5_mechanism.add_argument("--max-prefixes", type=int, default=5)
+    stage5_mechanism.add_argument("--process-timeout", type=float, default=60)
+    stage5_mechanism.add_argument("--total-solve-timeout", type=float, default=180)
+    stage5_mechanism.add_argument("--output", type=Path, required=True)
+    stage5_study = commands.add_parser(
+        "stage5-study", help="Run the frozen 240-slot bounded-suffix comparison")
+    stage5_study.add_argument("--config", type=Path,
+                              default=ROOT / "configs/stage5-formal-v2.json")
+    stage5_study.add_argument("--output", type=Path, required=True)
+    stage5_study.add_argument("--smoke-blocks", type=int,
+                              help="Development only: stop after this many paired blocks")
+    stage5_study.add_argument("--resume", action="store_true",
+                              help="Resume at a verified paired-block boundary")
+    stage5_audit = commands.add_parser(
+        "stage5-audit", help="Recompute Stage 5 findings from raw tool records")
+    stage5_audit.add_argument("study", type=Path)
+    stage5_audit.add_argument("--output", type=Path)
+    stage5_audit.add_argument("--allow-incomplete", action="store_true")
+    stage5_export = commands.add_parser(
+        "stage5-export", help="Archive audited Stage 5 raw evidence with path mapping")
+    stage5_export.add_argument("study", type=Path)
+    stage5_export.add_argument("--output", type=Path, required=True)
+    stage5_verify = commands.add_parser(
+        "stage5-verify-archive", help="Extract and independently audit a Stage 5 archive")
+    stage5_verify.add_argument("archive", type=Path)
+    stage5_verify.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     try:
+        if args.command == "stage5-mechanism":
+            from .stage5_pipeline import run_stage5_mechanism
+            config = RunConfig(args.fixture, args.seed, args.max_prefixes,
+                               args.warmup_tests, args.process_timeout,
+                               args.total_solve_timeout)
+            result = run_stage5_mechanism(config, args.output,
+                                          suffix_length=args.suffix_length)
+            print(f"{result['status']}: {args.output / 'report.json'}")
+            return 0 if result["status"] == "safety_confirmed" else 1
+        if args.command == "stage5-study":
+            from .stage5_study import run_stage5_study
+            result = run_stage5_study(args.config, args.output,
+                                      smoke_blocks=args.smoke_blocks,
+                                      resume=args.resume)
+            print(f"{result['status']}: {args.output / 'manifest.json'}")
+            return 0 if result["status"] == "complete" else 1
+        if args.command == "stage5-audit":
+            from .stage5_audit import audit_stage5, write_stage5_results
+            output = args.output or args.study / "derived/audit.json"
+            result = audit_stage5(args.study, output,
+                                  require_complete=not args.allow_incomplete)
+            write_stage5_results(result, output.parent)
+            print(f"{result['status']}: {result['slot_count']} slots: {output}")
+            return 0 if result["status"] == "passed" else 1
+        if args.command == "stage5-export":
+            from .stage5_export import export_stage5_archive
+            result = export_stage5_archive(args.study, args.output)
+            print(f"{result['file_count']} files: {result['archive']}")
+            return 0
+        if args.command == "stage5-verify-archive":
+            from .stage5_export import verify_stage5_archive
+            result = verify_stage5_archive(args.archive, args.output)
+            print(f"{result['status']}: {result['slot_count']} slots")
+            return 0 if result["status"] == "passed" else 1
         if args.command == "doctor":
             result = inspect_toolchain()
             if args.output:

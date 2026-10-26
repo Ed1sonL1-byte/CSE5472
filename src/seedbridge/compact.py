@@ -73,7 +73,7 @@ def read_compact_events(path: Path, metadata: dict) -> dict:
                     native = json.loads(payload)
                 except (UnicodeDecodeError, ValueError) as error:
                     raise _error(f"compact event {index} native payload is not JSON") from error
-                if not isinstance(native, list) or not 1 <= len(native) <= 4:
+                if not isinstance(native, list) or not 1 <= len(native) <= 5:
                     raise _error(f"compact event {index} native payload is not a short call sequence")
                 sequence["native_payload_verified"] = True
                 references = event.get("prefix_references")

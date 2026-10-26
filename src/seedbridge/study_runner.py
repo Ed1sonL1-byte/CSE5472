@@ -39,6 +39,7 @@ def _source_paths() -> list[Path]:
         "src/seedbridge/*.py", "adapters/medusa/*.go", "adapters/medusa/go.mod",
         "adapters/medusa/go.sum", "adapters/medusa/patches/*.patch", "fixtures/*/src/*.sol",
         "fixtures/*/foundry.toml", "configs/stage3-*.json", "configs/stage4-*.json",
+        "configs/stage5-*.json",
         "pyproject.toml", "uv.lock",
         ".python-version",
     ):

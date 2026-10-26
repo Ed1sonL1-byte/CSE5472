@@ -8,6 +8,7 @@ import (
 	"math/big"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/crytic/medusa/fuzzing/calls"
 )
@@ -24,8 +25,8 @@ func readSequence(path string, fx *fixture) (calls.CallSequence, error) {
 	if err := json.Unmarshal(b, &seq); err != nil {
 		return nil, fmt.Errorf("native CallSequence decode: %w", err)
 	}
-	if len(seq) < 1 || len(seq) > 4 {
-		return nil, fmt.Errorf("native sequence must have 1..4 calls")
+	if len(seq) < 1 || len(seq) > 5 {
+		return nil, fmt.Errorf("native sequence must have 1..5 calls")
 	}
 	for i, element := range seq {
 		if element == nil || element.Call == nil {
@@ -38,8 +39,8 @@ func readSequence(path string, fx *fixture) (calls.CallSequence, error) {
 		if msg.Value == nil || msg.Value.Sign() != 0 || msg.GasPrice == nil || msg.GasFeeCap == nil || msg.GasTipCap == nil {
 			return nil, fmt.Errorf("step %d has unsupported value or missing native fee fields", i)
 		}
-		if msg.GasLimit != 12500000 || msg.GasPrice.Cmp(big.NewInt(1)) != 0 || msg.GasFeeCap.Sign() != 0 || msg.GasTipCap.Sign() != 0 {
-			return nil, fmt.Errorf("step %d differs from fixed Stage 1 gas/fee settings", i)
+		if !externalGasAccepted(fx, msg) {
+			return nil, fmt.Errorf("step %d differs from the scenario gas/fee settings", i)
 		}
 		if msg.SkipNonceChecks || msg.SkipFromEOACheck || len(msg.AccessList) != 0 {
 			return nil, fmt.Errorf("step %d has unsupported account checks/access list", i)
@@ -76,6 +77,16 @@ func readSequence(path string, fx *fixture) (calls.CallSequence, error) {
 		}
 	}
 	return seq, nil
+}
+
+func externalGasAccepted(fx *fixture, msg *calls.CallMessage) bool {
+	if msg.GasPrice.Cmp(big.NewInt(1)) != 0 {
+		return false
+	}
+	if fx.External {
+		return msg.GasLimit == 4_000_000 && msg.GasFeeCap.Sign() == 0 && msg.GasTipCap.Sign() == 0
+	}
+	return msg.GasLimit == 12_500_000 && msg.GasFeeCap.Sign() == 0 && msg.GasTipCap.Sign() == 0
 }
 
 func writeSequence(path string, seq calls.CallSequence) (string, error) {
@@ -122,6 +133,99 @@ func appendCandidate(seq calls.CallSequence, fx *fixture, decimal string) (calls
 	data := &calls.CallMessageDataAbiValues{Method: &method, InputValues: []any{arg}}
 	call := calls.NewCallMessageWithAbiValueData(last.Call.From, last.Call.To, last.Call.Nonce+1, big.NewInt(0), last.Call.GasLimit, new(big.Int).Set(last.Call.GasPrice), new(big.Int).Set(last.Call.GasFeeCap), new(big.Int).Set(last.Call.GasTipCap), data)
 	return append(seq, calls.NewCallSequenceElement(nil, call, 0, 0)), nil
+}
+
+type suffixCallRequest struct {
+	Signature       string  `json:"signature"`
+	Selector        string  `json:"selector"`
+	Argument        *string `json:"argument"`
+	Actor           string  `json:"actor"`
+	Target          string  `json:"target"`
+	Value           string  `json:"value"`
+	ActualBlock     string  `json:"actual_block"`
+	ActualTimestamp string  `json:"actual_timestamp"`
+}
+
+type suffixPlanRequest struct {
+	Calls []suffixCallRequest `json:"calls"`
+}
+
+func appendSuffixCalls(seq calls.CallSequence, fx *fixture, request suffixPlanRequest) (calls.CallSequence, error) {
+	if len(seq) < 1 || len(seq) > 3 || len(request.Calls) < 1 || len(request.Calls) > 2 || len(seq)+len(request.Calls) > 5 {
+		return nil, fmt.Errorf("suffix requires a 1..3-call prefix, 1..2 new calls, and at most five total calls")
+	}
+	last := seq[len(seq)-1]
+	for index, entry := range request.Calls {
+		if !fx.Allowed[entry.Signature] || entry.Value != "0" ||
+			!strings.EqualFold(entry.Actor, last.Call.From.Hex()) ||
+			!strings.EqualFold(entry.Target, last.Call.To.Hex()) {
+			return nil, fmt.Errorf("suffix call %d has an unsupported signature, actor, target, or value", index)
+		}
+		for _, context := range []string{entry.ActualBlock, entry.ActualTimestamp} {
+			value, ok := new(big.Int).SetString(context, 10)
+			if !ok || value.Sign() < 0 || value.BitLen() > 256 {
+				return nil, fmt.Errorf("suffix call %d has invalid execution context", index)
+			}
+		}
+		if index > 0 && (entry.ActualBlock != request.Calls[0].ActualBlock || entry.ActualTimestamp != request.Calls[0].ActualTimestamp) {
+			return nil, fmt.Errorf("suffix context differs despite fixed zero block delays")
+		}
+		methodName := strings.SplitN(entry.Signature, "(", 2)[0]
+		method, ok := fx.ABI.Methods[methodName]
+		if !ok || method.Sig != entry.Signature || !strings.EqualFold(entry.Selector, "0x"+hex.EncodeToString(method.ID)) {
+			return nil, fmt.Errorf("suffix call %d method or selector differs from the ABI", index)
+		}
+		values := []any{}
+		if len(method.Inputs) == 0 {
+			if entry.Argument != nil {
+				return nil, fmt.Errorf("suffix call %d supplies an argument to a no-arg method", index)
+			}
+		} else if len(method.Inputs) == 1 && method.Inputs[0].Type.String() == "uint256" {
+			if entry.Argument == nil || *entry.Argument == "" {
+				return nil, fmt.Errorf("suffix call %d lacks its uint256 argument", index)
+			}
+			for _, c := range *entry.Argument {
+				if c < '0' || c > '9' {
+					return nil, fmt.Errorf("suffix call %d argument is not decimal", index)
+				}
+			}
+			arg, ok := new(big.Int).SetString(*entry.Argument, 10)
+			if !ok || arg.Sign() < 0 || arg.BitLen() > 256 || (len(*entry.Argument) > 1 && (*entry.Argument)[0] == '0') {
+				return nil, fmt.Errorf("suffix call %d argument is not canonical uint256", index)
+			}
+			values = append(values, arg)
+		} else {
+			return nil, fmt.Errorf("suffix call %d has an unsupported ABI", index)
+		}
+		data := &calls.CallMessageDataAbiValues{Method: &method, InputValues: values}
+		call := calls.NewCallMessageWithAbiValueData(last.Call.From, last.Call.To, last.Call.Nonce+1,
+			big.NewInt(0), last.Call.GasLimit, new(big.Int).Set(last.Call.GasPrice),
+			new(big.Int).Set(last.Call.GasFeeCap), new(big.Int).Set(last.Call.GasTipCap), data)
+		seq = append(seq, calls.NewCallSequenceElement(nil, call, 0, 0))
+		last = seq[len(seq)-1]
+	}
+	return seq, nil
+}
+
+func encodeSuffix(inputPath string, planPath string, outputPath string, fx *fixture) error {
+	sequence, err := readSequence(inputPath, fx)
+	if err != nil {
+		return err
+	}
+	data, err := os.ReadFile(planPath)
+	if err != nil {
+		return err
+	}
+	var request suffixPlanRequest
+	if err := json.Unmarshal(data, &request); err != nil {
+		return fmt.Errorf("suffix plan decode: %w", err)
+	}
+	sequence, err = appendSuffixCalls(sequence, fx, request)
+	if err != nil {
+		return err
+	}
+	_, err = writeSequence(outputPath, sequence)
+	return err
 }
 
 func sequenceSummary(seq calls.CallSequence) map[string]any {

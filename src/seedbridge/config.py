@@ -28,6 +28,10 @@ class Scenario:
     )
     mode: str = "reachability"
     property_id: str | None = None
+    stage5_suffix_calls: tuple[str, ...] = ()
+    stage5_repaired_fixture: str | None = None
+    stage5_required_prefix_call: str | None = None
+    ready_last_signature: str | None = None
 
     def __post_init__(self) -> None:
         if not 1 <= self.prefix_minimum <= self.prefix_maximum <= 3:
@@ -43,6 +47,16 @@ class Scenario:
             raise ValueError("unsupported scenario mode")
         if (self.mode == "safety") != (self.property_id is not None):
             raise ValueError("safety mode requires exactly one property identifier")
+        if self.stage5_suffix_calls:
+            if (self.mode != "safety" or len(set(self.stage5_suffix_calls)) != len(self.stage5_suffix_calls)
+                    or any(call not in self.allowed_calls for call in self.stage5_suffix_calls)
+                    or self.stage5_repaired_fixture is None):
+                raise ValueError("Stage 5 suffix calls require one safety pair and allowed signatures")
+        if self.ready_last_signature is not None and self.ready_last_signature not in self.allowed_calls:
+            raise ValueError("ready-last signature is not an allowed call")
+        if (self.stage5_required_prefix_call is not None
+                and self.stage5_required_prefix_call not in self.allowed_calls):
+            raise ValueError("Stage 5 required prefix call is not allowed")
 
     def ready(self, observation: list[object], prefix_length: int) -> bool:
         if not self.prefix_minimum <= prefix_length <= self.prefix_maximum:
@@ -100,8 +114,11 @@ class Scenario:
                 ],
                 "goal_domain": [False, True],
             },
-            "goal_definition": ("allocated != spent + remaining"
-                                if self.mode == "safety" else "observe[3] == true"),
+            "goal_definition": ({
+                "allocation_conservation": "allocated != spent + remaining",
+                "reservation_conservation": "available + reserved + settled != 100",
+                "approval_bound": "approved > requested",
+            }[self.property_id] if self.mode == "safety" else "observe[3] == true"),
             "execution": {
                 "prefix_steps": {"minimum": self.prefix_minimum, "maximum": self.prefix_maximum},
                 "worker_count": 1, "call_value": "0", "reinsertion_rounds": 1,
@@ -142,6 +159,9 @@ SCENARIOS = {
         state_bounds=((0, 100), (0, 100), (0, 100)),
         mode="safety", property_id="allocation_conservation",
         goal_id="allocation_conservation.violated",
+        stage5_suffix_calls=("open()", "spend(uint256)"),
+        stage5_repaired_fixture="accounting_repaired",
+        stage5_required_prefix_call="open()",
     ),
     "accounting_repaired": Scenario(
         "accounting_repaired", "AccountingRepaired", "spend",
@@ -151,6 +171,57 @@ SCENARIOS = {
         state_bounds=((0, 100), (0, 100), (0, 100)),
         mode="safety", property_id="allocation_conservation",
         goal_id="allocation_conservation.violated",
+        stage5_suffix_calls=("open()", "spend(uint256)"),
+        stage5_repaired_fixture="accounting_repaired",
+        stage5_required_prefix_call="open()",
+    ),
+    "reservation_flawed": Scenario(
+        "reservation_flawed", "ReservationFlawed", "settle",
+        ("start()", "reserve(uint256)", "settle(uint256)"),
+        ready_values=(100,), ready_last_signature="start()",
+        state_fields=("available", "reserved", "settled", "violation"),
+        state_bounds=((0, 100), (0, 100), (0, 100)),
+        mode="safety", property_id="reservation_conservation",
+        goal_id="reservation_conservation.violated",
+        stage5_suffix_calls=("reserve(uint256)", "settle(uint256)"),
+        stage5_repaired_fixture="reservation_repaired",
+        stage5_required_prefix_call="start()",
+    ),
+    "reservation_repaired": Scenario(
+        "reservation_repaired", "ReservationRepaired", "settle",
+        ("start()", "reserve(uint256)", "settle(uint256)"),
+        ready_values=(100,), ready_last_signature="start()",
+        state_fields=("available", "reserved", "settled", "violation"),
+        state_bounds=((0, 100), (0, 100), (0, 100)),
+        mode="safety", property_id="reservation_conservation",
+        goal_id="reservation_conservation.violated",
+        stage5_suffix_calls=("reserve(uint256)", "settle(uint256)"),
+        stage5_repaired_fixture="reservation_repaired",
+        stage5_required_prefix_call="start()",
+    ),
+    "request_flawed": Scenario(
+        "request_flawed", "RequestFlawed", "confirm",
+        ("start()", "request(uint256)", "confirm(uint256)"),
+        ready_values=(1,), ready_last_signature="start()",
+        state_fields=("phase", "requested", "approved", "violation"),
+        state_bounds=((0, 3), (0, 100), (0, 100)),
+        mode="safety", property_id="approval_bound",
+        goal_id="approval_bound.violated",
+        stage5_suffix_calls=("request(uint256)", "confirm(uint256)"),
+        stage5_repaired_fixture="request_repaired",
+        stage5_required_prefix_call="start()",
+    ),
+    "request_repaired": Scenario(
+        "request_repaired", "RequestRepaired", "confirm",
+        ("start()", "request(uint256)", "confirm(uint256)"),
+        ready_values=(1,), ready_last_signature="start()",
+        state_fields=("phase", "requested", "approved", "violation"),
+        state_bounds=((0, 3), (0, 100), (0, 100)),
+        mode="safety", property_id="approval_bound",
+        goal_id="approval_bound.violated",
+        stage5_suffix_calls=("request(uint256)", "confirm(uint256)"),
+        stage5_repaired_fixture="request_repaired",
+        stage5_required_prefix_call="start()",
     ),
 }
 REACHABILITY_SCENARIOS = tuple(

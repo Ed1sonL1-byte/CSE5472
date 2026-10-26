@@ -23,7 +23,7 @@ func main() {
 
 func runCLI(args []string) error {
 	if len(args) == 0 {
-		return errors.New("expected version, run-observed, run-campaign, decode-corpus, roundtrip, encode-candidate, or encode-batch")
+		return errors.New("expected version, run-observed, run-campaign, decode-corpus, roundtrip, encode-candidate, encode-suffix, encode-batch, replay-external, or fuzz-external")
 	}
 	if args[0] == "version" {
 		return json.NewEncoder(os.Stdout).Encode(map[string]string{"adapter_version": adapterVersion, "medusa_version": medusaVersion})
@@ -34,6 +34,7 @@ func runCLI(args []string) error {
 	input := fs.String("input", "", "native sequence file")
 	output := fs.String("output", "", "new output JSON file")
 	argument := fs.String("argument", "", "decimal uint256 suffix argument")
+	planPath := fs.String("plan", "", "JSON plan containing one or two concrete suffix calls")
 	prefixLength := fs.Int("prefix-length", 0, "optional positive prefix length for codec commands")
 	corpusDir := fs.String("corpus-dir", "", "local corpus directory")
 	lineageOutput := fs.String("lineage-output", "", "new JSONL lineage output for run-campaign")
@@ -41,7 +42,7 @@ func runCLI(args []string) error {
 	completionOutput := fs.String("completion-output", "", "new compact timing completion marker")
 	seed := fs.Int64("seed", 1, "single worker RNG seed")
 	tests := fs.Int("tests", 100, "number of complete sequences; stop only at the completion event")
-	maxSteps := fs.Int("max-steps", 3, "new sequence length, 1 to 4")
+	maxSteps := fs.Int("max-steps", 3, "new sequence length, 1 to 5")
 	timeout := fs.Duration("timeout", 30*time.Second, "fuzzing wall-clock limit after compilation")
 	observe := fs.Bool("observe", true, "read fixture state after every call")
 	recordLineage := fs.Bool("record-lineage", true, "record patched native parent selection lineage")
@@ -63,14 +64,19 @@ func runCLI(args []string) error {
 	if _, err := os.Stat(outputPath); err == nil {
 		return fmt.Errorf("output already exists: %s", outputPath)
 	}
-	fx, err := loadFixtureProject(*fixtureID, *projectDir)
+	var fx *fixture
+	if (args[0] == "replay-external" || args[0] == "fuzz-external" || args[0] == "encode-suffix") && externalScenario(*fixtureID) {
+		fx, err = loadExternalFixture(*fixtureID)
+	} else {
+		fx, err = loadFixtureProject(*fixtureID, *projectDir)
+	}
 	if err != nil {
 		return err
 	}
 	switch args[0] {
 	case "run-observed":
-		if *corpusDir == "" || *tests < 1 || *tests > 10000 || *maxSteps < 1 || *maxSteps > 4 || *timeout <= 0 || *timeout > 5*time.Minute {
-			return errors.New("run requires --corpus-dir, 1..10000 tests, 1..4 max-steps, and timeout in (0,5m]")
+		if *corpusDir == "" || *tests < 1 || *tests > 10000 || *maxSteps < 1 || *maxSteps > 5 || *timeout <= 0 || *timeout > 5*time.Minute {
+			return errors.New("run requires --corpus-dir, 1..10000 tests, 1..5 max-steps, and timeout in (0,5m]")
 		}
 		corpusPath, err := filepath.Abs(*corpusDir)
 		if err != nil {
@@ -82,8 +88,8 @@ func runCLI(args []string) error {
 		if *compact {
 			maxTests = 1000000
 		}
-		if *corpusDir == "" || *tests < 2 || *tests > maxTests || *maxSteps != 4 || *timeout <= 0 || *timeout > 5*time.Minute || *flushDelay < 0 {
-			return fmt.Errorf("campaign requires --corpus-dir, 2..%d tests, --max-steps 4, timeout in (0,5m], and nonnegative flush delay", maxTests)
+		if *corpusDir == "" || *tests < 2 || *tests > maxTests || (*maxSteps != 4 && *maxSteps != 5) || *timeout <= 0 || *timeout > 5*time.Minute || *flushDelay < 0 {
+			return fmt.Errorf("campaign requires --corpus-dir, 2..%d tests, --max-steps 4 or 5, timeout in (0,5m], and nonnegative flush delay", maxTests)
 		}
 		corpusPath, err := filepath.Abs(*corpusDir)
 		if err != nil {
@@ -150,6 +156,28 @@ func runCLI(args []string) error {
 			return errors.New("--input batch plan is required")
 		}
 		return encodeCandidateBatch(*input, outputPath, fx)
+	case "encode-suffix":
+		if *input == "" || *planPath == "" {
+			return errors.New("encode-suffix requires --input and --plan")
+		}
+		return encodeSuffix(*input, *planPath, outputPath, fx)
+	case "replay-external":
+		if *input == "" {
+			return errors.New("replay-external requires --input")
+		}
+		return replayExternal(fx, *input, outputPath)
+	case "fuzz-external":
+		if !fx.External {
+			return errors.New("fuzz-external requires an external scenario")
+		}
+		if *corpusDir == "" || *tests < 1 || *tests > 100 || *maxSteps < 1 || *maxSteps > 3 || *timeout <= 0 || *timeout > 2*time.Minute {
+			return errors.New("fuzz-external requires --corpus-dir, 1..100 tests, 1..3 max-steps, and timeout in (0,2m]")
+		}
+		corpusPath, err := filepath.Abs(*corpusDir)
+		if err != nil {
+			return err
+		}
+		return runObserved(fx, runOptions{Output: outputPath, CorpusDir: corpusPath, Seed: *seed, Tests: *tests, MaxSteps: *maxSteps, Timeout: *timeout, Observe: true, External: true})
 	default:
 		return fmt.Errorf("unknown command %q", args[0])
 	}

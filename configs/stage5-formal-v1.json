@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "study_id": "stage5-bounded-suffix-v1",
+  "fixtures": [
+    "reservation_flawed", "reservation_repaired",
+    "request_flawed", "request_repaired",
+    "accounting_flawed", "accounting_repaired"
+  ],
+  "arms": ["native_resume", "symbolic_one", "symbolic_two", "symbolic_adaptive"],
+  "repeats": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+  "total_budget_seconds": 16,
+  "common_limit_seconds": 5,
+  "augmentation_limit_seconds": 7,
+  "prefix_check_limit_seconds": 1,
+  "solver_limit_seconds": 1.5,
+  "minimum_query_seconds": 1,
+  "continuation_reserve_seconds": 3,
+  "process_limit_seconds": 2.5,
+  "cleanup_tolerance_seconds": 1,
+  "warmup_sequences": 100,
+  "max_prefixes": 4,
+  "max_plans_per_length": 4,
+  "max_queries": 4,
+  "continuation_sequence_limit": 1000000,
+  "max_complete_steps": 5,
+  "worker_count": 1,
+  "arm_order": "cyclic_by_repeat",
+  "cache_protocol": "Common compiled fixture and corpus are copied into isolated arm workspaces; shared preparation wall time is charged to every arm.",
+  "adaptive_rule": "Start with one-call plans; promote after a complete no-model/no-candidate or all-paths-reverted result, or after exhaustion when every one-call feedback is complete no-progress/candidate-rejected. Timeout, unsupported, and tool errors alone do not trigger promotion. Stop on confirmation or when query plus native reserve cannot fit.",
+  "residual_randomness": "Medusa corpus and mutation chooser RNG is clock seeded after the common warmup."
+}

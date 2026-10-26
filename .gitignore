@@ -5,6 +5,7 @@ __pycache__/
 .DS_Store
 runs/
 artifacts/*.tar.gz
+artifacts/seedbridge-course-delivery.zip
 .bin/
 configs/toolchain.local.json
 tmp/

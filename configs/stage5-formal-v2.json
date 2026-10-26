@@ -1,0 +1,50 @@
+{
+  "adaptive_rule": "Start with one-call plans; promote after a complete no-model/no-candidate or all-paths-reverted result, or after exhaustion when every one-call feedback is complete no-progress/candidate-rejected. Timeout, unsupported, and tool errors alone do not trigger promotion. Stop on confirmation or when query plus native reserve cannot fit.",
+  "arm_order": "cyclic_by_repeat",
+  "arms": [
+    "native_resume",
+    "symbolic_one",
+    "symbolic_two",
+    "symbolic_adaptive"
+  ],
+  "augmentation_limit_seconds": 7,
+  "cache_protocol": "Common compiled fixture and corpus are copied into isolated arm workspaces; shared preparation wall time is charged to every arm.",
+  "cleanup_tolerance_seconds": 1,
+  "common_limit_seconds": 5,
+  "continuation_reserve_seconds": 3,
+  "continuation_sequence_limit": 1000000,
+  "fixtures": [
+    "reservation_flawed",
+    "reservation_repaired",
+    "request_flawed",
+    "request_repaired",
+    "accounting_flawed",
+    "accounting_repaired"
+  ],
+  "max_complete_steps": 5,
+  "max_plans_per_length": 4,
+  "max_prefixes": 4,
+  "max_queries": 4,
+  "minimum_query_seconds": 1,
+  "prefix_check_limit_seconds": 1,
+  "process_limit_seconds": 2.5,
+  "repeats": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "residual_randomness": "Medusa corpus and mutation chooser RNG is clock seeded after the common warmup.",
+  "schema_version": 1,
+  "solver_limit_seconds": 1.5,
+  "study_id": "stage5-bounded-suffix-v2",
+  "total_budget_seconds": 16,
+  "warmup_sequences": 100,
+  "worker_count": 1
+}

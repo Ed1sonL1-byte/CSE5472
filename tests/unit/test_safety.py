@@ -8,7 +8,7 @@ from eth_hash.auto import keccak
 
 from seedbridge.config import ROOT, get_scenario
 from seedbridge.harness import generate_harness
-from seedbridge.safety import accounting_state
+from seedbridge.safety import accounting_state, external_count_property
 from seedbridge.study import load_study_spec
 from seedbridge.study_audit import StudyAuditError, _validate_steps
 from seedbridge.trace import validate_prefix
@@ -27,6 +27,20 @@ def test_frozen_safety_matrix_is_paired_and_does_not_seed_known_counterexample()
             assert {slot.seed for slot in spec.slots()
                     if slot.fixture_id == fixture and slot.repeat_id == repeat} == {
                 spec.seed(fixture, repeat)}
+
+
+def test_external_public_count_property_is_independent_of_target_observers():
+    wrapped = (1 << 256) - 1
+    assert external_count_property("count_after_subtraction_at_most_initial", 1,
+                                   success=True, signature="run(uint256)")
+    assert not external_count_property("count_after_subtraction_at_most_initial", wrapped,
+                                       success=True, signature="run(uint256)")
+    assert external_count_property("count_after_subtraction_at_most_initial", wrapped,
+                                   success=True, signature="init()")
+    assert external_count_property("local_arithmetic_preserves_count", 1,
+                                   success=True, signature="run(uint256)")
+    assert not external_count_property("local_arithmetic_preserves_count", 0,
+                                       success=True, signature="run(uint256)")
 
 
 def test_independent_property_rejects_marker_and_property_read_disagreement():

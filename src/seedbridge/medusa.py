@@ -37,14 +37,15 @@ def build_fixture(fixture_id: str, directory: Path, timeout: float,
 
 def observe(fixture_id: str, directory: Path, *, seed: int, tests: int,
             timeout: float, corpus: Path | None = None, enabled: bool = True,
-            project: Path | None = None) -> dict:
+            project: Path | None = None, max_steps: int | None = None) -> dict:
     output = directory / "observation.json"
     if output.exists():
         raise ValueError("Observation output must be fresh")
     arguments = ["run-observed", "--fixture", fixture_id,
                       "--corpus-dir", str(corpus or directory / "corpus"),
                       "--output", str(output), "--seed", str(seed),
-                      "--tests", str(tests), "--max-steps", "3" if corpus is None else "4",
+                      "--tests", str(tests), "--max-steps", str(
+                          max_steps if max_steps is not None else (3 if corpus is None else 4)),
                       "--timeout", f"{min(timeout, 300)}s", f"--observe={str(enabled).lower()}"]
     if project is not None:
         arguments.extend(["--project-dir", str(Path(project).resolve())])
@@ -70,7 +71,7 @@ def campaign(fixture_id: str, directory: Path, *, seed: int, tests: int,
              fuzz_timeout: float, process_timeout: float, corpus: Path,
              observe_state: bool = True, record_lineage: bool = True,
              compact: bool = False, flush_delay: float = 0.0,
-             project: Path | None = None) -> dict:
+             project: Path | None = None, max_steps: int = 4) -> dict:
     """Run the patched native continuation mode and retain valid partial timeout evidence."""
     if compact and not record_lineage:
         raise ValueError("compact campaigns require lineage recording")
@@ -87,7 +88,7 @@ def campaign(fixture_id: str, directory: Path, *, seed: int, tests: int,
     arguments = [
         "run-campaign", "--fixture", fixture_id, "--corpus-dir", str(corpus),
         "--output", str(output), "--seed", str(seed), "--tests", str(tests),
-        "--max-steps", "4", "--timeout", f"{fuzz_timeout:.6f}s",
+        "--max-steps", str(max_steps), "--timeout", f"{fuzz_timeout:.6f}s",
         f"--observe={str(observe_state).lower()}",
         f"--record-lineage={str(record_lineage).lower()}",
     ]
@@ -161,10 +162,12 @@ def campaign(fixture_id: str, directory: Path, *, seed: int, tests: int,
 
 def codec(fixture_id: str, operation: str, source: Path, output: Path,
           timeout: float, argument: str | None = None,
-          project: Path | None = None) -> dict:
+          project: Path | None = None, plan: Path | None = None) -> dict:
     arguments = [operation, "--fixture", fixture_id, "--input", str(source), "--output", str(output)]
     if argument is not None:
         arguments.extend(["--argument", argument])
+    if plan is not None:
+        arguments.extend(["--plan", str(plan)])
     if project is not None:
         arguments.extend(["--project-dir", str(Path(project).resolve())])
     return invoke(arguments, output.parent, timeout)
